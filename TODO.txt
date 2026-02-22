@@ -1,15 +1,31 @@
 == COURT TERME == 
 
-~ Améliorations/optimisations de l'ECS :
-	- Pour l'update du component manager, utiliser la liste de T au lieu de la liste de shared_ptr
-[Plus rapide pour la mise en cache (dans le doute, profiler ça), comme le compiler va générer la classe template avec les différents types, possiblité d'appeler une fonction de component même sans cast]
-	- Regarder si y'a moyen d'utiliser la liste de T à la place de la liste de weak_ptr aussi
-	- Tester d'avoir typeid(T) en static pour que ça le compile qu'une fois ?
-	- Regarder si ça marche bien l'appel à une fonction parent avec ClasseParent::fonction(), et si oui l'utiliser partout lol
-	- Rajouter une option à la création d'une entity pour lui mettre un lifetime
-[Fonctionnerai en créant un component si l'option a une valeur différente de 0 pour pas ajouter de fonctionnalité à la classe entity]
+~ Nettoyer le projet Sandbox de la bande démo pour pouvoir à nouveau l'utiliser pour travailler
+
+~ Nettoyer le projet Doomlike pour enlever les scènes et objets inutiles de la bande démo
+
+~ Créer un projet Benchmark pour mesurer les performances du moteur et de l'ECS
+
+~ Implémenter la V2 de l'ECS :
+	- Intégrer le code du nouvel ECS dans le moteur
+	- Changer les systèmes du moteur pour utiliser le nouvel ECS :
+	  (Note: penser à regarder le ClasseParent::fonction() et l'utiliser si c'est pertinent)
+		> Game & Scene system
+		> Rendering
+		> UI
+		> Audio
+		> Physique
+	- Expérimenter dans Sandbox avec des behavior components et confirmer l'implémentation de l'ECS
+	- Mettre à jour le projet Benchmark et comparer les performances du nouvel ECS avec l'ancien
+	- Mettre à jour le Doomlike pour le nouvel ECS :
+		> Prefabs
+		> Player Controller
+		> Objets interagissables
+		> Ennemis
 
 ~ Petites updates d'améliorations :
+	- Rajouter une option à la création d'une entity pour lui mettre un lifetime
+[Fonctionnerai en créant un component si l'option a une valeur différente de 0 pour pas ajouter de fonctionnalité à la classe entity]
 	- Changer le nom de la "model matrix" du transform en "entity matrix" (techniquement c'est plus la matrice du modèle)
 	- Refactor le "load game asset" du doomlike pour utiliser plus de fonctions et moins de copier coller
 [Commencer à réfléchir au futur éditeur d'assets, comment il va pouvoir être utilisé pour le chargement aussi (chargement en cascade ?)]
