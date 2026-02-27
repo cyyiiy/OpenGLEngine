@@ -90,22 +90,6 @@ void ExpositionGame::loadGameAssets()
 	AssetManager::GetModel("floor_wood").addMesh(AssetManager::GetSingleMesh("default_plane"), AssetManager::GetMaterial("floor_wood"));
 
 
-	//  props
-	double start_time = glfwGetTime();
-	loadProps("cannontrailer");
-	loadProps("romanstatue");
-	loadProps("woodenbarrel");
-	loadProps("woodenbeehive");
-	loadProps("woodenlamp", true);
-	loadProps("woodenwheelbarrow");
-	loadProps("floorlamp");
-	loadProps("orangebrick");
-	loadProps("woodenchair");
-	loadProps("woodenchest");
-	double end_time = glfwGetTime();
-	Locator::getLog().LogMessage_Category("Sandbox: Load props time: " + std::to_string(end_time - start_time) + " seconds.", LogCategory::Info);
-
-
 	//  audio
 	AssetManager::CreateSound("sound", "fartreverb.mp3", ACTIVATE_LOOP);
 	AudioSound& music = AssetManager::CreateSound("music", "TestMusic.mp3", ACTIVATE_3D | ACTIVATE_STREAM);
@@ -120,7 +104,7 @@ void ExpositionGame::loadGame()
 {
 	test_game_entity = createEntity();
 
-	loadScene(&demoreelSceneOne);
+	loadScene(&expositionScene);
 }
 
 
@@ -132,23 +116,4 @@ void ExpositionGame::unloadGame()
 	AssetManager::DeleteMaterial("light_source_white");
 	AssetManager::DeleteMaterial("light_source_cyan");
 	AssetManager::DeleteMaterial("backpack");
-}
-
-
-void ExpositionGame::loadProps(const std::string& propsName, bool emissive)
-{
-	const std::string props_path = "props/" + propsName;
-	AssetManager::LoadTexture(propsName + "_diffuse", props_path + "_basecolor.jpg");
-	AssetManager::LoadTexture(propsName + "_specular", props_path + "_specular.jpg");
-	if(emissive) AssetManager::LoadTexture(propsName + "_emissive", props_path + "_emissive.jpg");
-
-	Material& props_mat = AssetManager::CreateMaterial(propsName, AssetManager::GetShader("lit_object"));
-	props_mat.addTexture(&AssetManager::GetTexture(propsName + "_diffuse"), TextureType::Diffuse);
-	props_mat.addTexture(&AssetManager::GetTexture(propsName + "_specular"), TextureType::Specular);
-	props_mat.addTexture(&AssetManager::GetTexture(emissive ? (propsName + "_emissive") : "default_black"), TextureType::Emissive);
-	props_mat.addParameter("material.shininess", 32.0f);
-
-	AssetManager::LoadMeshCollection(propsName, props_path + ".fbx");
-
-	AssetManager::CreateModel(propsName).addMeshes(AssetManager::GetMeshCollection(propsName), AssetManager::GetMaterial(propsName));
 }

@@ -1,6 +1,6 @@
 == COURT TERME == 
 
-~ Nettoyer le projet Sandbox de la bande démo pour pouvoir à nouveau l'utiliser pour travailler
+~ Nettoyer le projet Sandbox de la bande démo pour pouvoir à nouveau l'utiliser pour travailler - fait
 
 ~ Nettoyer le projet Doomlike pour enlever les scènes et objets inutiles de la bande démo
 

@@ -150,8 +150,6 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="DefaultScenes\demoreelSceneOne.cpp" />
-    <ClCompile Include="DefaultScenes\demoreelSceneTwo.cpp" />
     <ClCompile Include="DefaultScenes\expositionScene.cpp" />
     <ClCompile Include="expositionGame.cpp" />
     <ClCompile Include="main.cpp" />
@@ -162,8 +160,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DefaultScenes\demoreelSceneOne.h" />
-    <ClInclude Include="DefaultScenes\demoreelSceneTwo.h" />
     <ClInclude Include="DefaultScenes\expositionScene.h" />
     <ClInclude Include="expositionGame.h" />
   </ItemGroup>
