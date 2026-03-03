@@ -67,9 +67,6 @@ void DoomlikeGame::loadGameAssets()
 
 	AssetManager::LoadTexture("hud_crosshair", "doomlike/hud/crosshair.png", false);
 
-	AssetManager::LoadTexture("button_diffuse", "button/button_basecolor.png");
-	AssetManager::LoadTexture("button_specular", "button/button_specular.png");
-
 	log.LogMessage_Category("Doomlike: Load textures time: " + std::to_string(glfwGetTime() - load_time), LogCategory::Info);
 	load_time = glfwGetTime();
 
@@ -103,12 +100,6 @@ void DoomlikeGame::loadGameAssets()
 	gun_mat.addTexture(&AssetManager::GetTexture("gun_emissive"), TextureType::Emissive);
 	gun_mat.addParameter("material.shininess", 32.0f);
 
-	Material& button_mat = AssetManager::CreateMaterial("button", AssetManager::GetShader("lit_object"));
-	button_mat.addTexture(&AssetManager::GetTexture("button_diffuse"), TextureType::Diffuse);
-	button_mat.addTexture(&AssetManager::GetTexture("button_specular"), TextureType::Specular);
-	button_mat.addTexture(&AssetManager::GetTexture("default_black"), TextureType::Emissive);
-	button_mat.addParameter("material.shininess", 32.0f);
-
 	log.LogMessage_Category("Doomlike: Load materials time: " + std::to_string(glfwGetTime() - load_time), LogCategory::Info);
 	load_time = glfwGetTime();
 
@@ -118,7 +109,6 @@ void DoomlikeGame::loadGameAssets()
 	AssetManager::LoadMeshCollection("enemy", "doomlike/enemy/enemy.obj");
 	AssetManager::LoadMeshCollection("bullet", "doomlike/bullet/bullet.fbx");
 	AssetManager::LoadMeshCollection("gun", "doomlike/gun/gun.obj");
-	AssetManager::LoadMeshCollection("button", "button/button.obj");
 
 	AssetManager::CreateModel("crate");
 	AssetManager::GetModel("crate").addMesh(AssetManager::GetSingleMesh("default_cube"), AssetManager::GetMaterial("crate"));
@@ -134,8 +124,6 @@ void DoomlikeGame::loadGameAssets()
 
 	AssetManager::CreateModel("gun");
 	AssetManager::GetModel("gun").addMeshes(AssetManager::GetMeshCollection("gun"), AssetManager::GetMaterial("gun"));
-
-	AssetManager::CreateModel("button").addMeshes(AssetManager::GetMeshCollection("button"), AssetManager::GetMaterial("button"));
 
 	log.LogMessage_Category("Doomlike: Load meshes & create models time: " + std::to_string(glfwGetTime() - load_time), LogCategory::Info);
 	load_time = glfwGetTime();
@@ -211,11 +199,6 @@ void DoomlikeGame::updateGame(float dt)
 	{
 		loadLevel(3);
 	}
-
-	if (Input::IsKeyPressed(GLFW_KEY_KP_5))
-	{
-		loadLevel(5);
-	}
 }
 
 void DoomlikeGame::restartLevel()
@@ -255,14 +238,6 @@ void DoomlikeGame::loadLevel(int index)
 	case 3:
 		loadScene(&levelAdvancedScene);
 		player->respawn(levelAdvancedScene.getSpawnPoint());
-		break;
-	case 4:
-		loadScene(&levelDemoreelAudio);
-		player->respawn(levelDemoreelAudio.getSpawnPoint());
-		break;
-	case 5:
-		loadScene(&levelDemoreelPhysics);
-		player->respawn(levelDemoreelPhysics.getSpawnPoint());
 		break;
 	}
 }

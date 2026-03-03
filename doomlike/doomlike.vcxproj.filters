@@ -72,15 +72,6 @@
     <ClCompile Include="GameLogic\enemyCount.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Scenes\Others\demoreelSceneAudio.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GameComponents\buttonComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Scenes\Others\demoreelScenePhysics.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scenes\testFpsScene.h">
@@ -138,15 +129,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GameLogic\enemyCount.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Scenes\Others\demoreelSceneAudio.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GameComponents\buttonComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Scenes\Others\demoreelScenePhysics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

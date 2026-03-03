@@ -152,7 +152,6 @@
   <ItemGroup>
     <ClCompile Include="doomlikeGame.cpp" />
     <ClCompile Include="GameComponents\bulletComponent.cpp" />
-    <ClCompile Include="GameComponents\buttonComponent.cpp" />
     <ClCompile Include="GameComponents\enemyComponent.cpp" />
     <ClCompile Include="GameComponents\OverrideComponents\cameraLagComponent.cpp" />
     <ClCompile Include="GameComponents\gunComponent.cpp" />
@@ -169,8 +168,6 @@
     <ClCompile Include="Scenes\doomlikeLevelAdvanced.cpp" />
     <ClCompile Include="Scenes\doomlikeLevelDebug.cpp" />
     <ClCompile Include="Scenes\doomlikeLevelStart.cpp" />
-    <ClCompile Include="Scenes\Others\demoreelSceneAudio.cpp" />
-    <ClCompile Include="Scenes\Others\demoreelScenePhysics.cpp" />
     <ClCompile Include="Scenes\testFpsScene.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -181,7 +178,6 @@
   <ItemGroup>
     <ClInclude Include="doomlikeGame.h" />
     <ClInclude Include="GameComponents\bulletComponent.h" />
-    <ClInclude Include="GameComponents\buttonComponent.h" />
     <ClInclude Include="GameComponents\enemyComponent.h" />
     <ClInclude Include="GameComponents\OverrideComponents\cameraLagComponent.h" />
     <ClInclude Include="GameComponents\gunComponent.h" />
@@ -198,8 +194,6 @@
     <ClInclude Include="Scenes\doomlikeLevelAdvanced.h" />
     <ClInclude Include="Scenes\doomlikeLevelDebug.h" />
     <ClInclude Include="Scenes\doomlikeLevelStart.h" />
-    <ClInclude Include="Scenes\Others\demoreelSceneAudio.h" />
-    <ClInclude Include="Scenes\Others\demoreelScenePhysics.h" />
     <ClInclude Include="Scenes\testFpsScene.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
