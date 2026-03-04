@@ -14,6 +14,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "doomlike", "doomlike\doomli
 		{7BDF02E2-AB62-4176-987F-2C2B99391124} = {7BDF02E2-AB62-4176-987F-2C2B99391124}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "benchmark", "benchmark\benchmark.vcxproj", "{DDFD2069-C38B-9F16-B439-8E2B95ECBF4D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -54,6 +56,14 @@ Global
 		{D8C7A6FD-BBE7-443E-BCF5-5EBC6A8BF61E}.Release|x64.Build.0 = Release|x64
 		{D8C7A6FD-BBE7-443E-BCF5-5EBC6A8BF61E}.Release|x86.ActiveCfg = Release|Win32
 		{D8C7A6FD-BBE7-443E-BCF5-5EBC6A8BF61E}.Release|x86.Build.0 = Release|Win32
+		{DDFD2069-C38B-9F16-B439-8E2B95ECBF4D}.Debug|x64.ActiveCfg = Debug|x64
+		{DDFD2069-C38B-9F16-B439-8E2B95ECBF4D}.Debug|x64.Build.0 = Debug|x64
+		{DDFD2069-C38B-9F16-B439-8E2B95ECBF4D}.Debug|x86.ActiveCfg = Debug|Win32
+		{DDFD2069-C38B-9F16-B439-8E2B95ECBF4D}.Debug|x86.Build.0 = Debug|Win32
+		{DDFD2069-C38B-9F16-B439-8E2B95ECBF4D}.Release|x64.ActiveCfg = Release|x64
+		{DDFD2069-C38B-9F16-B439-8E2B95ECBF4D}.Release|x64.Build.0 = Release|x64
+		{DDFD2069-C38B-9F16-B439-8E2B95ECBF4D}.Release|x86.ActiveCfg = Release|Win32
+		{DDFD2069-C38B-9F16-B439-8E2B95ECBF4D}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

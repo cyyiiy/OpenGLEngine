@@ -2,9 +2,14 @@
 
 ~ Nettoyer le projet Sandbox de la bande démo pour pouvoir à nouveau l'utiliser pour travailler - fait
 
-~ Nettoyer le projet Doomlike pour enlever les scènes et objets inutiles de la bande démo
+~ Nettoyer le projet Doomlike pour enlever les scènes et objets inutiles de la bande démo - fait
 
-~ Créer un projet Benchmark pour mesurer les performances du moteur et de l'ECS
+~ Créer un projet Benchmark pour mesurer les performances du moteur et de l'ECS - en cours
+	- Tester le rendering 3D (beaucoup d'objets et de lumières)
+	- Tester le rendering 2D (beaucoup de sprites et de textes)
+	- Tester la physique (beaucoup de collisions et de rigidbody)
+	- Tester l'update loop (beaucoup de composants behavior)
+	- Tester les interactions ECS (beaucoup de create/delete/get de composants)
 
 ~ Implémenter la V2 de l'ECS :
 	- Intégrer le code du nouvel ECS dans le moteur
