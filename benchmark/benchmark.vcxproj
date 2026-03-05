@@ -151,6 +151,8 @@
   <ItemGroup>
     <ClCompile Include="benchmarkGame.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Scenes\benchmarkEnd.cpp" />
+    <ClCompile Include="Scenes\benchmarkRendering3D.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\opengl_engine\opengl_engine.vcxproj">
@@ -159,6 +161,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="benchmarkGame.h" />
+    <ClInclude Include="Scenes\benchmarkEnd.h" />
+    <ClInclude Include="Scenes\benchmarkRendering3D.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
