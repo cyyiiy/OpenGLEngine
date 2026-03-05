@@ -23,7 +23,7 @@ void RendererOpenGL::draw()
 	// ===================
 
 	Matrix4 view = current_camera.getViewMatrix();
-	Matrix4 projection = Matrix4::createPerspectiveFOV(Maths::toRadians(current_camera.getFov()), static_cast<float>(windowSize.x), static_cast<float>(windowSize.y), 0.1f, 100.0f);
+	Matrix4 projection = Matrix4::createPerspectiveFOV(Maths::toRadians(current_camera.getFov()), static_cast<float>(windowSize.x), static_cast<float>(windowSize.y), 0.1f, 1000.0f);
 
 	//  loop through all shaders
 	for (auto& materials_by_shaders : materials)

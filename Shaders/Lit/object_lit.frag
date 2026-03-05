@@ -62,9 +62,9 @@ uniform float beta_tex_scaling_factor = 1;
 
 
 uniform DirectionalLight dirLight;
-uniform PointLight pointLights[16];
+uniform PointLight pointLights[64];
 uniform int nbPointLights;
-uniform SpotLight spotLights[8];
+uniform SpotLight spotLights[32];
 uniform int nbSpotLights;
 
 

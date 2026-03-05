@@ -25,8 +25,8 @@
 const std::unordered_map<LightType, int> LIGHTS_LIMITS
 {
 	{EDirectionalLight, 1},
-	{EPointLight, 16},
-	{ESpotLight, 8}
+	{EPointLight, 64},
+	{ESpotLight, 32}
 };
 
 const int TEXT_CHARS_LIMIT{ 200 };
