@@ -27,6 +27,9 @@
     <ClCompile Include="Scenes\benchmarkEnd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Scenes\benchmarkRendering2D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="benchmarkGame.h">
@@ -36,6 +39,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Scenes\benchmarkEnd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenes\benchmarkRendering2D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

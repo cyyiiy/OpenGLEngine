@@ -6,7 +6,7 @@
 
 ~ Créer un projet Benchmark pour mesurer les performances du moteur et de l'ECS - en cours
 	- Tester le rendering 3D (beaucoup d'objets et de lumières) - fait
-	- Tester le rendering 2D (beaucoup de sprites et de textes)
+	- Tester le rendering 2D (beaucoup de sprites et de textes) - fait
 	- Tester la physique (beaucoup de collisions et de rigidbody)
 	- Tester l'update loop (beaucoup de composants behavior)
 	- Tester les interactions ECS (beaucoup de create/delete/get de composants)

@@ -5,7 +5,8 @@
 #include <Assets/defaultAssets.h>
 
 #include <GLFW/glfw3.h>
-#include <limits>
+#include <sstream>
+#include <numeric>
 
 
 void BenchmarkGame::loadGameAssets()
@@ -38,6 +39,8 @@ void BenchmarkGame::loadGameAssets()
 	log.LogMessage_Category("Benchmark: Loaded floor texture in " + std::to_string(glfwGetTime() - load_time) + " seconds.", LogCategory::Info);
 	load_time = glfwGetTime();
 
+	// Load benchmark sprites
+	AssetManager::LoadTexture("sprite_matrix", "benchmark/sprites/matrix.jpg", false);
 
 	// Load benchmark props
 	loadProp("woodenchest");
@@ -61,6 +64,8 @@ void BenchmarkGame::unloadGame()
 	AssetManager::DeleteTexture("floor_diffuse");
 	AssetManager::DeleteTexture("floor_specular");
 
+	AssetManager::DeleteTexture("sprite_matrix");
+
 	unloadProp("woodenchest");
 	unloadProp("romanstatue");
 }
@@ -76,26 +81,53 @@ void BenchmarkGame::updateGame(float dt)
 	}
 
 	currentStateTime += dt;
-	currentStateFrameNumber++;
-	if (dt < currentStateMinFrameTime) currentStateMinFrameTime = dt;
-	if (dt > currentStateMaxFrameTime) currentStateMaxFrameTime = dt;
+	currentStateFrames.push_back(dt);
 
 	if (currentStateTime < 5.0f) return;
 
+	// Compute benchmark results
+	std::vector<float> shortest_fives = currentStateFrames, longest_fives = currentStateFrames;
+	std::partial_sort(shortest_fives.begin(), shortest_fives.begin() + 5, shortest_fives.end());
+	std::partial_sort(longest_fives.begin(), longest_fives.begin() + 5, longest_fives.end(), std::greater<>());
+	shortest_fives.resize(5);
+	longest_fives.resize(5);
+
+	float average = std::accumulate(currentStateFrames.begin(), currentStateFrames.end(), 0.0f);
+	average /= currentStateFrames.size();
+
+	// Log benchmark results
 	Log& log = Locator::getLog();
-	const float currentStateMeanFrameTime = currentStateTime / currentStateFrameNumber;
 
-	log.LogMessage_Category("Benchmark: Minimum frame time: " + std::to_string(currentStateMinFrameTime * 1000) + " ms." +
-		" (" + std::to_string(Maths::round(1.0f / currentStateMinFrameTime)) + " FPS)", LogCategory::Info);
-	log.LogMessage_Category("Benchmark: Maximum frame time: " + std::to_string(currentStateMaxFrameTime * 1000) + " ms." +
-		" (" + std::to_string(Maths::round(1.0f / currentStateMaxFrameTime)) + " FPS)", LogCategory::Info);
-	log.LogMessage_Category("Benchmark: Mean frame time: " + std::to_string(currentStateMeanFrameTime * 1000) + " ms." +
-		" (" + std::to_string(Maths::round(1.0f / currentStateMeanFrameTime)) + " FPS)", LogCategory::Info);
+	log.LogMessage_Category("Benchmark: Top 5 shortest frame times:", LogCategory::Info);
+	for (int i = 0; i < 5; i++)
+	{
+		std::stringstream msg;
+		msg << "#" << i + 1 << ": " << shortest_fives[i] * 1000.0f << " ms (" << Maths::round(1.0f / shortest_fives[i]) << " FPS).";
+		log.LogMessage_Category(msg.str(), LogCategory::Info);
+	}
 
+	log.LogMessage_Category("Benchmark: Top 5 longest frame times:", LogCategory::Info);
+	for (int i = 0; i < 5; i++)
+	{
+		std::stringstream msg;
+		msg << "#" << i + 1 << ": " << longest_fives[i] * 1000.0f << " ms (" << Maths::round(1.0f / longest_fives[i]) << " FPS).";
+		log.LogMessage_Category(msg.str(), LogCategory::Info);
+	}
+
+	std::stringstream msg;
+	msg << "Benchmark: Average frame time: " << average * 1000.0f << " ms (" << Maths::round(1.0f / average) << " FPS).";
+	log.LogMessage_Category(msg.str(), LogCategory::Info);
+
+	// Start next benchmark state
 	switch (currentBenchmarkState)
 	{
 	case Rendering3D:
-		log.LogMessage_Category("Benchmark: ========== End 3D Rendering benchmark ==========", LogCategory::Info);
+		log.LogMessage_Category("Benchmark: =============== End 3D Rendering benchmark ===============", LogCategory::Info);
+		startBenchmarkState(BenchmarkState::Rendering2D);
+		break;
+
+	case Rendering2D:
+		log.LogMessage_Category("Benchmark: =============== End 2D Rendering benchmark ===============", LogCategory::Info);
 		loadScene(&benchmarkEnd);
 		currentBenchmarkState = BenchmarkState::Null;
 		break;
@@ -150,9 +182,15 @@ void BenchmarkGame::startBenchmarkState(BenchmarkState state)
 	switch (state)
 	{
 	case Rendering3D:
-		log.LogMessage_Category("Benchmark: ========== Start 3D Rendering benchmark ==========", LogCategory::Info);
+		log.LogMessage_Category("Benchmark: =============== Start 3D Rendering benchmark ===============", LogCategory::Info);
 		loadScene(&benchmarkRendering3D);
 		log.LogMessage_Category("Benchmark: Loaded 3D Rendering scene in " + std::to_string(glfwGetTime() - load_scene_time) + " seconds.", LogCategory::Info);
+		break;
+
+	case Rendering2D:
+		log.LogMessage_Category("Benchmark: =============== Start 2D Rendering benchmark ===============", LogCategory::Info);
+		loadScene(&benchmarkRendering2D);
+		log.LogMessage_Category("Benchmark: Loaded 2D Rendering scene in " + std::to_string(glfwGetTime() - load_scene_time) + " seconds.", LogCategory::Info);
 		break;
 
 	default:
@@ -163,8 +201,6 @@ void BenchmarkGame::startBenchmarkState(BenchmarkState state)
 	log.LogMessage_Category("Benchmark: Analyzing performances... (wait 5 seconds)", LogCategory::Info);
 	currentStateFirstFrame = false;
 	currentStateTime = 0.0f;
-	currentStateFrameNumber = 0;
-	currentStateMinFrameTime = std::numeric_limits<float>::max();
-	currentStateMaxFrameTime = 0.0f;
+	currentStateFrames.clear();
 	currentBenchmarkState = state;
 }
