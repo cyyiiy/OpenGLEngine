@@ -2,6 +2,7 @@
 #include <Core/game.h>
 #include <Scenes/benchmarkRendering3D.h>
 #include <Scenes/benchmarkRendering2D.h>
+#include <Scenes/benchmarkPhysics.h>
 #include <Scenes/benchmarkEnd.h>
 
 
@@ -32,6 +33,7 @@ private:
 	// Scenes
 	BenchmarkRendering3D benchmarkRendering3D;
 	BenchmarkRendering2D benchmarkRendering2D;
+	BenchmarkPhysics benchmarkPhysics;
 	BenchmarkEnd benchmarkEnd;
 
 	// Benchmark variables

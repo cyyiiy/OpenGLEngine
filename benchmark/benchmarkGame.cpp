@@ -45,6 +45,7 @@ void BenchmarkGame::loadGameAssets()
 	// Load benchmark props
 	loadProp("woodenchest");
 	loadProp("romanstatue");
+	loadProp("orangebrick");
 	log.LogMessage_Category("Benchmark: Load props time: " + std::to_string(glfwGetTime() - load_time) + " seconds.", LogCategory::Info);
 	load_time = glfwGetTime();
 
@@ -68,6 +69,7 @@ void BenchmarkGame::unloadGame()
 
 	unloadProp("woodenchest");
 	unloadProp("romanstatue");
+	unloadProp("orangebrick");
 }
 
 void BenchmarkGame::updateGame(float dt)
@@ -122,12 +124,17 @@ void BenchmarkGame::updateGame(float dt)
 	switch (currentBenchmarkState)
 	{
 	case Rendering3D:
-		log.LogMessage_Category("Benchmark: =============== End 3D Rendering benchmark ===============", LogCategory::Info);
+		log.LogMessage_Category("Benchmark: =============== End 3D Rendering benchmark =================", LogCategory::Info);
 		startBenchmarkState(BenchmarkState::Rendering2D);
 		break;
 
 	case Rendering2D:
-		log.LogMessage_Category("Benchmark: =============== End 2D Rendering benchmark ===============", LogCategory::Info);
+		log.LogMessage_Category("Benchmark: =============== End 2D Rendering benchmark =================", LogCategory::Info);
+		startBenchmarkState(BenchmarkState::Physics);
+		break;
+
+	case Physics:
+		log.LogMessage_Category("Benchmark: =============== End Physics benchmark ======================", LogCategory::Info);
 		loadScene(&benchmarkEnd);
 		currentBenchmarkState = BenchmarkState::Null;
 		break;
@@ -184,13 +191,19 @@ void BenchmarkGame::startBenchmarkState(BenchmarkState state)
 	case Rendering3D:
 		log.LogMessage_Category("Benchmark: =============== Start 3D Rendering benchmark ===============", LogCategory::Info);
 		loadScene(&benchmarkRendering3D);
-		log.LogMessage_Category("Benchmark: Loaded 3D Rendering scene in " + std::to_string(glfwGetTime() - load_scene_time) + " seconds.", LogCategory::Info);
+		log.LogMessage_Category("Benchmark: Loaded 3D Rendering scene in " + std::to_string((glfwGetTime() - load_scene_time) * 1000.0) + " ms.", LogCategory::Info);
 		break;
 
 	case Rendering2D:
 		log.LogMessage_Category("Benchmark: =============== Start 2D Rendering benchmark ===============", LogCategory::Info);
 		loadScene(&benchmarkRendering2D);
-		log.LogMessage_Category("Benchmark: Loaded 2D Rendering scene in " + std::to_string(glfwGetTime() - load_scene_time) + " seconds.", LogCategory::Info);
+		log.LogMessage_Category("Benchmark: Loaded 2D Rendering scene in " + std::to_string((glfwGetTime() - load_scene_time) * 1000.0) + " ms.", LogCategory::Info);
+		break;
+
+	case Physics:
+		log.LogMessage_Category("Benchmark: =============== Start Physics benchmark ====================", LogCategory::Info);
+		loadScene(&benchmarkPhysics);
+		log.LogMessage_Category("Benchmark: Loaded Physics scene in " + std::to_string((glfwGetTime() - load_scene_time) * 1000.0) + " ms.", LogCategory::Info);
 		break;
 
 	default:

@@ -152,6 +152,7 @@
     <ClCompile Include="benchmarkGame.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Scenes\benchmarkEnd.cpp" />
+    <ClCompile Include="Scenes\benchmarkPhysics.cpp" />
     <ClCompile Include="Scenes\benchmarkRendering2D.cpp" />
     <ClCompile Include="Scenes\benchmarkRendering3D.cpp" />
   </ItemGroup>
@@ -163,6 +164,7 @@
   <ItemGroup>
     <ClInclude Include="benchmarkGame.h" />
     <ClInclude Include="Scenes\benchmarkEnd.h" />
+    <ClInclude Include="Scenes\benchmarkPhysics.h" />
     <ClInclude Include="Scenes\benchmarkRendering2D.h" />
     <ClInclude Include="Scenes\benchmarkRendering3D.h" />
   </ItemGroup>
