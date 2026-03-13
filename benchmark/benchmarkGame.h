@@ -3,6 +3,7 @@
 #include <Scenes/benchmarkRendering3D.h>
 #include <Scenes/benchmarkRendering2D.h>
 #include <Scenes/benchmarkPhysics.h>
+#include <Scenes/benchmarkECS.h>
 #include <Scenes/benchmarkEnd.h>
 
 
@@ -14,7 +15,6 @@ class BenchmarkGame : public Game
 		Rendering3D,
 		Rendering2D,
 		Physics,
-		UpdateLoop,
 		ECS
 	};
 
@@ -34,6 +34,7 @@ private:
 	BenchmarkRendering3D benchmarkRendering3D;
 	BenchmarkRendering2D benchmarkRendering2D;
 	BenchmarkPhysics benchmarkPhysics;
+	BenchmarkECS benchmarkECS;
 	BenchmarkEnd benchmarkEnd;
 
 	// Benchmark variables

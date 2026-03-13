@@ -150,7 +150,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="benchmarkGame.cpp" />
+    <ClCompile Include="Components\benchmarkComponentA.cpp" />
+    <ClCompile Include="Components\benchmarkComponentB.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Scenes\benchmarkECS.cpp" />
     <ClCompile Include="Scenes\benchmarkEnd.cpp" />
     <ClCompile Include="Scenes\benchmarkPhysics.cpp" />
     <ClCompile Include="Scenes\benchmarkRendering2D.cpp" />
@@ -163,6 +166,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="benchmarkGame.h" />
+    <ClInclude Include="Components\benchmarkComponentA.h" />
+    <ClInclude Include="Components\benchmarkComponentB.h" />
+    <ClInclude Include="Scenes\benchmarkECS.h" />
     <ClInclude Include="Scenes\benchmarkEnd.h" />
     <ClInclude Include="Scenes\benchmarkPhysics.h" />
     <ClInclude Include="Scenes\benchmarkRendering2D.h" />

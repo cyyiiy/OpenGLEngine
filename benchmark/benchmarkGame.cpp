@@ -49,7 +49,6 @@ void BenchmarkGame::loadGameAssets()
 	log.LogMessage_Category("Benchmark: Load props time: " + std::to_string(glfwGetTime() - load_time) + " seconds.", LogCategory::Info);
 	load_time = glfwGetTime();
 
-
 	log.LogMessage_Category("Benchmark: Finished loading assets in " + std::to_string(glfwGetTime() - load_start_time) + " seconds.", LogCategory::Info);
 }
 
@@ -135,6 +134,11 @@ void BenchmarkGame::updateGame(float dt)
 
 	case Physics:
 		log.LogMessage_Category("Benchmark: =============== End Physics benchmark ======================", LogCategory::Info);
+		startBenchmarkState(BenchmarkState::ECS);
+		break;
+
+	case ECS:
+		log.LogMessage_Category("Benchmark: =============== End ECS benchmark ==========================", LogCategory::Info);
 		loadScene(&benchmarkEnd);
 		currentBenchmarkState = BenchmarkState::Null;
 		break;
@@ -204,6 +208,12 @@ void BenchmarkGame::startBenchmarkState(BenchmarkState state)
 		log.LogMessage_Category("Benchmark: =============== Start Physics benchmark ====================", LogCategory::Info);
 		loadScene(&benchmarkPhysics);
 		log.LogMessage_Category("Benchmark: Loaded Physics scene in " + std::to_string((glfwGetTime() - load_scene_time) * 1000.0) + " ms.", LogCategory::Info);
+		break;
+
+	case ECS:
+		log.LogMessage_Category("Benchmark: =============== Start ECS benchmark ========================", LogCategory::Info);
+		loadScene(&benchmarkECS);
+		log.LogMessage_Category("Benchmark: Loaded ECS scene in " + std::to_string((glfwGetTime() - load_scene_time) * 1000.0) + " ms.", LogCategory::Info);
 		break;
 
 	default:
