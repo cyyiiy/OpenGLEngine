@@ -42,5 +42,6 @@ private:
 	bool currentStateFirstFrame{ false };
 	float currentStateTime{ 0.0f };
 	std::vector<float> currentStateFrames;
+	float currentStateEngineTimeSum;
 };
 

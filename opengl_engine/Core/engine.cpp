@@ -189,6 +189,8 @@ void Engine::run()
 		deltaTime = static_cast<float>(current_frame - lastFrame);
 		lastFrame = current_frame;
 
+		GameplayStatics::SetDeltaTime(deltaTime);
+
 
 		//  inputs update part
 		// --------------------
@@ -231,6 +233,12 @@ void Engine::run()
 
 
 		if (game) game->lateUpdate();
+
+
+		//  time logic second part
+		// ------------------------
+		const float engine_time = static_cast<float>(glfwGetTime() - current_frame);
+		GameplayStatics::SetEngineTime(engine_time);
 
 
 		//  events and buffer swap part

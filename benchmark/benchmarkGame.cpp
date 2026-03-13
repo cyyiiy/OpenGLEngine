@@ -3,6 +3,7 @@
 #include <ServiceLocator/locator.h>
 #include <Assets/assetManager.h>
 #include <Assets/defaultAssets.h>
+#include <GameplayStatics/gameplayStatics.h>
 
 #include <GLFW/glfw3.h>
 #include <sstream>
@@ -83,6 +84,7 @@ void BenchmarkGame::updateGame(float dt)
 
 	currentStateTime += dt;
 	currentStateFrames.push_back(dt);
+	currentStateEngineTimeSum += GameplayStatics::GetEngineTime();
 
 	if (currentStateTime < 5.0f) return;
 
@@ -95,6 +97,7 @@ void BenchmarkGame::updateGame(float dt)
 
 	float average = std::accumulate(currentStateFrames.begin(), currentStateFrames.end(), 0.0f);
 	average /= currentStateFrames.size();
+	const float average_engine = currentStateEngineTimeSum / currentStateFrames.size();
 
 	// Log benchmark results
 	Log& log = Locator::getLog();
@@ -118,6 +121,11 @@ void BenchmarkGame::updateGame(float dt)
 	std::stringstream msg;
 	msg << "Benchmark: Average frame time: " << average * 1000.0f << " ms (" << Maths::round(1.0f / average) << " FPS).";
 	log.LogMessage_Category(msg.str(), LogCategory::Info);
+
+	std::stringstream msg2;
+	msg2 << "Benchmark: Average engine time: " << average_engine * 1000.0f << " ms (" << Maths::round(1.0f / average_engine) << " FPS).";
+	log.LogMessage_Category(msg2.str(), LogCategory::Info);
+	log.LogMessage_Category("Benchmark: Engine time is frame time without the OpenGL buffer swap.", LogCategory::Info);
 
 	// Start next benchmark state
 	switch (currentBenchmarkState)
@@ -225,5 +233,6 @@ void BenchmarkGame::startBenchmarkState(BenchmarkState state)
 	currentStateFirstFrame = false;
 	currentStateTime = 0.0f;
 	currentStateFrames.clear();
+	currentStateEngineTimeSum = 0.0f;
 	currentBenchmarkState = state;
 }

@@ -4,6 +4,8 @@
 Game* GameplayStatics::currentGame = nullptr;
 Scene* GameplayStatics::currentScene = nullptr;
 Vector2Int GameplayStatics::windowSize = Vector2Int::zero;
+float GameplayStatics::deltaTime = 0.0f;
+float GameplayStatics::engineTime = 0.0f;
 Event<const Vector2Int> GameplayStatics::OnScrenResize;
 
 Game* GameplayStatics::GetGame()
@@ -33,6 +35,16 @@ Vector2Int GameplayStatics::GetWindowSize()
 	return windowSize;
 }
 
+float GameplayStatics::GetDeltaTime()
+{
+	return deltaTime;
+}
+
+float GameplayStatics::GetEngineTime()
+{
+	return engineTime;
+}
+
 
 void GameplayStatics::SetCurrentGame(Game* game)
 {
@@ -47,4 +59,14 @@ void GameplayStatics::SetCurrentScene(Scene* scene)
 void GameplayStatics::SetWindowSize(const Vector2Int& size)
 {
 	windowSize = size;
+}
+
+void GameplayStatics::SetDeltaTime(float time)
+{
+	deltaTime = time;
+}
+
+void GameplayStatics::SetEngineTime(float time)
+{
+	engineTime = time;
 }
