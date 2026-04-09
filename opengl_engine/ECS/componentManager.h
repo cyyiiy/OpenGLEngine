@@ -1,384 +1,362 @@
-#pragma once
-#include "component.h"
-#include <ServiceLocator/locator.h>
-
+﻿#pragma once
 #include <vector>
-#include <unordered_map>
 #include <memory>
-
-class Entity;
+#include <stdexcept>
+#include <string>
+#include <sstream>
+#include "componentSubList.h"
+#include "ecsTypes.h"
 
 
 /**
-* Component List
-* Base class for specialized component lists.
-* A component list manage each components of a class and is responsible of storing them continuously in the memory.
-*/
-class ComponentList
+ * Interface for `ComponentManager` so a list of all managers is possible (for global ECS methods such as `DeletePendings`).
+ */
+class IComponentManager
 {
 public:
-	ComponentList(size_t numComponentsPerSublist_, bool updateActivated_) : numComponentsPerSublist(numComponentsPerSublist_), updateActivated(updateActivated_)
-	{
-	}
+    virtual ~IComponentManager() = default;
+    
+    virtual void DeletePendingComponents() = 0;
+    virtual void ClearAllComponents() = 0;
+    
+    virtual std::string DebugComponentManager() const = 0;
+};
 
-	virtual ~ComponentList() {}
-
-
-	/** Create a component and store it continuously with the other components of this class in the memory. */
-	virtual std::shared_ptr<Component> createComponent(Entity* owner) = 0;
-
-	/** Remove a component from the list of this class of components. */
-	virtual void deleteComponent(const std::shared_ptr<Component>& component) = 0;
-
-	/** Update the active components of the list. */
-	void updateComponents(float deltaTime)
-	{
-		for (auto& component : componentsShared)
-		{
-			if (!component->getUdpateActivated()) continue;
-			component->update(deltaTime);
-		}
-	}
-
-	/** Clear the entire component list. Warning: This instantly free the memory of all components, so use this with caution. */
-	virtual void clearList() = 0;
-
-
-	/** Get the maximum number of components of this class that can be stored in a single list. */
-	size_t getNumComponentsPerList() const { return numComponentsPerSublist; }
-
-	/** Get the update activated value for the component class of this component list. */
-	bool getUpdateActivated() const { return updateActivated; }
-
-	/** Get every components of this class. */
-	const std::vector<std::shared_ptr<Component>>& getAllComponents() const { return componentsShared; }
-
-
+/**
+ * ECS manager that is responsible for all components of a class.
+ * The components are stored in `ComponentSubList` objects, and the system works like a memory pool.
+ * 
+ * Note: Component managers are created at compilation by the ECS system. It is advised to never create one manually.
+ * 
+ * @tparam T The component class.
+ * @tparam SublistSize The number of components that can be contained in a single sublist for this class.
+ */
+template <class T, size_t SublistSize>
+class ComponentManager : public IComponentManager
+{
+    static_assert(std::is_base_of_v<Component, T>, "T must be derived from Component.");
+    static_assert(std::is_nothrow_move_constructible_v<T>, "T must be nothrow move constructible.");
+    
 protected:
-	/** Initializing a component require to be a friend class of Component, and ComponentListByClass isn't so we do it in the parent class. */
-	void initComponent(const std::shared_ptr<Component>& component, Entity* componentOwner);
-	
-	/** Exiting a component require to be a friend class of Component, and ComponentListByClass isn't so we do it in the parent class. */
-	void exitComponent(const std::shared_ptr<Component>& component);
-
-	std::vector<std::shared_ptr<Component>> componentsShared;
-	size_t numComponentsPerSublist;
-	bool updateActivated;
-};
-
-
-
-/**
-* Component List by Class
-* Specialized component list class that manage every components of its defined class.
-*/
-template<class T>
-class ComponentListByClass : public ComponentList
-{
-private:
-	struct ComponentSubList
-	{
-		std::vector<T> components;
-		std::vector<bool> componentUsedBySlot;
-		size_t freeSlots;
-
-		ComponentSubList(size_t sublistSize) : freeSlots(sublistSize)
-		{
-			components.resize(sublistSize);
-			componentUsedBySlot.resize(sublistSize);
-		}
-	};
-	std::vector<std::unique_ptr<ComponentSubList>> componentSubLists;
-
-	std::vector<std::weak_ptr<T>> componentsSharedTemplated;
-
-
+    static constexpr uint32_t INVALID_INDEX = std::numeric_limits<uint32_t>::max();
+    
+    using Sublist = ComponentSubList<T, SublistSize>;
+    std::vector<std::unique_ptr<Sublist>> sublists;
+    std::vector<RawComponentHandle> pendingComponents;
+    
 public:
-	ComponentListByClass(size_t numComponentsPerSublist_, bool updateActivated_) : ComponentList(numComponentsPerSublist_, updateActivated_)
-	{
-		std::unique_ptr<ComponentSubList> sublist = std::make_unique<ComponentSubList>(numComponentsPerSublist);
-		componentSubLists.push_back(std::move(sublist));
-	}
+    /** Creates a new component in the manager.
+     * 
+     * Note: Prefer creating a component from an entity for a basic usage of the ECS.
+     * 
+     * @param ownerEntity The entity that owns this component. Must be nullptr if this function is not called from `Entity::addComponentByClass`.
+     * @return A ComponentHandle that allows to retrieve and access the component.
+     */
+    ComponentHandle<T> CreateComponent(class Entity* ownerEntity)
+    {
+        // Step 1: Find a sublist with a free component slot
+        size_t sublistId = sublists.size();
+        for (size_t i = 0; i < sublists.size(); i++)
+        {
+            if (sublists[i]->freeSlots <= 0) continue;
+            
+            sublistId = i;
+            break;
+        }
+        
+        // Step 1 bis: Create a new sublist (if all existing ones are full)
+        if (sublistId == sublists.size())
+        {
+            sublists.emplace_back(std::make_unique<Sublist>());
+        }
+        
+        Sublist& sublist_creating_in = *sublists[sublistId];
+        
+        // Step 2: Find a free component slot in the sublist
+        size_t slotId = SublistSize;
+        for (size_t i = 0; i < SublistSize; i++)
+        {
+            if (sublist_creating_in.usedSlots[i]) continue;
+            
+            slotId = i;
+            break;
+        }
+        
+        if (slotId == SublistSize)
+        {
+            throw std::runtime_error("Failed to find a free component slot.");
+        }
+        
+        sublist_creating_in.usedSlots[slotId] = true;
+        --sublist_creating_in.freeSlots;
+        
+        // Step 3: Set the packed index of the new component in the sublist
+        uint32_t packedIndex = static_cast<uint32_t>(sublist_creating_in.aliveCount++);
+        
+        sublist_creating_in.slotToPacked[slotId] = packedIndex;
+        sublist_creating_in.packedToSlot[packedIndex] = static_cast<uint32_t>(slotId);
+        
+        // Step 4: Construct the component
+        T* component = sublist_creating_in.packedGet(packedIndex);
+        
+        new (component) T();
+        component->setOwner(ownerEntity);
+        
+        if constexpr (std::is_base_of_v<BehaviorComponent, T>)
+        {
+            component->init();
+        }
+        
+        // Step 5: Return the component handle
+        const uint32_t generation = sublist_creating_in.generations[slotId];
+        return ComponentHandle<T>{
+            RawComponentHandle{
+                static_cast<uint32_t>(sublistId), 
+                static_cast<uint32_t>(slotId),
+                generation
+            }
+        };
+    }
 
-	/** Create a component and store it continuously with the other components of this class in the memory. */
-	std::shared_ptr<Component> createComponent(Entity* owner) override
-	{
-		//  step 1: get a sublist with a free slot available
-		//  ------------------------------------------------
-		int sublist_index = -1;
-		const size_t num_sublists = componentSubLists.size();
+    /** Deletes an existing component from the manager.
+     * 
+     * Note: The deletion only occurs when `ComponentManager::DeletePendingComponents` is called.
+     * 
+     * @param handle The ComponentHandle that allows to access the component to delete.
+     */
+    void DeleteComponent(const ComponentHandle<T>& handle)
+    {
+        T& component = GetComponent(handle); // Throw error if the component doesn't exist
+        
+        if (component.getPendingDelete())
+            throw std::runtime_error("Component is already pending deletion.");
+            
+        component.setPendingDelete(true);
+        
+        pendingComponents.push_back(handle.raw);
+    }
 
-		for (size_t sublists_iter = 0; sublists_iter < num_sublists; sublists_iter++)
-		{
-			if (componentSubLists[sublists_iter]->freeSlots > 0)
-			{
-				sublist_index = (int)sublists_iter;
-				break;
-			}
-		}
+    /** Get a reference to an existing component in the manager.
+     * 
+     * @param handle The ComponentHandle that allows to access the component to get.
+     * @return A reference to the component.
+     */
+    T& GetComponent(const ComponentHandle<T>& handle)
+    {        
+        Sublist& sublist = *sublists[handle.raw.sublistId];
+        
+        if (sublist.generations[handle.raw.slotId] != handle.raw.generation)
+            throw std::runtime_error("Invalid component handle.");
+        
+        // `slotToPacked` allows to retrieve the packed index of the component in the sublist from the slot index in the handle
+        const uint32_t packed_index = sublist.slotToPacked[handle.raw.slotId];
+        
+        return *sublist.packedGet(packed_index);
+    }
 
-		//  step 1-B: create a new sublist if no free slot
-		//  ----------------------------------------------
-		if (sublist_index == -1)
-		{
-			std::unique_ptr<ComponentSubList> sublist = std::make_unique<ComponentSubList>(numComponentsPerSublist);
-			componentSubLists.push_back(std::move(sublist));
-			sublist_index = (int)num_sublists; //  index of the new sublist will be the total number of sublists before its creation
-		}
+    /** Know if a component handle access to an existing component in the manager.
+     * 
+     * @param handle The ComponentHandle to check.
+     * @return True if the component handle is valid, False otherwise.
+     */
+    bool IsComponentHandleValid(const ComponentHandle<T>& handle) noexcept
+    {
+        if (handle.raw.sublistId >= sublists.size() || handle.raw.slotId >= SublistSize)
+        {
+            return false;
+        }
+        
+        Sublist& sublist = *sublists[handle.raw.sublistId];
+        
+        if (!sublist.usedSlots[handle.raw.slotId])
+        {
+            return false;
+        }
+        
+        return sublist.generations[handle.raw.slotId] == handle.raw.generation;
+    }
 
-		ComponentSubList& sublist_creating_in = *componentSubLists[sublist_index];
+    /** Destroy all components in the manager that are pending deletion.
+     * 
+     * Note: Usually called once a frame by `ECS::DeletePendings`.
+     */
+    void DeletePendingComponents() override
+    {
+        if (pendingComponents.empty()) return;
+        
+        for (RawComponentHandle& handle : pendingComponents)
+        {
+            // Step 1: Prepare the data
+            Sublist& sublist = *sublists[handle.sublistId];
+        
+            if (sublist.generations[handle.slotId] != handle.generation)
+                continue;
+            
+            const uint32_t packed_index = sublist.slotToPacked[handle.slotId]; // packed index of the pending deletion component
+            const uint32_t last_packed_index = static_cast<uint32_t>(sublist.aliveCount - 1); // packed index of the last alive component in the sublist
+            
+            T* component = sublist.packedGet(packed_index);
+            
+            // Step 2: Delete the pending deletion component
+            if constexpr (std::is_base_of_v<BehaviorComponent, T>)
+            {
+                component->exit();
+            }
+            component->~T();
+            
+            if (packed_index != last_packed_index)
+            {
+                // Step 3: Move the last alive component in the sublist to keep memory consistency
+                T* last_component = sublist.packedGet(last_packed_index);
+                
+                // Constructs a new T object at the memory address of the deleted component by using the move constructor
+                new (component) T(std::move(*last_component));
+                last_component->~T();
+                
+                // Step 4: Update the indirection table so the slot of the swapped component redirects to the new packed index
+                uint32_t swaped_comp_slot = sublist.packedToSlot[last_packed_index];
+                sublist.slotToPacked[swaped_comp_slot] = packed_index;
+                sublist.packedToSlot[packed_index] = swaped_comp_slot;
+            }
+            
+            // Step 4-bis: Properly resets the indirection table at indices of the deleted component
+            sublist.slotToPacked[handle.slotId] = INVALID_INDEX;
+            sublist.packedToSlot[last_packed_index] = INVALID_INDEX;
+            
+            // Step 5: Update sublist metadata
+            --sublist.aliveCount;
+            ++sublist.freeSlots;
+            
+            ++sublist.generations[handle.slotId];
+            sublist.usedSlots[handle.slotId] = false;
+        }
+        
+        pendingComponents.clear();
+    }
 
+    /** Iterates on all active components of the manager.
+     * 
+     * Usage:
+     * 
+     * manager.ForEach([](const Component& component) { component.doSomething(); });
+     * 
+     * @param func The lambda to execute for each component.
+     */
+    template<typename Func>
+    void ForEach(Func&& func)
+    {
+        for (auto& sublist_ptr : sublists)
+        {
+            Sublist& sublist = *sublist_ptr;
+            
+            for (uint32_t packed_index = 0; packed_index < sublist.aliveCount; packed_index++)
+            {
+                func(*sublist.packedGet(packed_index));
+            }
+        }
+    }
 
-		//  step 2: "create" the component in the sublist
-		//  ---------------------------------------------
-		int created_component_slot = -1;
-		for (size_t slots_iter = 0; slots_iter < numComponentsPerSublist; slots_iter++)
-		{
-			if (sublist_creating_in.componentUsedBySlot[slots_iter]) continue;
-
-			//  note: we don't actually create the component (with new) cause it has been done when the sublist was created
-			//  instead, we will get a component of the sublist that is unused for now (works like a memory pool)
-
-			sublist_creating_in.componentUsedBySlot[slots_iter] = true;
-			sublist_creating_in.freeSlots--;
-			created_component_slot = (int)slots_iter;
-			break;
-		}
-
-		if (created_component_slot == -1)
-		{
-			Locator::getLog().LogMessage_Category("Component Manager: Failed to find a free memory slot to create a component", LogCategory::Error);
-			return std::make_shared<Component>();
-		}
-
-
-		//  step 3: shared_ptr from created component
-		//  -----------------------------------------
-		ComponentSubList* sublist_ptr = componentSubLists[sublist_index].get(); //  give a raw ptr of the sublist to the destructor lambda
-
-		const std::shared_ptr<T> shared_component_as_t = std::shared_ptr<T>(&sublist_creating_in.components[created_component_slot],
-			[this, created_component_slot, sublist_ptr](T* component) //  define a custom destructor for the shared_ptr with a lambda
-			{
-				//  note: the shared_ptr destructor will be called when its last shared reference will disappear
-				//  we use this to free the memory of the component only when we're sure that nobody uses it anymore
-
-				if (componentSubLists.empty()) return; //  security to avoid errors when the game is closing for exemple
-
-				//  we don't actually free the memory since it would mean erasing the entire sublist, but we authorize a new component to replace this one in the sublist (memory pool)
-				sublist_ptr->componentUsedBySlot[created_component_slot] = false;
-				sublist_ptr->freeSlots++;
-
-
-				//  checking if we can't delete the sublist
-				if (sublist_ptr->freeSlots == numComponentsPerSublist)
-				{
-					//  the sublist has reached 0 used components, we can delete it
-					for (size_t sublists_iter = 0; sublists_iter < numComponentsPerSublist; sublists_iter++)
-					{
-						//  searching in all sublists the one that reached 0 used components
-						if (componentSubLists[sublists_iter].get() == sublist_ptr)
-						{
-							componentSubLists.erase(componentSubLists.begin() + sublists_iter);
-							break;
-						}
-					}
-				}
-
-				//  note: we don't delete the list if it goes empty cause an empty component list cause it's not a bad issue,
-				//  except if the game create class of components that are used only once and does this thousands times
-				//  all component lists are still destroyed when the game closes
-			});
-
-		componentsSharedTemplated.push_back(shared_component_as_t);
-		const std::shared_ptr<Component> shared_component = std::dynamic_pointer_cast<Component>(shared_component_as_t);
-		componentsShared.push_back(shared_component);
-
-
-		//  step 4: initialize the created component
-		//  ----------------------------------------
-		initComponent(shared_component, owner);
-
-		return shared_component;
-	}
-
-	/** Remove a component from the list of this class of components. */
-	void deleteComponent(const std::shared_ptr<Component>& component) override
-	{
-		const size_t num_shared_comps = componentsShared.size();
-		for (size_t iter_shared_comps = 0; iter_shared_comps < num_shared_comps; iter_shared_comps++)
-		{
-			if (componentsShared[iter_shared_comps] == component)
-			{
-				exitComponent(component);
-				componentsShared.erase(componentsShared.begin() + iter_shared_comps);
-				break;
-			}
-		}
-
-		std::shared_ptr<T> component_as_t = std::dynamic_pointer_cast<T>(component);
-		for (size_t iter_shared_comps = 0; iter_shared_comps < num_shared_comps; iter_shared_comps++)
-		{
-			if (componentsSharedTemplated[iter_shared_comps].lock() == component_as_t)
-			{
-				componentsSharedTemplated.erase(componentsSharedTemplated.begin() + iter_shared_comps);
-				break;
-			}
-		}
-
-		//  note: we don't free the memory of the component here for 2 reasons:
-		//  1. we don't want to cause errors if other objects still use the component, so we wait for the shared pointer to lose its last reference to continue
-		//  2. the sublist system works like a memory pool, so the component will not be deleted, but will be free to be reused
-		//  (the memory is freed at the end of the game, or if a sublist reach 0 used components, leading to the suppression of the sublist)
-	}
-
-	/** Get all active components in a list of weak ptr to their true class. */
-	std::vector<std::weak_ptr<T>>& getAllComponentsTemplated()
-	{
-		return componentsSharedTemplated;
-	}
-
-	/** Clear the entire component list. Warning: This instantly free the memory of all components, so use this with caution. */
-	void clearList() override
-	{
-		componentSubLists.clear();
-	}
+    /** Instantly delete every existing components of the manager.
+     * 
+     * Note: Usually called by `ECS::Clear`.
+     */
+    void ClearAllComponents() override
+    {
+        for (auto& sublist_ptr : sublists)
+        {
+            Sublist& sublist = *sublist_ptr;
+            
+            // Clear only alive components
+            for (uint32_t packed_index = 0; packed_index < sublist.aliveCount; packed_index++)
+            {
+                const uint32_t slot = sublist.packedToSlot[packed_index];
+                T* component = sublist.packedGet(packed_index);
+                
+                if constexpr (std::is_base_of_v<BehaviorComponent, T>)
+                {
+                    component->exit();
+                }
+                component->~T();
+                
+                ++sublist.generations[slot];
+                sublist.usedSlots[slot] = false;
+                
+                sublist.slotToPacked[slot] = INVALID_INDEX;
+                sublist.packedToSlot[packed_index] = INVALID_INDEX;
+            }
+            
+            sublist.aliveCount = 0;
+            sublist.freeSlots = SublistSize;
+        }
+        
+        pendingComponents.clear();
+    }
+    
+    
+    std::string DebugComponentManager() const override
+    {
+        std::stringstream result;
+        result << "Manager for component \"" << typeid(T).name() << "\"\n";
+        
+        result << "Number of sublists: " << sublists.size() << "\n";
+        result << "Number of components per sublist: " << SublistSize << "\n";
+        
+        for (size_t i = 0; i < sublists.size(); i++)
+        {
+            result << "Free slots of sublist " << i << ": " << sublists[i]->freeSlots << "\n";
+            for (size_t j = 0; j < SublistSize; j++)
+            {
+                if (sublists[i]->usedSlots[j] || sublists[i]->generations[j] != 0)
+                {
+                    result << "Sublist " << i << " | Slot " << j << " | Used: " << (sublists[i]->usedSlots[j] ? "true" : "false") << " | Generation: " << sublists[i]->generations[j] << " | PackedIndex: " << sublists[i]->slotToPacked[j] << "\n";
+                }
+            }
+        }
+        
+        return result.str();
+    }
 };
 
 
-
 /**
-* Component Class Data
-* Data associated to a component class to give information of wether or not this class should have an update, and the number of components of this class in a sublist.
-*/
-struct ComponentClassData
-{
-	bool updateActivated;
-	int numComponentsPerSublist;
-
-	ComponentClassData() : updateActivated(true), numComponentsPerSublist(20) {}
-	ComponentClassData(bool updateActivated_, int numComponentsPerSublist_) : updateActivated(updateActivated_), numComponentsPerSublist(numComponentsPerSublist_) {}
-};
-
-
-/**
-* Component Manager
-* Static class that manage specialized component lists and is the interface to create, update and delete components.
-*/
-class ComponentManager
+ * Interface for `BehaviorManager` so a list of all managers of behavior components is possible (for global `Update`).
+ */
+class IBehaviorManager
 {
 public:
-	/** Create a component list for this component class. Warning: This function does not check if a list for this class already exists. */
-	template<typename T>
-	static void AddComponentList(size_t classId)
-	{
-		ComponentClassData component_class_data = GetComponentClassData(classId);
-
-		componentLists[classId] = std::make_unique<ComponentListByClass<T>>(component_class_data.numComponentsPerSublist, component_class_data.updateActivated);
-	}
-
-	/** Create a component and return a shared pointer to it. */
-	template<typename T>
-	static std::shared_ptr<T> CreateComponent(Entity* owner)
-	{
-		const size_t component_class_id = typeid(T).hash_code(); //  get the "unique id" of the given component class
-		if (componentLists.find(component_class_id) == componentLists.end())
-		{
-			//  if there is no existing list for this component class, create one
-			AddComponentList<T>(component_class_id);
-		}
-
-		//  create the component in the corresponding component list
-		return std::static_pointer_cast<T>(componentLists[component_class_id]->createComponent(owner));
-	}
-
-	/** Delete a component. */
-	static void DeleteComponent(const std::shared_ptr<Component>& component)
-	{
-		const size_t component_class_id = typeid(*component.get()).hash_code(); //  get the "unique id" of the class of the component to remove (can't get the id from 'T' cause it will just be the 'Component' class)
-		if (componentLists.find(component_class_id) != componentLists.end())
-		{
-			//  if there is no existing list for this component class, it is impossible to delete the given component
-			componentLists[component_class_id]->deleteComponent(component);
-		}
-	}
-
-	/** Update all components. Note: won't update components of a class that has been registered with disabled update. */
-	static void UpdateComponents(float deltaTime)
-	{
-		for (auto& component_list : componentLists)
-		{
-			if (!component_list.second->getUpdateActivated()) continue;
-
-			component_list.second->updateComponents(deltaTime);
-		}
-	}
-
-
-	/** Get a reference to the component list of the given class. */
-	template<typename T>
-	static ComponentListByClass<T>& GetComponentListByClass()
-	{
-		const size_t component_class_id = typeid(T).hash_code(); //  get the "unique id" of the given component class
-		return *static_cast<ComponentListByClass<T>*>(componentLists[component_class_id].get());
-	}
-
-	/** Get all active components of the given class via a list of weak ptr of their real class. */
-	template<typename T>
-	static std::vector<std::weak_ptr<T>>& GetAllComponentOfClass()
-	{
-		return GetComponentListByClass<T>().getAllComponentsTemplated();
-	}
-
-	/** Get all active components via a list of shared ptr. */
-	static std::vector<std::shared_ptr<Component>> GetAllComponents()
-	{
-		std::vector<std::shared_ptr<Component>> all_components;
-		for (auto& component_list : componentLists)
-		{
-			const std::vector<std::shared_ptr<Component>>& components = component_list.second->getAllComponents();
-			all_components.insert(all_components.end(), components.begin(), components.end());
-		}
-		return all_components;
-	}
-
-
-	/** Clear the component list of the given class. Warning: This instantly free the memory of the components of the given class, so use with caution. */
-	template<typename T>
-	static void ClearAllComponentsOfClass()
-	{
-		const size_t component_class_id = typeid(T).hash_code(); //  get the "unique id" of the given component class
-		if (componentLists.find(component_class_id) != componentLists.end())
-		{
-			//  if there is no existing list for this component class, there is nothing to clear
-			componentLists[component_class_id]->clearList();
-			componentLists.erase(component_class_id);
-		}
-	}
-
-	/** Clear all components and all component lists. Warning: This instantly free the memory of every component of the game, so use with caution. */
-	static void ClearAllComponents()
-	{
-		for (auto& component_list : componentLists)
-		{
-			component_list.second->clearList();
-		}
-		componentLists.clear();
-	}
-
-	/** Register class datas for the given component class. Note that those datas will have effect if there are registered before the first component of this class is created. */
-	template<typename T>
-	static void RegisterComponentDataByClass(const ComponentClassData& datas)
-	{
-		const size_t component_class_id = typeid(T).hash_code(); //  get the "unique id" of the given component class
-		componentClassDatas[component_class_id] = datas;
-	}
-
-	/** Get the registered class datas for a specific component class, or default class datas if there is none. */
-	static ComponentClassData GetComponentClassData(size_t classId);
-
-
-private:
-	static std::unordered_map<size_t, std::unique_ptr<ComponentList>> componentLists;
-	static std::unordered_map<size_t, ComponentClassData> componentClassDatas;
+    virtual void UpdateComponents(float deltaTime) = 0;
 };
 
+/**
+ * Override of `ComponentManager` for component class that inherit from `BehaviorComponent`.
+ * 
+ * Note: Behavior managers are created at compilation by the ECS system. It is advised to never create one manually.
+ * 
+ * @tparam T The component class.
+ * @tparam SublistSize The number of components that can be contained in a single sublist for this class.
+ */
+template <class T, size_t SublistSize>
+class BehaviorManager final : public ComponentManager<T, SublistSize>, public IBehaviorManager
+{
+    static_assert(std::is_base_of_v<BehaviorComponent, T>, "T must be derived from BehaviorComponent.");
+    
+public:
+    // Note: Called automatically every frame by the system that manages the ECS globally
+    void UpdateComponents(float deltaTime) override
+    {
+        auto& sublists = this->sublists;
+        for (auto& sublist_ptr : sublists)
+        {
+            ComponentSubList<T, SublistSize>& sublist = *sublist_ptr;
+            
+            // Update only alive components
+            for (uint32_t packed_index = 0; packed_index < sublist.aliveCount; packed_index++)
+            {
+                T* component = sublist.packedGet(packed_index);
+                if (!component->getUpdateActivated()) continue;
+                
+                component->update(deltaTime);
+            }
+        }
+    }
+};

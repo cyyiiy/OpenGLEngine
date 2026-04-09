@@ -1,7 +1,7 @@
 == COURT TERME ==
 
-~ Implémenter la V2 de l'ECS :
-	- Intégrer le code du nouvel ECS dans le moteur
+~ Implémenter la V2 de l'ECS : - en cours
+	- Intégrer le code du nouvel ECS dans le moteur - fait
 	- Changer les systèmes du moteur pour utiliser le nouvel ECS :
 	  (Note: penser à regarder le ClasseParent::fonction() et l'utiliser si c'est pertinent)
 		> Game & Scene system
@@ -10,6 +10,7 @@
 		> Audio
 		> Physique
 	- Expérimenter dans Sandbox avec des behavior components et confirmer l'implémentation de l'ECS
+	  (Note: penser à retirer les print debugs du nouvel ECS)
 	- Mettre à jour le projet Benchmark et comparer les performances du nouvel ECS avec l'ancien
 	- Mettre à jour le Doomlike pour le nouvel ECS :
 		> Prefabs

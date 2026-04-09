@@ -1,44 +1,42 @@
-#pragma once
-#include <memory>
+﻿#pragma once
 
-class Entity;
+class Entity; // Forward declaration
 
+
+/**
+ * Templated struct that contains the number of components contained per sublist for a class.
+ * If this struct is defined for a specific class with a new value, it will override the default value of 64 for this class.
+ * 
+ * @tparam T The component class.
+ */
+template <class T>
+struct ComponentSublistSize
+{
+    static constexpr size_t value = 64; // Default sublist size
+};
+
+
+/**
+ * Base class for all components.
+ * 
+ * Store a pointer towards its owner `Entity` and knows if it is pending deletion.
+ */
 class Component
 {
 public:
-	Component();
-	~Component();
-	Component(const Component& other); //  we need the copy constructor for the vector
-
-	Component& operator=(const Component&) = delete;
-
-	/** Get the Entity that owns this component. */
-	Entity* getOwner() const;
-
-	void setUpdateActivated(bool updateActive);
-	bool getUdpateActivated() const;
-
-protected:
-	friend class Entity;
-	friend class ComponentList;
-	friend class ComponentManager;
-
-	virtual void registerComponent() {}
-	virtual void unregisterComponent() {}
-
-	/** Called after the component has been created, but before it is registered. */
-	virtual void init() {}
-
-	/** Called each frame. Note: won't be called if the class of this component has been registered with update disabled. */
-	virtual void update(float deltaTime) {}
-
-	/** Called before the component is removed, but after it is unregistered. */
-	virtual void exit() {}
-
+    Component() = default;
+    virtual ~Component() = default;
+    Component(const Component& other) = default;
+    
+    Component& operator=(const Component&) = delete;
+    
+    void setPendingDelete(bool value);
+    bool getPendingDelete() const;
+    
+    void setOwner(Entity* ownerEntity);
+    Entity* getOwner() const;
+    
 private:
-	Entity* owner{ nullptr };
-	bool updateActivated{ true };
-
-	void setOwner(Entity* owner_);
+    bool pendingDelete{ false };
+    Entity* owner{ nullptr };
 };
-
