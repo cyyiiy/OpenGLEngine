@@ -153,6 +153,7 @@
     <ClCompile Include="ECS\component.cpp" />
     <ClCompile Include="ECS\ecs.cpp" />
     <ClCompile Include="ECS\entity.cpp" />
+    <ClCompile Include="ECS\entityContainer.cpp" />
     <ClCompile Include="OldECS\component.cpp" />
     <ClCompile Include="OldECS\componentManager.cpp" />
     <ClCompile Include="OldECS\EngineComponents\engineComponents.cpp" />
@@ -230,6 +231,7 @@
     <ClInclude Include="ECS\ecs.h" />
     <ClInclude Include="ECS\ecsTypes.h" />
     <ClInclude Include="ECS\entity.h" />
+    <ClInclude Include="ECS\entityContainer.h" />
     <ClInclude Include="OldECS\component.h" />
     <ClInclude Include="OldECS\componentManager.h" />
     <ClInclude Include="OldECS\EngineComponents\engineComponents.h" />

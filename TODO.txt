@@ -4,7 +4,7 @@
 	- Intégrer le code du nouvel ECS dans le moteur - fait
 	- Changer les systèmes du moteur pour utiliser le nouvel ECS :
 	  (Note: penser à regarder le ClasseParent::fonction() et l'utiliser si c'est pertinent)
-		> Game & Scene system
+		> Game & Scene system - en cours
 		> Rendering
 		> UI
 		> Audio

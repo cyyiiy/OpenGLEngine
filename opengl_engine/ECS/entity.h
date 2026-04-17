@@ -7,6 +7,11 @@
 #include "ecs.h"
 #include "component.h"
 
+#include <Core/transform.h>
+#include <Core/Gameplay/gameplayTag.h>
+
+class EntityContainer;
+
 
 /**
  * Internal struct that allows the entity to store a component handle with a pointer to the delete function templated for the correct class.
@@ -31,12 +36,13 @@ struct StoredComponent
 /**
  * Object that can own components and easily manage them.
  */
-class Entity
+class Entity : public Transform, public GameplayTag
 {
 public:
-    Entity() = default;
+    Entity(EntityContainer& containerRef_);
     ~Entity() = default;
     
+    Entity() = delete;
     Entity(const Entity& other) = delete;
     Entity& operator=(const Entity&) = delete;
 
@@ -181,10 +187,18 @@ public:
      * Note: This function is automatically called by the game system when the entity is removed.
      */
     void clearAllComponents();
+
+    /** Destroy an entity and every components it owns.
+    * 
+    * Note: The deletion will occur at the end of the frame by the game system.
+    */
+    void destroyEntity();
     
     void debugEntity();
     
     
 private:
     std::unordered_map<ComponentTypeId, std::vector<StoredComponent>> components;
+
+    EntityContainer& containerRef;
 };

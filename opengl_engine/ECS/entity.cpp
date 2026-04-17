@@ -1,5 +1,10 @@
 ﻿#include "entity.h"
+#include "entityContainer.h"
 #include <iostream>
+
+Entity::Entity(EntityContainer& containerRef_) : Transform(), containerRef(containerRef_)
+{
+}
 
 void Entity::clearAllComponents()
 {
@@ -14,6 +19,11 @@ void Entity::clearAllComponents()
     }
     
     components.clear();
+}
+
+void Entity::destroyEntity()
+{
+    containerRef.addPendingEntity(this);
 }
 
 void Entity::debugEntity()
