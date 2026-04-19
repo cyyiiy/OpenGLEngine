@@ -1,5 +1,5 @@
 #include "scene.h"
-#include <ServiceLocator/locator.h>
+//#include <ServiceLocator/locator.h>
 
 void Scene::load() 
 {
@@ -12,7 +12,7 @@ void Scene::unload(bool exitGame)
 {
 	unloadScene();
 
-	Locator::getPhysics().ClearRaycastOnSceneUnload(exitGame);
+	//Locator::getPhysics().ClearRaycastOnSceneUnload(exitGame);
 
 	clearEntities();
 }

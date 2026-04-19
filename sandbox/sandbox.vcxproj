@@ -150,7 +150,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="DefaultScenes\expositionScene.cpp" />
+    <ClCompile Include="DefaultScenes\wipScene.cpp" />
     <ClCompile Include="expositionGame.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
@@ -160,7 +160,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DefaultScenes\expositionScene.h" />
+    <ClInclude Include="DefaultScenes\wipScene.h" />
     <ClInclude Include="expositionGame.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

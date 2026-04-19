@@ -77,7 +77,7 @@ void DefaultAssets::LoadDefaultAssets()
 
 	Material& black_emissive_mat = AssetManager::CreateMaterial("default_black_emissive", AssetManager::GetShader("flat_emissive"));
 	black_emissive_mat.addParameter("emissive", Color::black);
-	renderer.AddMaterial(&black_emissive_mat);
+	//renderer.AddMaterial(&black_emissive_mat);
 
 	Material& white_emissive_mat = AssetManager::CreateMaterial("default_white_emissive", AssetManager::GetShader("flat_emissive"));
 	white_emissive_mat.addParameter("emissive", Color::white);

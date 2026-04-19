@@ -4,7 +4,7 @@
 	- Intégrer le code du nouvel ECS dans le moteur - fait
 	- Changer les systèmes du moteur pour utiliser le nouvel ECS :
 	  (Note: penser à regarder le ClasseParent::fonction() et l'utiliser si c'est pertinent)
-		> Game & Scene system - en cours
+		> Game & Scene system - fait
 		> Rendering
 		> UI
 		> Audio
@@ -29,6 +29,7 @@
 	- Rajouter un repère visuel sur la position réelle des lights en mode draw debug
 [Besoin de créer un bilboard renderer ?]
 	- Regarder si c'est possible de récupérer le nom d'une classe pour les print warning de template ("unable to find component of given class")
+	- Pour les systèmes enregistrés dans le Service Locator, faire en sorte qu'ils ne soient jamais appelés directement (par exemple par la classe Engine), pour qu'il suffisse de ne pas les enregistrer pour les désactiver
 
 
 == MOYEN TERME ==

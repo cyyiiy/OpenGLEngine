@@ -4,15 +4,15 @@
 
 #include "game.h"
 #include "window.h"
-#include <Rendering/rendererOpenGL.h>
+//#include <Rendering/rendererOpenGL.h>
 #include <ECS/entityContainer.h>
-#include <Rendering/cameraComponent.h>
-#include <Rendering/Text/textRendererComponent.h>
+//#include <Rendering/cameraComponent.h>
+//#include <Rendering/Text/textRendererComponent.h>
 
-#include <Audio/audioManager.h>
-#include <Audio/audioSound.h>
+//#include <Audio/audioManager.h>
+//#include <Audio/audioSound.h>
 
-#include <Log/logManager.h>
+//#include <Log/logManager.h>
 
 #include <Maths/matrix4.h>
 #include <Maths/vector3.h>
@@ -48,22 +48,22 @@ private:
 	Window window;
 
 	//  renderer
-	RendererOpenGL* renderer{ nullptr };
+	//RendererOpenGL* renderer{ nullptr };
 
 	//  audio manager
-	AudioManager* audio{ nullptr };
+	//AudioManager* audio{ nullptr };
 
 	//  log manager
-	LogManager* log{ nullptr };
+	//LogManager* log{ nullptr };
 
 	//  cameras
 	Entity* debugCamEntity{ nullptr };
-	std::shared_ptr<CameraComponent> debugCamera{ nullptr };
+	//std::shared_ptr<CameraComponent> debugCamera{ nullptr };
 	float debugCameraSpeed{ 4.0f };
 	float debugCameraMouseSensitivity{ 0.1f };
 
 	//  debug text
-	std::shared_ptr<TextRendererComponent> fpsText{ nullptr };
+	//std::shared_ptr<TextRendererComponent> fpsText{ nullptr };
 	int frameCounter = 0;
 	float frameTimeCounter = 0.0f;
 

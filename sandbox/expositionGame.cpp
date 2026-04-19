@@ -1,7 +1,7 @@
 #include "expositionGame.h"
-#include <ServiceLocator/locator.h>
-#include <Assets/defaultAssets.h>
-#include <Assets/assetManager.h>
+//#include <ServiceLocator/locator.h>
+//#include <Assets/defaultAssets.h>
+//#include <Assets/assetManager.h>
 #include <Inputs/Input.h>
 
 ExpositionGame::ExpositionGame()
@@ -15,7 +15,7 @@ void ExpositionGame::updateGame(float dt)
 
 void ExpositionGame::loadGameAssets()
 {
-	Locator::getLog().SetConsoleLogDisplayRule(LogCategory::Info);
+	/*Locator::getLog().SetConsoleLogDisplayRule(LogCategory::Info);
 
 	Renderer& renderer = Locator::getRenderer();
 
@@ -97,23 +97,24 @@ void ExpositionGame::loadGameAssets()
 
 
 	//  font
-	AssetManager::LoadFont("octosquares_128", "octosquares_font/octosquares.ttf", 128, CharacterLoading::ASCII_128);
+	AssetManager::LoadFont("octosquares_128", "octosquares_font/octosquares.ttf", 128, CharacterLoading::ASCII_128);*/
 }
 
 void ExpositionGame::loadGame()
 {
 	test_game_entity = createEntity();
 
-	loadScene(&expositionScene);
+	//loadScene(&expositionScene);
+	loadScene(&wipScene);
 }
 
 
 void ExpositionGame::unloadGame()
 {
-	Renderer& renderer = Locator::getRenderer();
+	/*Renderer& renderer = Locator::getRenderer();
 
 	AssetManager::DeleteMaterial("container");
 	AssetManager::DeleteMaterial("light_source_white");
 	AssetManager::DeleteMaterial("light_source_cyan");
-	AssetManager::DeleteMaterial("backpack");
+	AssetManager::DeleteMaterial("backpack");*/
 }

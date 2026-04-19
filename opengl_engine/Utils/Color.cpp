@@ -34,7 +34,7 @@ Color Color::HSV(float h, float s, float v)
 {
     if (h > 360 || h < 0 || s > 100 || s < 0 || v > 100 || v < 0)
     {
-        Locator::getLog().LogMessage_Category("Color: HSV values out of range.", LogCategory::Warning);
+        //Locator::getLog().LogMessage_Category("Color: HSV values out of range.", LogCategory::Warning);
         return Color::black;
     }
 
