@@ -5,7 +5,7 @@
 	- Changer les systèmes du moteur pour utiliser le nouvel ECS :
 	  (Note: penser à regarder le ClasseParent::fonction() et l'utiliser si c'est pertinent)
 		> Game & Scene system - fait
-		> Rendering
+		> Rendering - en cours
 		> UI
 		> Audio
 		> Physique
@@ -18,10 +18,14 @@
 		> Objets interagissables
 		> Ennemis
 
+~ Améliorations du benchmark (peut être fait en parallèle de l'ECS V2) :
+	- Avoir une nouvelle scène de test Rendering 3D qui teste les performances de plein de materials différents, avec un seul model renderer component pour chaque material
+
 ~ Petites updates d'améliorations :
 	- Rajouter une option à la création d'une entity pour lui mettre un lifetime
 [Fonctionnerai en créant un component si l'option a une valeur différente de 0 pour pas ajouter de fonctionnalité à la classe entity]
 	- Changer le nom de la "model matrix" du transform en "entity matrix" (techniquement c'est plus la matrice du modèle)
+	- Essayer une optimisation sur les transform (notamment pour le rendering 3D), qui permet de savoir quand est-ce que le transform a été update pour la dernière fois, et de ne recalculer les matrices modèle et normale que si nécessaire (un peu comme l'ancien système mais sans utiliser d'event et de logique sur le composant)
 	- Refactor le "load game asset" du doomlike pour utiliser plus de fonctions et moins de copier coller
 [Commencer à réfléchir au futur éditeur d'assets, comment il va pouvoir être utilisé pour le chargement aussi (chargement en cascade ?)]
 	- Améliorer les textes debug

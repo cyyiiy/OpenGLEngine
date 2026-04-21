@@ -50,9 +50,6 @@ public:
 	void AddLight(LightComponent* light) override;
 	void RemoveLight(LightComponent* light) override;
 
-	void AddModelRenderer(ModelRendererComponent* modelRenderer) override;
-	void RemoveModelRenderer(ModelRendererComponent* modelRenderer) override;
-
 	void AddText(TextRendererComponent* text) override;
 	void RemoveText(TextRendererComponent* text) override;
 
@@ -69,9 +66,12 @@ private:
 	CameraComponent& selectCurrentCam();
 	bool isCurrentCamValid();
 
+	void drawModelComponent(const ModelRendererComponent& modelComponent, Material& materialInUsage);
+
+
+
 	std::unordered_map<LightType, std::vector<LightComponent*>> lights;
 	std::unordered_map<Shader*, std::vector<Material*>> materials;
-	std::vector<ModelRendererComponent*> modelRenderers;
 	std::vector<TextRendererComponent*> texts;
 	std::vector<SpriteRendererComponent*> sprites;
 	std::vector<DebugRenderBase*> debugDraws;

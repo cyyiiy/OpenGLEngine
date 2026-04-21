@@ -163,6 +163,16 @@
     <ClCompile Include="Maths\vector3.cpp" />
     <ClCompile Include="Core\transform.cpp" />
     <ClCompile Include="Core\window.cpp" />
+    <ClCompile Include="Rendering\Debug\cube.cpp" />
+    <ClCompile Include="Rendering\Debug\debugRenderBase.cpp" />
+    <ClCompile Include="Rendering\Debug\line.cpp" />
+    <ClCompile Include="Rendering\Debug\point.cpp" />
+    <ClCompile Include="Rendering\material.cpp" />
+    <ClCompile Include="Rendering\Model\mesh.cpp" />
+    <ClCompile Include="Rendering\Model\model.cpp" />
+    <ClCompile Include="Rendering\Model\vertexArray.cpp" />
+    <ClCompile Include="Rendering\shader.cpp" />
+    <ClCompile Include="Rendering\texture.cpp" />
     <ClCompile Include="Utils\color.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -193,6 +203,17 @@
     <ClInclude Include="Maths\vector3.h" />
     <ClInclude Include="Core\transform.h" />
     <ClInclude Include="Core\window.h" />
+    <ClInclude Include="Rendering\Debug\cube.h" />
+    <ClInclude Include="Rendering\Debug\debugRenderBase.h" />
+    <ClInclude Include="Rendering\Debug\line.h" />
+    <ClInclude Include="Rendering\Debug\point.h" />
+    <ClInclude Include="Rendering\material.h" />
+    <ClInclude Include="Rendering\modelRendererComponent.h" />
+    <ClInclude Include="Rendering\Model\mesh.h" />
+    <ClInclude Include="Rendering\Model\model.h" />
+    <ClInclude Include="Rendering\Model\vertexArray.h" />
+    <ClInclude Include="Rendering\shader.h" />
+    <ClInclude Include="Rendering\texture.h" />
     <ClInclude Include="Utils\color.h" />
     <ClInclude Include="Utils\defines.h" />
   </ItemGroup>

@@ -1,6 +1,8 @@
 #include "rendererOpenGL.h"
 #include <Assets/assetManager.h>
 #include <ServiceLocator/locator.h>
+#include <ECS/ecs.h>
+#include <ECS/entity.h>
 #include <algorithm>
 
 #include "Debug/point.h"
@@ -8,9 +10,43 @@
 #include "Debug/cube.h"
 
 
+
+void RendererOpenGL::drawModelComponent(const ModelRendererComponent& modelComponent, Material& materialInUsage)
+{
+	// 1. Check if the model component is valid and uses the currently processed material
+	Model* model = modelComponent.model;
+	if (model == nullptr) return;
+	if (!model->useMaterial(materialInUsage)) return;
+
+	// 2. Compute the model matrices
+	Matrix4 model_matrix = modelComponent.offset.getModelMatrix();
+	Vector3 model_scale = modelComponent.offset.getScale();
+
+	if (!modelComponent.ignoreOwnerTransform)
+	{
+		Transform& model_owner = *modelComponent.getOwner();
+		model_matrix *= model_owner.getModelMatrix();
+		model_scale *= model_owner.getScale();
+	}
+
+	Matrix4 normal_matrix = model_matrix;
+	normal_matrix.invert();
+	normal_matrix.transpose();
+	
+	// 3. Set the matrices in the shader
+	Shader& shader_used = materialInUsage.getShader();
+
+	shader_used.setMatrix4("model", model_matrix.getAsFloatPtr());
+	shader_used.setMatrix4("normalMatrix", normal_matrix.getAsFloatPtr());
+	shader_used.setVec3("scale", model_scale);
+
+	// 4. Draw the model
+	model->draw(materialInUsage);
+}
+
 void RendererOpenGL::draw()
 {
-	//  clear with flat color
+	// Clear with flat color
 	glClearColor(clearColor.r / 255.0f, clearColor.g / 255.0f, clearColor.b / 255.0f, clearColor.a / 255.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
@@ -25,24 +61,27 @@ void RendererOpenGL::draw()
 	Matrix4 view = current_camera.getViewMatrix();
 	Matrix4 projection = Matrix4::createPerspectiveFOV(Maths::toRadians(current_camera.getFov()), static_cast<float>(windowSize.x), static_cast<float>(windowSize.y), 0.1f, 1000.0f);
 
-	//  loop through all shaders
+	// Get the needed component managers
+	auto& model_renderers_manager = ECS::Manager<ModelRendererComponent>();
+
+	// Loop through all shaders
 	for (auto& materials_by_shaders : materials)
 	{
-		//  retrieve the shader
+		// Retrieve the shader
 		Shader* shader = materials_by_shaders.first;
 
 		if (!shader->isLoaded()) continue;
 
-		//  activate the shader and set the primary uniforms
+		// Activate the shader and set the primary uniforms
 		shader->use();
 		shader->setMatrix4("view", view.getAsFloatPtr());
 		shader->setMatrix4("projection", projection.getAsFloatPtr());
 
 		ShaderType shader_type = shader->getShaderType();
-		switch (shader_type) //  feels a bit hardcoded, should be cool to find a better way to do this
+		switch (shader_type) // Feels a bit hardcoded, should be cool to find a better way to do this
 		{
 		case ShaderType::Lit:
-			//  use lights
+			// Use lights
 			for (auto light_t : lights)
 			{
 				LightType light_type = light_t.first;
@@ -77,26 +116,27 @@ void RendererOpenGL::draw()
 			break;
 
 		case ShaderType::Unlit:
-			//  nothing else to do
+			// Nothing else to do
 			break;
 		}
 		
-		//  loop through all materials that use the shader
+		// Loop through all materials that use the shader
 		for (auto& material : materials_by_shaders.second)
 		{
-			shader->setBool("beta_prevent_tex_scaling", false); //  should do a better thing for all beta parameters
-			shader->setFloat("beta_tex_scaling_factor", 1.0f); //  should do a better thing for all beta parameters
+			shader->setBool("beta_prevent_tex_scaling", false); // Should do a better thing for all beta parameters
+			shader->setFloat("beta_tex_scaling_factor", 1.0f); // Should do a better thing for all beta parameters
 
 			material->use();
 
-			//  loop through all model renderer components to draw all meshes that uses the material
-			for (auto& model_renderer : modelRenderers)
+			// Loop through all model renderer components to draw all meshes that uses the active material
+			model_renderers_manager.ForEach([this, material](const ModelRendererComponent& model_component)
 			{
-				if (model_renderer->useMaterial(*material)) model_renderer->draw(*material);
-			}
+				this->drawModelComponent(model_component, *material);
+			});
 		}
 	}
 
+	/*  WILL BE RE-IMPLEMENTED LATER
 
 	//  draw debug part
 	Material& debug_draw_mat = AssetManager::GetMaterial("debug_draws");
@@ -275,6 +315,8 @@ void RendererOpenGL::draw()
 	}
 
 	glBindVertexArray(0);
+
+	*/
 }
 
 
@@ -373,25 +415,6 @@ void RendererOpenGL::RemoveLight(LightComponent* light)
 
 	std::iter_swap(iter, lights[light->getLightType()].end() - 1);
 	lights[light->getLightType()].pop_back();
-}
-
-
-void RendererOpenGL::AddModelRenderer(ModelRendererComponent* modelRenderer)
-{
-	modelRenderers.push_back(modelRenderer);
-}
-
-void RendererOpenGL::RemoveModelRenderer(ModelRendererComponent* modelRenderer)
-{
-	auto iter = std::find(modelRenderers.begin(), modelRenderers.end(), modelRenderer);
-	if (iter == modelRenderers.end())
-	{
-		Locator::getLog().LogMessage_Category("Renderer: Tried to remove a model renderer that doesn't exist.", LogCategory::Error);
-		return;
-	}
-
-	std::iter_swap(iter, modelRenderers.end() - 1);
-	modelRenderers.pop_back();
 }
 
 
