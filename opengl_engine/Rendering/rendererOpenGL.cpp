@@ -4,45 +4,13 @@
 #include <ECS/ecs.h>
 #include <ECS/entity.h>
 #include <algorithm>
+#include <stdexcept>
 
-#include "Debug/point.h"
-#include "Debug/line.h"
-#include "Debug/cube.h"
+//#include "Debug/point.h"
+//#include "Debug/line.h"
+//#include "Debug/cube.h"
 
 
-
-void RendererOpenGL::drawModelComponent(const ModelRendererComponent& modelComponent, Material& materialInUsage)
-{
-	// 1. Check if the model component is valid and uses the currently processed material
-	Model* model = modelComponent.model;
-	if (model == nullptr) return;
-	if (!model->useMaterial(materialInUsage)) return;
-
-	// 2. Compute the model matrices
-	Matrix4 model_matrix = modelComponent.offset.getModelMatrix();
-	Vector3 model_scale = modelComponent.offset.getScale();
-
-	if (!modelComponent.ignoreOwnerTransform)
-	{
-		Transform& model_owner = *modelComponent.getOwner();
-		model_matrix *= model_owner.getModelMatrix();
-		model_scale *= model_owner.getScale();
-	}
-
-	Matrix4 normal_matrix = model_matrix;
-	normal_matrix.invert();
-	normal_matrix.transpose();
-	
-	// 3. Set the matrices in the shader
-	Shader& shader_used = materialInUsage.getShader();
-
-	shader_used.setMatrix4("model", model_matrix.getAsFloatPtr());
-	shader_used.setMatrix4("normalMatrix", normal_matrix.getAsFloatPtr());
-	shader_used.setVec3("scale", model_scale);
-
-	// 4. Draw the model
-	model->draw(materialInUsage);
-}
 
 void RendererOpenGL::draw()
 {
@@ -77,6 +45,8 @@ void RendererOpenGL::draw()
 		shader->setMatrix4("view", view.getAsFloatPtr());
 		shader->setMatrix4("projection", projection.getAsFloatPtr());
 
+		/* WILL BE RE-IMPLEMENTED LATER (LIGHTS)
+		
 		ShaderType shader_type = shader->getShaderType();
 		switch (shader_type) // Feels a bit hardcoded, should be cool to find a better way to do this
 		{
@@ -119,6 +89,7 @@ void RendererOpenGL::draw()
 			// Nothing else to do
 			break;
 		}
+		*/
 		
 		// Loop through all materials that use the shader
 		for (auto& material : materials_by_shaders.second)
@@ -136,7 +107,7 @@ void RendererOpenGL::draw()
 		}
 	}
 
-	/*  WILL BE RE-IMPLEMENTED LATER
+	/*  WILL BE RE-IMPLEMENTED LATER (DEBUG + HUD)
 
 	//  draw debug part
 	Material& debug_draw_mat = AssetManager::GetMaterial("debug_draws");
@@ -319,8 +290,41 @@ void RendererOpenGL::draw()
 	*/
 }
 
+void RendererOpenGL::drawModelComponent(const ModelRendererComponent& modelComponent, Material& materialInUsage)
+{
+	// 1. Check if the model component is valid and uses the currently processed material
+	Model* model = modelComponent.model;
+	if (model == nullptr) return;
+	if (!model->useMaterial(materialInUsage)) return;
 
-void RendererOpenGL::updateDebugDraws(float dt)
+	// 2. Compute the model matrices
+	Matrix4 model_matrix = modelComponent.offset.getModelMatrix();
+	Vector3 model_scale = modelComponent.offset.getScale();
+
+	if (!modelComponent.ignoreOwnerTransform)
+	{
+		Transform& model_owner = *modelComponent.getOwner();
+		model_matrix *= model_owner.getModelMatrix();
+		model_scale *= model_owner.getScale();
+	}
+
+	Matrix4 normal_matrix = model_matrix;
+	normal_matrix.invert();
+	normal_matrix.transpose();
+
+	// 3. Set the matrices in the shader
+	Shader& shader_used = materialInUsage.getShader();
+
+	shader_used.setMatrix4("model", model_matrix.getAsFloatPtr());
+	shader_used.setMatrix4("normalMatrix", normal_matrix.getAsFloatPtr());
+	shader_used.setVec3("scale", model_scale);
+
+	// 4. Draw the model
+	model->draw(materialInUsage);
+}
+
+
+/*void RendererOpenGL::updateDebugDraws(float dt)
 {
 	std::vector<DebugRenderBase*> expired_debug_draws;
 	for (auto& debug_draw : debugDraws)
@@ -339,28 +343,40 @@ void RendererOpenGL::updateDebugDraws(float dt)
 
 	debugDraws.shrink_to_fit();
 	expired_debug_draws.clear();
-}
+}*/
 
 
 
-void RendererOpenGL::SetCamera(std::weak_ptr<CameraComponent> camera)
+void RendererOpenGL::SetCamera(ComponentHandle<CameraComponent> camera)
 {
-	if(activeCamera) activeCamera->setActiveValue(false);
-
-	activeCamera = camera.lock();
-
-	if (!activeCamera)
+	if (!ECS::IsComponentHandleValid(camera))
 	{
-		activeCamera = defaultCamera;
-		return;
+		Locator::getLog().LogMessage_Category("Renderer: Tried to set a camera that doesn't exist.", LogCategory::Error);
 	}
 
-	activeCamera->setActiveValue(true);
+	activeCamera = camera;
 }
 
-const std::shared_ptr<CameraComponent> RendererOpenGL::GetCamera() const
+bool RendererOpenGL::IsActiveCamera(ComponentHandle<CameraComponent> camera)
 {
-	return activeCamera;
+	return activeCamera == camera;
+}
+
+void RendererOpenGL::RemoveActiveCamera()
+{
+	activeCamera = defaultCamera;
+}
+
+const CameraComponent& RendererOpenGL::GetCamera() const
+{
+	if (ECS::IsComponentHandleValid(activeCamera))
+	{
+		return ECS::GetComponent(activeCamera);
+	}
+	else
+	{
+		throw std::runtime_error("The renderer doesn't have an active camera.");
+	}
 }
 
 
@@ -394,7 +410,7 @@ void RendererOpenGL::RemoveMaterial(Material* material)
 }
 
 
-void RendererOpenGL::AddLight(LightComponent* light)
+/*void RendererOpenGL::AddLight(LightComponent* light)
 {
 	lights[light->getLightType()].push_back(light);
 
@@ -477,32 +493,32 @@ void RendererOpenGL::DrawDebugCube(const Box& boxInfos, const Color& color, floa
 	debug_cube->setupDebugDraw(color, duration);
 	debug_cube->setBox(boxInfos);
 	debugDraws.push_back(debug_cube);
-}
+}*/
 
 
 CameraComponent& RendererOpenGL::selectCurrentCam()
 {
-	return debugCamActivated ? *debugCamera : *activeCamera;
+	return debugCamActivated ? ECS::GetComponent(debugCamera) : ECS::GetComponent(activeCamera);
 }
 
 bool RendererOpenGL::isCurrentCamValid()
 {
-	return debugCamActivated ? debugCamera.operator bool() : activeCamera.operator bool();
+	return debugCamActivated ? ECS::IsComponentHandleValid(debugCamera) : ECS::IsComponentHandleValid(activeCamera);
 }
 
 
 
-void RendererOpenGL::initializeRenderer(Color clearColor_, Vector2Int windowSize_, std::weak_ptr<CameraComponent> defaultCamera_)
+void RendererOpenGL::initializeRenderer(Color clearColor_, Vector2Int windowSize_, ComponentHandle<CameraComponent> defaultCamera_)
 {
 	clearColor = clearColor_;
 	windowSize = windowSize_;
-	defaultCamera = defaultCamera_.lock();
+	defaultCamera = defaultCamera_;
 	activeCamera = defaultCamera;
 }
 
-void RendererOpenGL::setDebugCamera(std::weak_ptr<CameraComponent> debugCamera_)
+void RendererOpenGL::setDebugCamera(ComponentHandle<CameraComponent> debugCamera_)
 {
-	debugCamera = debugCamera_.lock();
+	debugCamera = debugCamera_;
 }
 
 void RendererOpenGL::setDebugCamActivated(bool debugCamActivated_)

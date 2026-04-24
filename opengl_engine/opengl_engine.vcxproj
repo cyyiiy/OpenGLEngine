@@ -163,6 +163,7 @@
     <ClCompile Include="Maths\vector3.cpp" />
     <ClCompile Include="Core\transform.cpp" />
     <ClCompile Include="Core\window.cpp" />
+    <ClCompile Include="Rendering\cameraComponent.cpp" />
     <ClCompile Include="Rendering\Debug\cube.cpp" />
     <ClCompile Include="Rendering\Debug\debugRenderBase.cpp" />
     <ClCompile Include="Rendering\Debug\line.cpp" />
@@ -203,6 +204,7 @@
     <ClInclude Include="Maths\vector3.h" />
     <ClInclude Include="Core\transform.h" />
     <ClInclude Include="Core\window.h" />
+    <ClInclude Include="Rendering\cameraComponent.h" />
     <ClInclude Include="Rendering\Debug\cube.h" />
     <ClInclude Include="Rendering\Debug\debugRenderBase.h" />
     <ClInclude Include="Rendering\Debug\line.h" />

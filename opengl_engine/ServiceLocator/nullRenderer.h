@@ -4,6 +4,7 @@
 #include <Utils/Color.h>
 #include <Maths/Vector3.h>
 #include <Maths/Geometry/box.h>
+#include <stdexcept>
 
 /**
 * The renderer null service provider class.
@@ -11,8 +12,10 @@
 class NullRenderer : public Renderer
 {
 public:
-	void SetCamera(std::weak_ptr<CameraComponent> camera) override {}
-	const std::shared_ptr<CameraComponent> GetCamera() const override { return std::make_shared<CameraComponent>(); } //  pretty sure this is very sus but theorically this function is never called so... alright I guess ?
+	void SetCamera(ComponentHandle<CameraComponent> camera) override {}
+	bool IsActiveCamera(ComponentHandle<CameraComponent> camera) override { return false; }
+	void RemoveActiveCamera() override {}
+	const CameraComponent& GetCamera() const override { throw std::runtime_error("The renderer doesn't have an active camera."); }
 
 	void SetClearColor(Color clearColor) override {}
 	const Color GetClearColor() const override { return Color::black; }
@@ -22,9 +25,6 @@ public:
 
 	void AddLight(LightComponent* light) override {}
 	void RemoveLight(LightComponent* light) override {}
-
-	void AddModelRenderer(ModelRendererComponent* modelRenderer) override {}
-	void RemoveModelRenderer(ModelRendererComponent* modelRenderer) override {}
 
 	void AddText(TextRendererComponent* text) override {}
 	void RemoveText(TextRendererComponent* text) override {}

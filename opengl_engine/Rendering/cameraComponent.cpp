@@ -28,14 +28,14 @@ Vector3 CameraComponent::getCamRight() const
 	return computedRight;
 }
 
-void CameraComponent::setAsActiveCamera()
+bool CameraComponent::isActiveCamera() const
 {
-	Locator::getRenderer().SetCamera(shared_from_this());
+	return Locator::getRenderer().IsActiveCamera(getSelfHandle<CameraComponent>());
 }
 
-void CameraComponent::setActiveValue(bool activeValue)
+void CameraComponent::setAsActiveCamera()
 {
-	active = activeValue;
+	Locator::getRenderer().SetCamera(getSelfHandle<CameraComponent>());
 }
 
 void CameraComponent::copyCamera(const CameraComponent& otherCamera, bool copyEntityTransform)
@@ -116,37 +116,21 @@ void CameraComponent::setFov(float fov_)
 }
 
 
-
-void CameraComponent::registerComponent()
+void CameraComponent::init()
 {
 	getOwner()->onTransformUpdated.registerObserver(this, Bind_0(&CameraComponent::onEntityMoved));
 	computeCameraVectors(true, true);
+	setUpdateActivated(false);
 }
 
-void CameraComponent::unregisterComponent()
+void CameraComponent::exit()
 {
 	getOwner()->onTransformUpdated.unregisterObserver(this);
 
-	if (active)
+	if (isActiveCamera())
 	{
-		Locator::getRenderer().SetCamera(std::shared_ptr<CameraComponent>(nullptr));
+		Locator::getRenderer().RemoveActiveCamera();
 	}
-}
-
-void CameraComponent::init()
-{
-	//  reset the values in case this component was used before (the component manager is a memory pool)
-	active = false;
-	posOffset = Vector3::zero;
-	rotOffset = Quaternion::identity;
-	yawOffset = 0.0f;
-	pitchOffset = 0.0f;
-	rollOffset = 0.0f;
-	fov = 45.0f;
-	computedPos = Vector3::zero;
-	computedForward = Vector3::unitX;
-	computedUp = Vector3::unitY;
-	computedRight = Vector3::unitZ;
 }
 
 void CameraComponent::onEntityMoved()

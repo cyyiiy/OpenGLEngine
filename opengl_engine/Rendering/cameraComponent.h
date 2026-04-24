@@ -1,5 +1,5 @@
 #pragma once
-#include <ECS/component.h>
+#include <ECS/behaviorComponent.h>
 #include <Events/observer.h>
 #include <Maths/Vector3.h>
 #include <Maths/Matrix4.h>
@@ -8,7 +8,7 @@
 /** Camera Component
 * Component for the camera.
 */
-class CameraComponent : public Component, public Observer, public std::enable_shared_from_this<CameraComponent>
+class CameraComponent : public BehaviorComponent, public Observer
 {
 public:
 	/**
@@ -29,15 +29,11 @@ public:
 	/** Get the computed right vector of the camera. */
 	Vector3 getCamRight() const;
 
-	/** Set this camera as the active one used for rendering. */
-	void setAsActiveCamera();
+	/** Check if this camera is the active one used by the renderer. */
+	bool isActiveCamera() const;
 
-	/**
-	* Set the active value of this camera.
-	* Automatically called when the active camera change.
-	* Do not call this function manually.
-	*/
-	void setActiveValue(bool activeValue);
+	/** Set this camera as the active one used by the renderer. */
+	void setAsActiveCamera();
 
 	/**
 	* Copy another camera to have the same offsets, fov, etc.
@@ -67,16 +63,12 @@ public:
 	float getFov() const { return fov; }
 
 protected:
-	virtual void registerComponent() override;
-	virtual void unregisterComponent() override;
-
 	virtual void init() override;
+	virtual void exit() override;
 
 	void onEntityMoved();
 	void computeRotOffset();
 	virtual void computeCameraVectors(bool computePos, bool computeDirections);
-
-	bool active{ false };
 
 	Vector3 posOffset{ Vector3::zero };
 	Quaternion rotOffset{ Quaternion::identity };
@@ -92,4 +84,12 @@ protected:
 	Vector3 computedForward{ Vector3::unitX };
 	Vector3 computedUp{ Vector3::unitY };
 	Vector3 computedRight{ Vector3::unitZ };
+};
+
+
+// Specify sublist size for 'CameraComponent'
+template<>
+struct ComponentSublistSize<CameraComponent>
+{
+	static constexpr size_t value = 4;
 };

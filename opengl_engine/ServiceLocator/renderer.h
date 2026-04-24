@@ -1,4 +1,5 @@
 #pragma once
+#include <ECS/ecsTypes.h>
 #include <memory>
 
 class CameraComponent;
@@ -25,13 +26,26 @@ public:
 	* Set the new camera that will be used.
 	* @param	camera		The new camera to use.
 	*/
-	virtual void SetCamera(std::weak_ptr<CameraComponent> camera) = 0;
+	virtual void SetCamera(ComponentHandle<CameraComponent> camera) = 0;
+
+	/**
+	* Check if this camera is the one currently used by the renderer.
+	* @return			True if the camera is used by the renderer.
+	*/
+	virtual bool IsActiveCamera(ComponentHandle<CameraComponent> camera) = 0;
+
+	/**
+	* Removes the active camera used by the renderer.
+	* The renderer will switch to the default camera if possible.
+	*/
+	virtual void RemoveActiveCamera() = 0;
 
 	/**
 	* Retrieve the currently used camera.
 	* @return			The currently used camera.
+	* @exception		Throws a runtime error if there is no active camera on the renderer.
 	*/
-	virtual const std::shared_ptr<CameraComponent> GetCamera() const = 0;
+	virtual const CameraComponent& GetCamera() const = 0;
 
 
 	/**
@@ -71,19 +85,6 @@ public:
 	* @param	light	The light component to unregister.
 	*/
 	virtual void RemoveLight(LightComponent* light) = 0;
-
-
-	/**
-	* Register a model renderer component to the renderer.
-	* @param	modelRenderer	The model renderer component to register.
-	*/
-	virtual void AddModelRenderer(ModelRendererComponent* modelRenderer) = 0;
-
-	/**
-	* Unregister a model renderer component from the renderer.
-	* @param	modelRenderer	The model renderer component to unregister.
-	*/
-	virtual void RemoveModelRenderer(ModelRendererComponent* modelRenderer) = 0;
 
 
 	/**
