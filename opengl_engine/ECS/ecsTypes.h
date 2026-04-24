@@ -1,4 +1,6 @@
 ﻿#pragma once
+#include <cstdint>
+#include <type_traits>
 
 using ComponentTypeId = size_t;
 
@@ -41,4 +43,12 @@ struct ComponentHandle
     RawComponentHandle raw;
     
     ComponentHandle(RawComponentHandle r) : raw(r) {}
+
+    bool operator==(const ComponentHandle& otherHandle) const
+    {
+        return
+            otherHandle.raw.sublistId == this->raw.sublistId &&
+            otherHandle.raw.slotId == this->raw.slotId &&
+            otherHandle.raw.generation == this->raw.generation;
+    }
 };

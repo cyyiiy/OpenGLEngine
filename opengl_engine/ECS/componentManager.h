@@ -95,12 +95,20 @@ public:
         
         sublist_creating_in.slotToPacked[slotId] = packedIndex;
         sublist_creating_in.packedToSlot[packedIndex] = static_cast<uint32_t>(slotId);
+
+        const uint32_t generation = sublist_creating_in.generations[slotId];
+        const RawComponentHandle raw_handle{
+            static_cast<uint32_t>(sublistId),
+            static_cast<uint32_t>(slotId),
+            generation
+        };
         
         // Step 4: Construct the component
         T* component = sublist_creating_in.packedGet(packedIndex);
         
         new (component) T();
         component->setOwner(ownerEntity);
+        component->setRawHandle(raw_handle);
         
         if constexpr (std::is_base_of_v<BehaviorComponent, T>)
         {
@@ -108,14 +116,7 @@ public:
         }
         
         // Step 5: Return the component handle
-        const uint32_t generation = sublist_creating_in.generations[slotId];
-        return ComponentHandle<T>{
-            RawComponentHandle{
-                static_cast<uint32_t>(sublistId), 
-                static_cast<uint32_t>(slotId),
-                generation
-            }
-        };
+        return ComponentHandle<T>(raw_handle);
     }
 
     /** Deletes an existing component from the manager.

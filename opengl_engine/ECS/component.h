@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "ecsTypes.h"
 
 class Entity; // Forward declaration
 
@@ -35,8 +36,16 @@ public:
     
     void setOwner(Entity* ownerEntity);
     Entity* getOwner() const;
+
+    void setRawHandle(RawComponentHandle handle);
+    template<class T>
+    ComponentHandle<T> getSelfHandle() const
+    {
+        return ComponentHandle<T>(rawHandle);
+    }
     
 private:
     bool pendingDelete{ false };
     Entity* owner{ nullptr };
+    RawComponentHandle rawHandle;
 };
