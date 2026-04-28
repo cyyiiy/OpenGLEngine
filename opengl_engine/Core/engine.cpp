@@ -3,7 +3,7 @@
 //#include <Assets/defaultAssets.h>
 //#include <Assets/assetsIDs.h>
 #include <Inputs/input.h>
-//#include <ServiceLocator/locator.h>
+#include <ServiceLocator/locator.h>
 //#include <Physics/physicsManager.h>
 #include <GameplayStatics/gameplayStatics.h>
 #include <ECS/ecs.h>
@@ -83,7 +83,7 @@ bool Engine::initialize(int wndw_width, int wndw_height, std::string wndw_name, 
 
 	//  initialize service locator
 	std::cout << "Initializing service locator...";
-	//Locator::initialize();
+	Locator::initialize();
 	std::cout << " Done.\n";
 
 
@@ -366,7 +366,7 @@ void Engine::pauseGame()
 {
 	gamePaused = true;
 	//audio->PauseAll();
-	//log->LogMessage_Category("Game paused", LogCategory::Info);
+	Locator::getLog().LogMessage_Category("Game paused", LogCategory::Info);
 }
 
 void Engine::unpauseGame()
@@ -374,7 +374,7 @@ void Engine::unpauseGame()
 	gamePaused = false;
 	//audio->ResumeAll();
 	if (freecamMode) disableFreecam();
-	//log->LogMessage_Category("Game unpaused", LogCategory::Info);
+	Locator::getLog().LogMessage_Category("Game unpaused", LogCategory::Info);
 }
 
 void Engine::advanceOneFrame()
@@ -382,7 +382,7 @@ void Engine::advanceOneFrame()
 	if (!gamePaused) pauseGame();
 	else
 	{
-		//log->LogMessage_Category("Debug: Advance one frame", LogCategory::Info);
+		Locator::getLog().LogMessage_Category("Debug: Advance one frame", LogCategory::Info);
 		oneFrame = true;
 	}
 }
@@ -391,7 +391,7 @@ void Engine::enableFreecam()
 {
 	/*freecamMode = true;
 	if (!gamePaused) pauseGame();
-	log->LogMessage_Category("Debug: Freecam mode enabled", LogCategory::Info);
+	Locator::getLog().LogMessage_Category("Debug: Freecam mode enabled", LogCategory::Info);
 	debugCamera->copyCamera(*renderer->GetCamera(), true);
 	renderer->setDebugCamActivated(true);
 	debugCameraSpeed = 4.0f;*/
@@ -400,14 +400,14 @@ void Engine::enableFreecam()
 void Engine::disableFreecam()
 {
 	/*freecamMode = false;
-	log->LogMessage_Category("Debug: Freecam mode disabled", LogCategory::Info);
+	Locator::getLog().LogMessage_Category("Debug: Freecam mode disabled", LogCategory::Info);
 	renderer->setDebugCamActivated(false);*/
 }
 
 void Engine::enableDebugView()
 {
 	/*debugViewMode = true;
-	log->LogMessage_Category("Debug: Debug mode view enabled", LogCategory::Info);
+	Locator::getLog().LogMessage_Category("Debug: Debug mode view enabled", LogCategory::Info);
 	renderer->physicsDebugMode = true;
 	fpsText->setEnabled(true);*/
 }
@@ -415,7 +415,7 @@ void Engine::enableDebugView()
 void Engine::disableDebugView()
 {
 	/*debugViewMode = false;
-	log->LogMessage_Category("Debug: Debug mode view disabled", LogCategory::Info);
+	Locator::getLog().LogMessage_Category("Debug: Debug mode view disabled", LogCategory::Info);
 	renderer->physicsDebugMode = false;
 	fpsText->setEnabled(false);*/
 }
@@ -427,7 +427,7 @@ void Engine::windowResize(GLFWwindow* glWindow, int width, int height)
 	glViewport(0, 0, width, height); //  resize OpenGL viewport when GLFW is resized
 	window.changeSize(width, height);
 
-	//log->LogMessage_Category("Window: Size updated to [Width: " + std::to_string(width) + " | Height: " + std::to_string(height) + "]", LogCategory::Info);
+	Locator::getLog().LogMessage_Category("Window: Size updated to [Width: " + std::to_string(width) + " | Height: " + std::to_string(height) + "]", LogCategory::Info);
 
 	Vector2Int window_size(width, height);
 	//renderer->setWindowSize(window_size);

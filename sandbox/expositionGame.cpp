@@ -1,5 +1,5 @@
 #include "expositionGame.h"
-//#include <ServiceLocator/locator.h>
+#include <ServiceLocator/locator.h>
 //#include <Assets/defaultAssets.h>
 //#include <Assets/assetManager.h>
 #include <Inputs/Input.h>
@@ -15,8 +15,9 @@ void ExpositionGame::updateGame(float dt)
 
 void ExpositionGame::loadGameAssets()
 {
-	/*Locator::getLog().SetConsoleLogDisplayRule(LogCategory::Info);
+	Locator::getLog().SetConsoleLogDisplayRule(LogCategory::Info);
 
+	/*
 	Renderer& renderer = Locator::getRenderer();
 
 	DefaultAssets::LoadDefaultAssets();

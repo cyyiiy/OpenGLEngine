@@ -174,6 +174,7 @@
     <ClCompile Include="Rendering\Model\vertexArray.cpp" />
     <ClCompile Include="Rendering\shader.cpp" />
     <ClCompile Include="Rendering\texture.cpp" />
+    <ClCompile Include="ServiceLocator\locator.cpp" />
     <ClCompile Include="Utils\color.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -189,6 +190,7 @@
     <ClInclude Include="Events\event.h" />
     <ClInclude Include="Events\observer.h" />
     <ClInclude Include="GameplayStatics\gameplayStatics.h" />
+    <ClInclude Include="Log\logUtils.h" />
     <ClInclude Include="Maths\vector4.h" />
     <ClInclude Include="Maths\Geometry\box.h" />
     <ClInclude Include="Maths\Geometry\ray.h" />
@@ -216,6 +218,11 @@
     <ClInclude Include="Rendering\Model\vertexArray.h" />
     <ClInclude Include="Rendering\shader.h" />
     <ClInclude Include="Rendering\texture.h" />
+    <ClInclude Include="ServiceLocator\locator.h" />
+    <ClInclude Include="ServiceLocator\log.h" />
+    <ClInclude Include="ServiceLocator\nullLog.h" />
+    <ClInclude Include="ServiceLocator\nullRenderer.h" />
+    <ClInclude Include="ServiceLocator\renderer.h" />
     <ClInclude Include="Utils\color.h" />
     <ClInclude Include="Utils\defines.h" />
   </ItemGroup>
