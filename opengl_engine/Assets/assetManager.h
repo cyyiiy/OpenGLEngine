@@ -4,8 +4,8 @@
 #include <Rendering/shader.h>
 #include <Rendering/material.h>
 #include <Rendering/Model/model.h>
-#include <Rendering/Text/font.h>
-#include <Audio/audioSound.h>
+//#include <Rendering/Text/font.h>
+//#include <Audio/audioSound.h>
 
 #include <unordered_map>
 #include <string>
@@ -236,20 +236,20 @@ public:
 	* @param	size				The size to load the font with.
 	* @param	charLoadSetting		How many chars to load with this font.
 	*/
-	static void LoadFont(const std::string& name, const std::string& fontPath, const int size, const CharacterLoading charLoadSetting);
+	//static void LoadFont(const std::string& name, const std::string& fontPath, const int size, const CharacterLoading charLoadSetting);
 
 	/**
 	* Retrieve a font from the asset storage.
 	* @param	name	The name of the font you want to retrieve.
 	* @return			The font with corresponding name (if it exists).
 	*/
-	static Font& GetFont(const std::string& name);
+	//static Font& GetFont(const std::string& name);
 
 	/**
 	* Delete a font from the asset storage.
 	* @param	name	The name of the font you want to delete.
 	*/
-	static void DeleteFont(const std::string& name);
+	//static void DeleteFont(const std::string& name);
 
 
 
@@ -264,20 +264,20 @@ public:
 	* @param	settings	(optionnal) Additionnal load settings for the sound.
 	* @return				The newly created sound.
 	*/
-	static AudioSound& CreateSound(const std::string& name, const std::string& filePath, const SoundSettings settings);
+	//static AudioSound& CreateSound(const std::string& name, const std::string& filePath, const SoundSettings settings);
 
 	/**
 	* Retrieve a sound from the asset storage.
 	* @param	name	The name of the sound you want to retrieve.
 	* @return			The sound with corresponding name (if it exists).
 	*/
-	static AudioSound& GetSound(const std::string& name);
+	//static AudioSound& GetSound(const std::string& name);
 
 	/**
 	* Delete a sound from the asset storage.
 	* @param	name	The name of the sound you want to delete.
 	*/
-	static void DeleteSound(const std::string& name);
+	//static void DeleteSound(const std::string& name);
 
 
 
@@ -291,20 +291,20 @@ public:
 	* @param	audioCollisionType		The value of the audio collision type you want to register.
 	* @return							The registered audio collision type.
 	*/
-	static AudioCollisionOcclusion& RegisterAudioCollisionType(const std::string& name, AudioCollisionOcclusion audioCollisionType);
+	//static AudioCollisionOcclusion& RegisterAudioCollisionType(const std::string& name, AudioCollisionOcclusion audioCollisionType);
 
 	/**
 	* Retrieve an audio collision type from the asset storage.
 	* @param	name	The name of the audio collision type you want to retrieve.
 	* @return			The audio collision type with corresponding name (if it exists).
 	*/
-	static AudioCollisionOcclusion& GetAudioCollisionType(const std::string& name);
+	//static AudioCollisionOcclusion& GetAudioCollisionType(const std::string& name);
 
 	/**
 	* Delete an audio collision type from the asset storage.
 	* @param	name	The name of the audio collision type you want to delete.
 	*/
-	static void DeleteAudioCollisionType(const std::string& name);
+	//static void DeleteAudioCollisionType(const std::string& name);
 
 
 
@@ -322,8 +322,8 @@ private:
 	static std::unordered_map<std::string, std::unique_ptr<Shader>> shaders;
 	static std::unordered_map<std::string, std::unique_ptr<Material>> materials;
 	static std::unordered_map<std::string, std::unique_ptr<MaterialCollection>> materialsCollection;
-	static std::unordered_map<std::string, std::unique_ptr<Font>> fonts;
-	static std::unordered_map<std::string, std::unique_ptr<AudioSound>> sounds;
-	static std::unordered_map<std::string, AudioCollisionOcclusion> audioCollisionTypes;
+	//static std::unordered_map<std::string, std::unique_ptr<Font>> fonts;
+	//static std::unordered_map<std::string, std::unique_ptr<AudioSound>> sounds;
+	//static std::unordered_map<std::string, AudioCollisionOcclusion> audioCollisionTypes;
 };
 

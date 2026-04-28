@@ -1,7 +1,7 @@
 #include "expositionGame.h"
 #include <ServiceLocator/locator.h>
-//#include <Assets/defaultAssets.h>
-//#include <Assets/assetManager.h>
+#include <Assets/defaultAssets.h>
+#include <Assets/assetManager.h>
 #include <Inputs/Input.h>
 
 ExpositionGame::ExpositionGame()
@@ -17,10 +17,10 @@ void ExpositionGame::loadGameAssets()
 {
 	Locator::getLog().SetConsoleLogDisplayRule(LogCategory::Info);
 
+	DefaultAssets::LoadDefaultAssets();
+
 	/*
 	Renderer& renderer = Locator::getRenderer();
-
-	DefaultAssets::LoadDefaultAssets();
 
 	//  shaders, textures and materials
 	AssetManager::CreateShaderProgram("lit_object", "Lit/object_lit.vert", "Lit/object_lit.frag", ShaderType::Lit);

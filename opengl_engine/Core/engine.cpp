@@ -1,7 +1,7 @@
 #include "engine.h"
-//#include <Assets/assetManager.h>
-//#include <Assets/defaultAssets.h>
-//#include <Assets/assetsIDs.h>
+#include <Assets/assetManager.h>
+#include <Assets/defaultAssets.h>
+#include <Assets/assetsIDs.h>
 #include <Inputs/input.h>
 #include <ServiceLocator/locator.h>
 //#include <Physics/physicsManager.h>
@@ -134,13 +134,13 @@ bool Engine::initialize(int wndw_width, int wndw_height, std::string wndw_name, 
 
 	//  load "null" assets of AssetManager
 	std::cout << "Initializing asset manager...";
-	//AssetManager::LoadNullAssets();
+	AssetManager::LoadNullAssets();
 
 	//  initialize assets IDs
-	//AssetsIDs::InitializeAssetIDs();
+	AssetsIDs::InitializeAssetIDs();
 
 	//  load engine assets
-	//DefaultAssets::LoadEngineAssets();
+	DefaultAssets::LoadEngineAssets();
 	std::cout << " Done.\n";
 
 

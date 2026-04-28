@@ -141,6 +141,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Assets\assetManager.cpp" />
+    <ClCompile Include="Assets\assetMesh.cpp" />
+    <ClCompile Include="Assets\assetsIDs.cpp" />
+    <ClCompile Include="Assets\defaultAssets.cpp" />
     <ClCompile Include="Core\Gameplay\gameplayTag.cpp" />
     <ClCompile Include="ECS\behaviorComponent.cpp" />
     <ClCompile Include="ECS\component.cpp" />
@@ -178,6 +182,10 @@
     <ClCompile Include="Utils\color.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Assets\assetManager.h" />
+    <ClInclude Include="Assets\assetMesh.h" />
+    <ClInclude Include="Assets\assetsIDs.h" />
+    <ClInclude Include="Assets\defaultAssets.h" />
     <ClInclude Include="Core\Gameplay\gameplayTag.h" />
     <ClInclude Include="ECS\behaviorComponent.h" />
     <ClInclude Include="ECS\component.h" />
