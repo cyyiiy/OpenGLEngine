@@ -1,8 +1,11 @@
 ﻿#pragma once
 #include <cstdint>
+#include <limits>
 #include <type_traits>
 
 using ComponentTypeId = size_t;
+static constexpr uint32_t INVALID_INDEX = std::numeric_limits<uint32_t>::max();
+
 
 /** Get a unique and stable identifier for a component class.
  * 
@@ -41,8 +44,9 @@ struct ComponentHandle
     static_assert(std::is_base_of_v<class Component, T>, "T must be derived from Component.");
     
     RawComponentHandle raw;
-    
-    ComponentHandle(RawComponentHandle r) : raw(r) {}
+
+    ComponentHandle() : raw{ INVALID_INDEX, INVALID_INDEX, INVALID_INDEX } {}
+    explicit ComponentHandle(RawComponentHandle r) : raw(r) {}
 
     bool operator==(const ComponentHandle& otherHandle) const
     {

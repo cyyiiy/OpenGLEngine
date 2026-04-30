@@ -5,6 +5,10 @@ Transform::Transform()
 	computeMatrix();
 }
 
+Transform::Transform(const Transform& other) : position(other.position), scale(other.scale), rotation(other.rotation), modelMatrix(other.modelMatrix), 
+	onTransformUpdated(other.onTransformUpdated)
+{}
+
 
 void Transform::setPosition(Vector3 newPos)
 {

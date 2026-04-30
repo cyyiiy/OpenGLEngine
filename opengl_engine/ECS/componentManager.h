@@ -35,7 +35,7 @@ template <class T, size_t SublistSize>
 class ComponentManager : public IComponentManager
 {
     static_assert(std::is_base_of_v<Component, T>, "T must be derived from Component.");
-    static_assert(std::is_nothrow_move_constructible_v<T>, "T must be nothrow move constructible.");
+    static_assert(std::is_move_constructible_v<T>, "T must be move constructible.");
     
 protected:
     static constexpr uint32_t INVALID_INDEX = std::numeric_limits<uint32_t>::max();

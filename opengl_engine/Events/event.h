@@ -9,6 +9,9 @@ template<typename ...Parameters>
 class Event
 {
 public:
+	Event() = default;
+	Event(const Event& other) : observers(other.observers), pendingObservers(other.pendingObservers), inBroadcast(other.inBroadcast) {}
+
 	using Function = std::function<void(Parameters...)>;
 
 	void registerObserver(Observer* observer, Function broadcastFunction)

@@ -23,6 +23,7 @@ public:
 	void AddMaterial(Material* material) override {}
 	void RemoveMaterial(Material* material) override {}
 
+	/*
 	void AddLight(LightComponent* light) override {}
 	void RemoveLight(LightComponent* light) override {}
 
@@ -35,4 +36,5 @@ public:
 	void DrawDebugPoint(const Vector3& pointPosition, const Color& color, float duration) override {}
 	void DrawDebugLine(const Vector3& pointA, const Vector3& pointB, const Color& color, float duration) override {}
 	void DrawDebugCube(const Box& boxInfos, const Color& color, float duration) override {}
+	*/
 };

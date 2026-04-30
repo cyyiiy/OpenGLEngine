@@ -19,6 +19,12 @@ void ExpositionGame::loadGameAssets()
 
 	DefaultAssets::LoadDefaultAssets();
 
+	Material& flat_emissive_white = AssetManager::CreateMaterial("light_source_white", AssetManager::GetShader("flat_emissive"));
+	flat_emissive_white.addParameter("emissive", Color::white.toVector());
+
+	AssetManager::CreateModel("white_emissive_cube").addMesh(AssetManager::GetSingleMesh("default_cube"), AssetManager::GetMaterial("light_source_white"));
+
+
 	/*
 	Renderer& renderer = Locator::getRenderer();
 

@@ -4,9 +4,9 @@
 
 #include "game.h"
 #include "window.h"
-//#include <Rendering/rendererOpenGL.h>
+#include <Rendering/rendererOpenGL.h>
 #include <ECS/entityContainer.h>
-//#include <Rendering/cameraComponent.h>
+#include <Rendering/cameraComponent.h>
 //#include <Rendering/Text/textRendererComponent.h>
 
 //#include <Audio/audioManager.h>
@@ -48,7 +48,7 @@ private:
 	Window window;
 
 	//  renderer
-	//RendererOpenGL* renderer{ nullptr };
+	RendererOpenGL* renderer{ nullptr };
 
 	//  audio manager
 	//AudioManager* audio{ nullptr };
@@ -58,7 +58,7 @@ private:
 
 	//  cameras
 	Entity* debugCamEntity{ nullptr };
-	//std::shared_ptr<CameraComponent> debugCamera{ nullptr };
+	ComponentHandle<CameraComponent> debugCamera;
 	float debugCameraSpeed{ 4.0f };
 	float debugCameraMouseSensitivity{ 0.1f };
 

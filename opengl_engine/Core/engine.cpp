@@ -97,11 +97,11 @@ bool Engine::initialize(int wndw_width, int wndw_height, std::string wndw_name, 
 
 	//  create renderer and default camera
 	std::cout << "Initializing renderer...";
-	//Entity* default_cam_entity = createEntity();
-	//default_cam_entity->addComponentByClass<CameraComponent>();
-	//renderer = new RendererOpenGL();
-	//Locator::provideRenderer(renderer);
-	//renderer->initializeRenderer(Color::black, Vector2Int{ window.getWidth(), window.getHeigth() }, default_cam_entity->getComponentByClass<CameraComponent>());
+	Entity* default_cam_entity = createEntity();
+	default_cam_entity->addComponentByClass<CameraComponent>();
+	renderer = new RendererOpenGL();
+	Locator::provideRenderer(renderer);
+	renderer->initializeRenderer(Color::black, Vector2Int{ window.getWidth(), window.getHeigth() }, default_cam_entity->getComponentOfClass<CameraComponent>());
 	std::cout << " Done.\n";
 
 
@@ -152,8 +152,8 @@ bool Engine::initialize(int wndw_width, int wndw_height, std::string wndw_name, 
 
 	//  initialize debug camera
 	debugCamEntity = createEntity();
-	//debugCamera = debugCamEntity->addComponentByClass<CameraComponent>();
-	//renderer->setDebugCamera(debugCamera);
+	debugCamera = debugCamEntity->addComponentByClass<CameraComponent>();
+	renderer->setDebugCamera(debugCamera);
 
 
 	//  configure global OpenGL properties
@@ -210,7 +210,7 @@ void Engine::run()
 
 		//  rendering part
 		// ----------------
-		//renderer->draw();
+		renderer->draw();
 		//renderer->updateDebugDraws(gamePaused ? 0.0f : deltaTime); //  debug draws don't expire if engine is paused
 
 
@@ -313,18 +313,20 @@ void Engine::engineUpdate(GLFWwindow* glWindow)
 
 	if (freecamMode)
 	{
+		CameraComponent& debug_camera_comp = ECS::GetComponent(debugCamera);
+
 		//  move freecam
-		/*if (Input::IsKeyDown(GLFW_KEY_W))
-			debugCamEntity->addPosition(debugCamera->getCamForward() * debugCameraSpeed * deltaTime);
+		if (Input::IsKeyDown(GLFW_KEY_W))
+			debugCamEntity->addPosition(debug_camera_comp.getCamForward() * debugCameraSpeed * deltaTime);
 
 		if (Input::IsKeyDown(GLFW_KEY_S))
-			debugCamEntity->addPosition(-debugCamera->getCamForward() * debugCameraSpeed * deltaTime);
+			debugCamEntity->addPosition(-debug_camera_comp.getCamForward() * debugCameraSpeed * deltaTime);
 
 		if (Input::IsKeyDown(GLFW_KEY_A))
-			debugCamEntity->addPosition(debugCamera->getCamRight() * debugCameraSpeed * deltaTime);
+			debugCamEntity->addPosition(debug_camera_comp.getCamRight() * debugCameraSpeed * deltaTime);
 
 		if (Input::IsKeyDown(GLFW_KEY_D))
-			debugCamEntity->addPosition(-debugCamera->getCamRight() * debugCameraSpeed * deltaTime);
+			debugCamEntity->addPosition(-debug_camera_comp.getCamRight() * debugCameraSpeed * deltaTime);
 
 		if (Input::IsKeyDown(GLFW_KEY_SPACE))
 			debugCamEntity->addPosition(Vector3::unitY * debugCameraSpeed * deltaTime);
@@ -339,11 +341,11 @@ void Engine::engineUpdate(GLFWwindow* glWindow)
 			debugCameraSpeed = 4.0f;
 
 		Vector2 mouse_delta = Input::GetMouseDelta() * debugCameraMouseSensitivity;
-		debugCamera->addYaw(-mouse_delta.x);
-		debugCamera->setPitch(Maths::clamp(debugCamera->getPitch() + mouse_delta.y, -89.0f, 89.0f));
+		debug_camera_comp.addYaw(-mouse_delta.x);
+		debug_camera_comp.setPitch(Maths::clamp(debug_camera_comp.getPitch() + mouse_delta.y, -89.0f, 89.0f));
 
 		float scroll_offset = Input::GetScrollOffset();
-		debugCamera->setFov(Maths::clamp(debugCamera->getFov() - scroll_offset, 1.0f, 45.0f));*/
+		debug_camera_comp.setFov(Maths::clamp(debug_camera_comp.getFov() - scroll_offset, 1.0f, 45.0f));
 	}
 
 
@@ -389,19 +391,19 @@ void Engine::advanceOneFrame()
 
 void Engine::enableFreecam()
 {
-	/*freecamMode = true;
+	freecamMode = true;
 	if (!gamePaused) pauseGame();
 	Locator::getLog().LogMessage_Category("Debug: Freecam mode enabled", LogCategory::Info);
-	debugCamera->copyCamera(*renderer->GetCamera(), true);
+	ECS::GetComponent(debugCamera).copyCamera(renderer->GetCamera(), true);
 	renderer->setDebugCamActivated(true);
-	debugCameraSpeed = 4.0f;*/
+	debugCameraSpeed = 4.0f;
 }
 
 void Engine::disableFreecam()
 {
-	/*freecamMode = false;
+	freecamMode = false;
 	Locator::getLog().LogMessage_Category("Debug: Freecam mode disabled", LogCategory::Info);
-	renderer->setDebugCamActivated(false);*/
+	renderer->setDebugCamActivated(false);
 }
 
 void Engine::enableDebugView()

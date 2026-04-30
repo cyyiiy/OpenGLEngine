@@ -176,6 +176,7 @@
     <ClCompile Include="Rendering\Model\mesh.cpp" />
     <ClCompile Include="Rendering\Model\model.cpp" />
     <ClCompile Include="Rendering\Model\vertexArray.cpp" />
+    <ClCompile Include="Rendering\rendererOpenGL.cpp" />
     <ClCompile Include="Rendering\shader.cpp" />
     <ClCompile Include="Rendering\texture.cpp" />
     <ClCompile Include="ServiceLocator\locator.cpp" />
@@ -224,6 +225,7 @@
     <ClInclude Include="Rendering\Model\mesh.h" />
     <ClInclude Include="Rendering\Model\model.h" />
     <ClInclude Include="Rendering\Model\vertexArray.h" />
+    <ClInclude Include="Rendering\rendererOpenGL.h" />
     <ClInclude Include="Rendering\shader.h" />
     <ClInclude Include="Rendering\texture.h" />
     <ClInclude Include="ServiceLocator\locator.h" />

@@ -62,10 +62,11 @@ public:
 	Quaternion getRotOffset() const { return rotOffset; }
 	float getFov() const { return fov; }
 
-protected:
+
 	virtual void init() override;
 	virtual void exit() override;
 
+protected:
 	void onEntityMoved();
 	void computeRotOffset();
 	virtual void computeCameraVectors(bool computePos, bool computeDirections);

@@ -78,39 +78,39 @@ public:
 	* Register a light component to the renderer.
 	* @param	light	The light component to register.
 	*/
-	virtual void AddLight(LightComponent* light) = 0;
+	//virtual void AddLight(LightComponent* light) = 0;
 
 	/**
 	* Unregister a light component from the renderer.
 	* @param	light	The light component to unregister.
 	*/
-	virtual void RemoveLight(LightComponent* light) = 0;
+	//virtual void RemoveLight(LightComponent* light) = 0;
 
 
 	/**
 	* Register a text to the renderer.
 	* @param	text	The text to register.
 	*/
-	virtual void AddText(TextRendererComponent* text) = 0;
+	//virtual void AddText(TextRendererComponent* text) = 0;
 
 	/**
 	* Unregister a text from the renderer.
 	* @param	text	The text to unregister.
 	*/
-	virtual void RemoveText(TextRendererComponent* text) = 0;
+	//virtual void RemoveText(TextRendererComponent* text) = 0;
 
 
 	/**
 	* Register a sprite to the renderer.
 	* @param	sprite	The sprite to register.
 	*/
-	virtual void AddSprite(SpriteRendererComponent* sprite) = 0;
+	//virtual void AddSprite(SpriteRendererComponent* sprite) = 0;
 
 	/**
 	* Unregister a sprite from the renderer.
 	* @param	sprite	The sprite to unregister.
 	*/
-	virtual void RemoveSprite(SpriteRendererComponent* sprite) = 0;
+	//virtual void RemoveSprite(SpriteRendererComponent* sprite) = 0;
 
 
 	/**
@@ -119,7 +119,7 @@ public:
 	* @param	color			The color of the point to draw.
 	* @param	duration		The duration of the debug draw (in seconds).
 	*/
-	virtual void DrawDebugPoint(const Vector3& pointPosition, const Color& color, float duration) = 0;
+	//virtual void DrawDebugPoint(const Vector3& pointPosition, const Color& color, float duration) = 0;
 
 	/**
 	* Draw a debug line between two points for a desired duration.
@@ -128,7 +128,7 @@ public:
 	* @param	color		The color of the line to draw.
 	* @param	duration	The duration of the debug draw (in seconds).
 	*/
-	virtual void DrawDebugLine(const Vector3& pointA, const Vector3& pointB, const Color& color, float duration) = 0;
+	//virtual void DrawDebugLine(const Vector3& pointA, const Vector3& pointB, const Color& color, float duration) = 0;
 
 	/**
 	* Draw a debug cube for a desired duration.
@@ -136,5 +136,5 @@ public:
 	* @param	color		The color of the cube to draw.
 	* @param	duration	The duration of the debug draw (in seconds).
 	*/
-	virtual void DrawDebugCube(const Box& boxInfos, const Color& color, float duration) = 0;
+	//virtual void DrawDebugCube(const Box& boxInfos, const Color& color, float duration) = 0;
 };
