@@ -11,8 +11,6 @@
 
 #include <Rendering/cameraComponent.h>
 #include <Rendering/material.h>
-//#include <Rendering/Lights/lightComponent.h>
-#include <Rendering/modelRendererComponent.h>
 //#include <Rendering/Text/textRendererComponent.h>
 //#include <Rendering/Hud/spriteRendererComponent.h>
 //#include <Rendering/Debug/debugRenderBase.h>
@@ -22,15 +20,22 @@
 #include <memory>
 
 
-//  would be cool if I find a better way to do this but it works for now
-/*const std::unordered_map<LightType, int> LIGHTS_LIMITS
+enum LightType : uint8_t
 {
-	{EDirectionalLight, 1},
-	{EPointLight, 64},
-	{ESpotLight, 32}
+	EDirectionalLight,
+	EPointLight,
+	ESpotLight
 };
 
-const int TEXT_CHARS_LIMIT{ 200 };*/
+const std::unordered_map<LightType, int> LIGHTS_LIMITS
+{
+	{ EDirectionalLight, 1 },
+	{ EPointLight, 64 },
+	{ ESpotLight, 32 }
+};
+
+
+//const int TEXT_CHARS_LIMIT{ 200 };
 
 
 /**
@@ -50,9 +55,6 @@ public:
 	void AddMaterial(Material* material) override;
 	void RemoveMaterial(Material* material) override;
 
-	//void AddLight(LightComponent* light) override;
-	//void RemoveLight(LightComponent* light) override;
-
 	//void AddText(TextRendererComponent* text) override;
 	//void RemoveText(TextRendererComponent* text) override;
 
@@ -69,11 +71,13 @@ private:
 	CameraComponent& selectCurrentCam();
 	bool isCurrentCamValid();
 
-	void drawModelComponent(const ModelRendererComponent& modelComponent, Material& materialInUsage);
+	void drawModelComponent(const class ModelRendererComponent& modelComponent, Material& materialInUsage);
+
+	void useDirectionalLight(const class DirectionalLightComponent& dirLightComponent, Shader& shaderInUsage);
 
 
 	std::unordered_map<Shader*, std::vector<Material*>> materials;
-	//std::unordered_map<LightType, std::vector<LightComponent*>> lights;
+	std::unordered_map<LightType, int> lights_count;
 	//std::vector<TextRendererComponent*> texts;
 	//std::vector<SpriteRendererComponent*> sprites;
 	//std::vector<DebugRenderBase*> debugDraws;

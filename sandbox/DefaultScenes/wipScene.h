@@ -12,5 +12,12 @@ protected:
 private:
 	ComponentHandle<CameraComponent> cameraOne;
 	ComponentHandle<CameraComponent> cameraTwo;
+	ComponentHandle<CameraComponent> activeCamera;
+	
+	Entity* cyanCube{ nullptr };
+	float cyanCubeTimer{ 0.0f };
+
+	const float cameraSpeed{ 4.0f };
+	const float cameraSensitivity{ 0.1f };
 };
 

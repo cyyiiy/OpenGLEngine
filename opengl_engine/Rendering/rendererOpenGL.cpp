@@ -3,6 +3,8 @@
 #include <ServiceLocator/locator.h>
 #include <ECS/ecs.h>
 #include <ECS/entity.h>
+#include <Rendering/modelRendererComponent.h>
+#include <Rendering/Lights/directionalLightComponent.h>
 #include <algorithm>
 #include <stdexcept>
 
@@ -31,6 +33,7 @@ void RendererOpenGL::draw()
 
 	// Get the needed component managers
 	auto& model_renderers_manager = ECS::Manager<ModelRendererComponent>();
+	auto& directional_lights_manager = ECS::Manager<DirectionalLightComponent>();
 
 	// Loop through all shaders
 	for (auto& materials_by_shaders : materials)
@@ -45,14 +48,20 @@ void RendererOpenGL::draw()
 		shader->setMatrix4("view", view.getAsFloatPtr());
 		shader->setMatrix4("projection", projection.getAsFloatPtr());
 
-		/* WILL BE RE-IMPLEMENTED LATER (LIGHTS)
-		
 		ShaderType shader_type = shader->getShaderType();
 		switch (shader_type) // Feels a bit hardcoded, should be cool to find a better way to do this
 		{
 		case ShaderType::Lit:
 			// Use lights
-			for (auto light_t : lights)
+			lights_count[EDirectionalLight] = 0;
+			lights_count[EPointLight] = 0;
+			lights_count[ESpotLight] = 0;
+			directional_lights_manager.ForEach([this, shader](const DirectionalLightComponent& dir_light_component)
+				{
+					this->useDirectionalLight(dir_light_component, *shader);
+				});
+
+			/*for (auto light_t : lights)
 			{
 				LightType light_type = light_t.first;
 
@@ -81,7 +90,7 @@ void RendererOpenGL::draw()
 				}
 			}
 
-			shader->setVec3("viewPos", current_camera.getCamPosition());
+			shader->setVec3("viewPos", current_camera.getCamPosition());*/
 
 			break;
 
@@ -89,7 +98,6 @@ void RendererOpenGL::draw()
 			// Nothing else to do
 			break;
 		}
-		*/
 		
 		// Loop through all materials that use the shader
 		for (auto& material : materials_by_shaders.second)
@@ -321,6 +329,25 @@ void RendererOpenGL::drawModelComponent(const ModelRendererComponent& modelCompo
 
 	// 4. Draw the model
 	model->draw(materialInUsage);
+}
+
+void RendererOpenGL::useDirectionalLight(const DirectionalLightComponent& dirLightComponent, Shader& shaderInUsage)
+{
+	const int limit = LIGHTS_LIMITS.at(EDirectionalLight);
+	if (lights_count[EDirectionalLight] >= limit) return;
+
+	if (!dirLightComponent.active) return;
+
+	shaderInUsage.setVec3("dirLight.direction", dirLightComponent.direction);
+	shaderInUsage.setVec3("dirLight.ambient", dirLightComponent.ambientStrength * dirLightComponent.lightColor.toVector());
+	shaderInUsage.setVec3("dirLight.diffuse", dirLightComponent.diffuseStrength * dirLightComponent.lightColor.toVector());
+	shaderInUsage.setVec3("dirLight.specular", Color::white.toVector());
+
+	lights_count[EDirectionalLight]++;
+	if (lights_count[EDirectionalLight] >= limit)
+	{
+		Locator::getLog().LogMessage_Category("Renderer: There are more than " + std::to_string(limit) + " active directional lights.", LogCategory::Warning);
+	}
 }
 
 
