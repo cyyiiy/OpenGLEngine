@@ -1,6 +1,10 @@
 == COURT TERME ==
 
-~ Implémenter la V2 de l'ECS :
+~ Amélioration du benchmark :
+	- Avoir une nouvelle scène de test Rendering 3D qui teste les performances de plein de materials différents, avec un seul model renderer component pour chaque material
+	- Avoir une nouvelle scène de test Rendering 3D qui teste les performances en mouvement, avec des model renderer components et des point lights qui bougent en continu
+
+~ Implémenter la V2 de l'ECS : - en cours sur une autre branche
 	- Intégrer le code du nouvel ECS dans le moteur
 	- Changer les systèmes du moteur pour utiliser le nouvel ECS :
 	  (Note: penser à regarder le ClasseParent::fonction() et l'utiliser si c'est pertinent)
@@ -18,9 +22,7 @@
 		> Ennemis
 
 ~ Petites updates d'améliorations :
-	- Rajouter une option à la création d'une entity pour lui mettre un lifetime
-[Fonctionnerai en créant un component si l'option a une valeur différente de 0 pour pas ajouter de fonctionnalité à la classe entity]
-	- Changer le nom de la "model matrix" du transform en "entity matrix" (techniquement c'est plus la matrice du modèle)
+	- Rajouter un component "lifetime" qui supprime son entité au bout d'un temps donné (component data-only avec système extérieur)
 	- Refactor le "load game asset" du doomlike pour utiliser plus de fonctions et moins de copier coller
 [Commencer à réfléchir au futur éditeur d'assets, comment il va pouvoir être utilisé pour le chargement aussi (chargement en cascade ?)]
 	- Améliorer les textes debug
@@ -30,45 +32,42 @@
 	- Regarder si c'est possible de récupérer le nom d'une classe pour les print warning de template ("unable to find component of given class")
 
 
-== MOYEN TERME ==
+== MOYEN TERME == (possible pour fin 2026 ?)
 
 ~ Faire un éditeur d'assets (utiliser ImGUI pour l'interface)
+
+~ Créer et implémenter l'ECS V3 :
+	- rework du transform pour un système proche d'Unreal, avec des composants qui peuvent s'attacher à d'autres composants
+	- rework des entités pour que ça ne soit plus que des "id" et qu'elles n'aient plus aucune logique propre
 
 ~ Etendre l'éditeur d'assets pour faire un éditeur de préfab
 
 ~ Améliorer le doomlike avec l'éditeur de préfab
 
 
-== LONG TERME == (étudier lequel est le plus important)
+== LONG TERME == (améliorer d'autres systèmes au niveau de finition de l'ECS V3)
+
+~ Intégrer une librairie physique beaucoup plus complète (adieu le AABB custom)
+
+~ Améliorer le rendu (il faut mieux que le phong lighting, et avoir au moins des normal map ça serait bien)
+[Regarder "Advanced OpenGL", "Advanced Lighting" et "PBR Lighting" de learnopengl.com]
+
+~ Améliorer le système d'inputs (avoir la possiblité de se bind et de consommer les inputs ?)
+[Si possible, gérer les manettes ça serait insane]
 
 ~ Mettre des particules (avec ces vidéos ? https://www.youtube.com/watch?v=4YhQJPD7ylQ)
 
-~ Animations 3D : https://ogldev.org/www/tutorial38/tutorial38.html
+~ Créer un éditeur de level à partir de l'éditeur de prefabs
 
-~ Mettre un éditeur de level à partir de l'éditeur de prefabs
+~ Mettre des animations 3D : https://ogldev.org/www/tutorial38/tutorial38.html
 
-
-== PROGRAMMATION GRAPHIQUE == (aka j'ai envie mais pas le focus principal (au moins jusqu'à ce que j'ai trouvé un taff))
-
-~ Partie "Advanced OpenGL" de learnopengl.com
-
-~ Partie "Advanced Lighting" de learnopengl.com
-
-~ Partie "PBR Lighting" de learnopengl.com
-
-
-== TRES LONG TERME == (aka ça sera jamais fait)
-
-~ "Finir" la physique avec la répulsion des collisions body/body (imagine pousser une caisse dans un mur oskour)
-
-~ Mettre un système de physique supportant plus que du AABB
-
-~ Mettre un éditeur complet :skull:
+~ Créer un système de build/package pour le moteur, pour pouvoir faire des vraies releases des jeux
 
 
 == AUTRES ==
 
 ~ Compute la direction des Spot Light en fonction de la rotation de l'Entity (avoir une rotation offset ? avoir un vecteur de direction offset ?)
+[Probablement obsolète une fois l'ECS V3 implémenté, à voir]
 
 ~ Finir les sons dans le doomlike (mouvement ennemis, mur qui bouge, lumière qui s'allume)
 
@@ -87,8 +86,7 @@
 ~ Intégrer des cullings pour le rendering (au moins le frustum culling)
 
 ~ Intégrer l'oct-tree pour les collisions
-
-~ Améliorer les draw call: remplacer la liste de model renderer component, la liste de text renderer component, etc. par une liste de draw call avec toutes les infos nécessaires, ce qui permettrait au moins de les trier par shader et par material, ce qui serait beaucoup mieux que maintenant
+[À voir une fois la vraie librairie physique implémentée]
 
 
 == REFLEXIONS / PROBLEMES CONNUS ==
