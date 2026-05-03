@@ -5,6 +5,7 @@
 #include <Rendering/modelRendererComponent.h>
 #include <Rendering/Lights/directionalLightComponent.h>
 #include <Rendering/Lights/pointLightComponent.h>
+#include <Rendering/Lights/spotLightComponent.h>
 
 
 void WipScene::loadScene()
@@ -63,6 +64,14 @@ void WipScene::loadScene()
 	PointLightComponent& cyan_point_light = ECS::GetComponent(cyanCube->addComponentByClass<PointLightComponent>());
 	cyan_point_light.lightColor = Color::cyan;
 	cyan_point_light.useColorToSpecular = true;
+
+	Entity* spot_light_entity = createEntity();
+	spot_light_entity->setPosition(Vector3{ -1.0f, 2.0f, -2.5f });
+	SpotLightComponent& spot_light = ECS::GetComponent(spot_light_entity->addComponentByClass<SpotLightComponent>());
+	spot_light.lightColor = Color::magenta;
+	spot_light.direction = Vector3::negUnitY;
+	spot_light.cutoffs = SpotLightCutoffs{ Maths::cos(Maths::toRadians(20.0f)), Maths::cos(Maths::toRadians(25.0f)) };
+	spot_light.diffuseStrength = 1.0f;
 
 
 	// Cameras

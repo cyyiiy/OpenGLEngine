@@ -75,6 +75,7 @@ private:
 
 	void useDirectionalLight(const class DirectionalLightComponent& dirLightComponent, Shader& shaderInUsage);
 	void usePointLight(const class PointLightComponent& pointLightComponent, Shader& shaderInUsage);
+	void useSpotLight(const class SpotLightComponent& spotLightComponent, Shader& shaderInUsage);
 
 
 	std::unordered_map<Shader*, std::vector<Material*>> materials;
