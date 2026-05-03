@@ -4,6 +4,7 @@
 #include <Inputs/Input.h>
 #include <Rendering/modelRendererComponent.h>
 #include <Rendering/Lights/directionalLightComponent.h>
+#include <Rendering/Lights/pointLightComponent.h>
 
 
 void WipScene::loadScene()
@@ -55,6 +56,13 @@ void WipScene::loadScene()
 	directional_light.direction = Vector3::normalize(Vector3{ 0.5f, -1.0f, 0.75f });
 	directional_light.ambientStrength = 0.2f;
 	directional_light.diffuseStrength = 0.9f;
+
+	PointLightComponent& white_point_light = ECS::GetComponent(white_cube->addComponentByClass<PointLightComponent>());
+	white_point_light.lightColor = Color::white;
+
+	PointLightComponent& cyan_point_light = ECS::GetComponent(cyanCube->addComponentByClass<PointLightComponent>());
+	cyan_point_light.lightColor = Color::cyan;
+	cyan_point_light.useColorToSpecular = true;
 
 
 	// Cameras

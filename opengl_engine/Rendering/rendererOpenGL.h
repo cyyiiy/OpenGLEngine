@@ -74,6 +74,7 @@ private:
 	void drawModelComponent(const class ModelRendererComponent& modelComponent, Material& materialInUsage);
 
 	void useDirectionalLight(const class DirectionalLightComponent& dirLightComponent, Shader& shaderInUsage);
+	void usePointLight(const class PointLightComponent& pointLightComponent, Shader& shaderInUsage);
 
 
 	std::unordered_map<Shader*, std::vector<Material*>> materials;

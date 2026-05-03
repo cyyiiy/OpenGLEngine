@@ -222,6 +222,8 @@
     <ClInclude Include="Rendering\Debug\point.h" />
     <ClInclude Include="Rendering\Lights\directionalLightComponent.h" />
     <ClInclude Include="Rendering\Lights\lightComponent.h" />
+    <ClInclude Include="Rendering\Lights\pointLightComponent.h" />
+    <ClInclude Include="Rendering\Lights\positionBasedLight.h" />
     <ClInclude Include="Rendering\material.h" />
     <ClInclude Include="Rendering\modelRendererComponent.h" />
     <ClInclude Include="Rendering\Model\mesh.h" />

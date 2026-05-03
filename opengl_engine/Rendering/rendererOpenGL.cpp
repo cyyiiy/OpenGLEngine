@@ -5,6 +5,7 @@
 #include <ECS/entity.h>
 #include <Rendering/modelRendererComponent.h>
 #include <Rendering/Lights/directionalLightComponent.h>
+#include <Rendering/Lights/pointLightComponent.h>
 #include <algorithm>
 #include <stdexcept>
 
@@ -34,6 +35,7 @@ void RendererOpenGL::draw()
 	// Get the needed component managers
 	auto& model_renderers_manager = ECS::Manager<ModelRendererComponent>();
 	auto& directional_lights_manager = ECS::Manager<DirectionalLightComponent>();
+	auto& point_lights_manager = ECS::Manager<PointLightComponent>();
 
 	// Loop through all shaders
 	for (auto& materials_by_shaders : materials)
@@ -56,10 +58,19 @@ void RendererOpenGL::draw()
 			lights_count[EDirectionalLight] = 0;
 			lights_count[EPointLight] = 0;
 			lights_count[ESpotLight] = 0;
+
 			directional_lights_manager.ForEach([this, shader](const DirectionalLightComponent& dir_light_component)
-				{
-					this->useDirectionalLight(dir_light_component, *shader);
-				});
+			{
+				this->useDirectionalLight(dir_light_component, *shader);
+			});
+
+			point_lights_manager.ForEach([this, shader](const PointLightComponent& point_light_component)
+			{
+				this->usePointLight(point_light_component, *shader);
+			});
+			shader->setInt("nbPointLights", lights_count[EPointLight]);
+
+			shader->setVec3("viewPos", current_camera.getCamPosition());
 
 			/*for (auto light_t : lights)
 			{
@@ -333,20 +344,56 @@ void RendererOpenGL::drawModelComponent(const ModelRendererComponent& modelCompo
 
 void RendererOpenGL::useDirectionalLight(const DirectionalLightComponent& dirLightComponent, Shader& shaderInUsage)
 {
+	// 1. Check if the directional lights limit has been reached
 	const int limit = LIGHTS_LIMITS.at(EDirectionalLight);
 	if (lights_count[EDirectionalLight] >= limit) return;
 
 	if (!dirLightComponent.active) return;
 
+	// 2. Set the light informations in the shader
 	shaderInUsage.setVec3("dirLight.direction", dirLightComponent.direction);
 	shaderInUsage.setVec3("dirLight.ambient", dirLightComponent.ambientStrength * dirLightComponent.lightColor.toVector());
 	shaderInUsage.setVec3("dirLight.diffuse", dirLightComponent.diffuseStrength * dirLightComponent.lightColor.toVector());
 	shaderInUsage.setVec3("dirLight.specular", Color::white.toVector());
 
+	// 3. Increase the directional lights limit
 	lights_count[EDirectionalLight]++;
 	if (lights_count[EDirectionalLight] >= limit)
 	{
 		Locator::getLog().LogMessage_Category("Renderer: There are more than " + std::to_string(limit) + " active directional lights.", LogCategory::Warning);
+	}
+}
+
+void RendererOpenGL::usePointLight(const PointLightComponent& pointLightComponent, Shader& shaderInUsage)
+{
+	// 1. Check if the point lights limit has been reached
+	const int limit = LIGHTS_LIMITS.at(EPointLight);
+	if (lights_count[EPointLight] >= limit) return;
+
+	if (!pointLightComponent.active) return;
+
+	// 2. Compute the point light world position
+	const Matrix4 light_pos_matrix = 
+		Matrix4::createTranslation(pointLightComponent.offset) * 
+		pointLightComponent.getOwner()->getModelMatrix();
+	const Vector3 light_position = light_pos_matrix.getTranslation();
+
+	// 3. Set the light informations in the shader
+	std::string light_index = std::to_string(lights_count[EPointLight]);
+	shaderInUsage.setVec3("pointLights[" + light_index + "].position", light_position);
+	shaderInUsage.setVec3("pointLights[" + light_index + "].ambient", pointLightComponent.ambientStrength * pointLightComponent.lightColor.toVector());
+	shaderInUsage.setVec3("pointLights[" + light_index + "].diffuse", pointLightComponent.diffuseStrength * pointLightComponent.lightColor.toVector());
+	const Color specular_color = pointLightComponent.useColorToSpecular ? pointLightComponent.lightColor : Color::white;
+	shaderInUsage.setVec3("pointLights[" + light_index + "].specular", specular_color.toVector());
+	shaderInUsage.setFloat("pointLights[" + light_index + "].constant", pointLightComponent.attenuation.constant);
+	shaderInUsage.setFloat("pointLights[" + light_index + "].linear", pointLightComponent.attenuation.linear);
+	shaderInUsage.setFloat("pointLights[" + light_index + "].quadratic", pointLightComponent.attenuation.quadratic);
+
+	// 4. Increase the point lights limit
+	lights_count[EPointLight]++;
+	if (lights_count[EDirectionalLight] >= limit)
+	{
+		Locator::getLog().LogMessage_Category("Renderer: There are more than " + std::to_string(limit) + " active point lights.", LogCategory::Warning);
 	}
 }
 
