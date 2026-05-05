@@ -245,9 +245,9 @@ void Engine::run()
 
 	//  close engine
 	unloadGame();
-	//audio->Quit();
 	clearEntities();
-	ECS::Clear();
+	ECS::Clear(true);
+	//audio->Quit();
 	//delete log;
 	//delete audio;
 }
