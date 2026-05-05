@@ -228,6 +228,7 @@ void Engine::run()
 
 
 		if (game) game->lateUpdate();
+		ECS::DeletePendings();
 
 
 		//  time logic second part
@@ -246,6 +247,7 @@ void Engine::run()
 	unloadGame();
 	//audio->Quit();
 	clearEntities();
+	ECS::Clear();
 	//delete log;
 	//delete audio;
 }
