@@ -27,6 +27,7 @@ enum LightType : uint8_t
 	ESpotLight
 };
 
+// Hard limit coded in the shader of how many lights of each type can be active at once
 const std::unordered_map<LightType, int> LIGHTS_LIMITS
 {
 	{ EDirectionalLight, 1 },
