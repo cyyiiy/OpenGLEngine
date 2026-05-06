@@ -27,3 +27,11 @@ public:
 	/** Wether or not to use the diffuse color for the specular color (default specular color is white). */
 	bool useColorToSpecular{ false };
 };
+
+
+// Specify sublist size for 'SpotLightComponent'
+template<>
+struct ComponentSublistSize<SpotLightComponent>
+{
+	static constexpr size_t value = 16;
+};

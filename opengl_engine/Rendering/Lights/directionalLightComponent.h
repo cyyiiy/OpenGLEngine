@@ -12,3 +12,11 @@ public:
 	/** The direction of the directional light. */
 	Vector3 direction{ Vector3::unitX };
 };
+
+
+// Specify sublist size for 'DirectionalLightComponent'
+template<>
+struct ComponentSublistSize<DirectionalLightComponent>
+{
+	static constexpr size_t value = 1;
+};
