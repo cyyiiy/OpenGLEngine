@@ -13,7 +13,6 @@
 #include <Rendering/material.h>
 //#include <Rendering/Text/textRendererComponent.h>
 //#include <Rendering/Hud/spriteRendererComponent.h>
-//#include <Rendering/Debug/debugRenderBase.h>
 
 #include <vector>
 #include <unordered_map>
@@ -62,10 +61,6 @@ public:
 	//void AddSprite(SpriteRendererComponent* sprite) override;
 	//void RemoveSprite(SpriteRendererComponent* sprite) override;
 
-	//void DrawDebugPoint(const Vector3& pointPosition, const Color& color, float duration) override;
-	//void DrawDebugLine(const Vector3& pointA, const Vector3& pointB, const Color& color, float duration) override;
-	//void DrawDebugCube(const Box& boxInfos, const Color& color, float duration) override;
-
 
 
 private:
@@ -83,7 +78,6 @@ private:
 	std::unordered_map<LightType, int> lights_count;
 	//std::vector<TextRendererComponent*> texts;
 	//std::vector<SpriteRendererComponent*> sprites;
-	//std::vector<DebugRenderBase*> debugDraws;
 
 	Color clearColor{ Color::black };
 
@@ -108,7 +102,6 @@ public:
 	void setDebugCamActivated(bool debugCamActivated_);
 
 	void draw();
-	//void updateDebugDraws(float dt);
 
 	void setWindowSize(Vector2Int windowSize_);
 

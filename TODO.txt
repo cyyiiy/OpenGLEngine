@@ -5,7 +5,7 @@
 	- Changer les systèmes du moteur pour utiliser le nouvel ECS :
 	  (Note: penser à regarder le ClasseParent::fonction() et l'utiliser si c'est pertinent)
 		> Game & Scene system - fait
-		> Rendering - en cours
+		> Rendering - fait
 		> UI
 		> Audio
 		> Physique

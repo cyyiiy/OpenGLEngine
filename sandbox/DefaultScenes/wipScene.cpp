@@ -2,10 +2,12 @@
 #include <ServiceLocator/locator.h>
 #include <Assets/assetManager.h>
 #include <Inputs/Input.h>
+#include <GameplayStatics/gameplayStatics.h>
 #include <Rendering/modelRendererComponent.h>
 #include <Rendering/Lights/directionalLightComponent.h>
 #include <Rendering/Lights/pointLightComponent.h>
 #include <Rendering/Lights/spotLightComponent.h>
+#include <Maths/Geometry/box.h>
 
 
 void WipScene::loadScene()
@@ -129,15 +131,42 @@ void WipScene::updateScene(float dt)
 	cam_comp.setPitch(Maths::clamp(cam_comp.getPitch() + mouse_delta.y, -89.0f, 89.0f));
 
 	// Switch active camera
-	if (Input::IsKeyDown(GLFW_KEY_KP_1))
+	if (Input::IsKeyPressed(GLFW_KEY_KP_1))
 	{
 		ECS::GetComponent(cameraOne).setAsActiveCamera();
 		activeCamera = cameraOne;
 	}
 
-	if (Input::IsKeyDown(GLFW_KEY_KP_2))
+	if (Input::IsKeyPressed(GLFW_KEY_KP_2))
 	{
 		ECS::GetComponent(cameraTwo).setAsActiveCamera();
 		activeCamera = cameraTwo;
+	}
+
+	// Draw debug shapes
+	if (Input::IsKeyPressed(GLFW_KEY_KP_4))
+	{
+		ComponentHandle<CameraComponent> inactive_camera = (activeCamera == cameraOne) ? cameraTwo : cameraOne;
+		GameplayStatics::DrawDebugPoint(ECS::GetComponent(inactive_camera).getCamPosition(), Color::red, 5.0f);
+	}
+
+	if (Input::IsKeyPressed(GLFW_KEY_KP_5))
+	{
+		ComponentHandle<CameraComponent> inactive_camera = (activeCamera == cameraOne) ? cameraTwo : cameraOne;
+		CameraComponent& cam = ECS::GetComponent(inactive_camera);
+		GameplayStatics::DrawDebugLine(cam.getCamPosition(), cam.getCamPosition() + cam.getCamForward() * 2.0f, Color::magenta, 5.0f);
+	}
+
+	if (Input::IsKeyPressed(GLFW_KEY_KP_6))
+	{
+		Box debug_box{ cyanCube->getPosition(), Vector3::one * 0.1f };
+		GameplayStatics::DrawDebugCube(debug_box, Color::blue, 5.0f);
+	}
+
+
+	// TODO: Remove this at some point!
+	if (Input::IsKeyPressed(GLFW_KEY_KP_0))
+	{
+		ECS::DebugECS();
 	}
 }

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -168,16 +168,15 @@
     <ClCompile Include="Core\transform.cpp" />
     <ClCompile Include="Core\window.cpp" />
     <ClCompile Include="Rendering\cameraComponent.cpp" />
-    <ClCompile Include="Rendering\Debug\cube.cpp" />
-    <ClCompile Include="Rendering\Debug\debugRenderBase.cpp" />
-    <ClCompile Include="Rendering\Debug\line.cpp" />
-    <ClCompile Include="Rendering\Debug\point.cpp" />
     <ClCompile Include="Rendering\material.cpp" />
     <ClCompile Include="Rendering\Model\mesh.cpp" />
     <ClCompile Include="Rendering\Model\model.cpp" />
     <ClCompile Include="Rendering\Model\vertexArray.cpp" />
     <ClCompile Include="Rendering\rendererOpenGL.cpp" />
     <ClCompile Include="Rendering\shader.cpp" />
+    <ClCompile Include="Rendering\Shapes\shapeCube.cpp" />
+    <ClCompile Include="Rendering\Shapes\shapeLine.cpp" />
+    <ClCompile Include="Rendering\Shapes\shapePoint.cpp" />
     <ClCompile Include="Rendering\texture.cpp" />
     <ClCompile Include="ServiceLocator\locator.cpp" />
     <ClCompile Include="Utils\color.cpp" />
@@ -216,10 +215,6 @@
     <ClInclude Include="Core\transform.h" />
     <ClInclude Include="Core\window.h" />
     <ClInclude Include="Rendering\cameraComponent.h" />
-    <ClInclude Include="Rendering\Debug\cube.h" />
-    <ClInclude Include="Rendering\Debug\debugRenderBase.h" />
-    <ClInclude Include="Rendering\Debug\line.h" />
-    <ClInclude Include="Rendering\Debug\point.h" />
     <ClInclude Include="Rendering\Lights\directionalLightComponent.h" />
     <ClInclude Include="Rendering\Lights\lightComponent.h" />
     <ClInclude Include="Rendering\Lights\pointLightComponent.h" />
@@ -232,6 +227,11 @@
     <ClInclude Include="Rendering\Model\vertexArray.h" />
     <ClInclude Include="Rendering\rendererOpenGL.h" />
     <ClInclude Include="Rendering\shader.h" />
+    <ClInclude Include="Rendering\shapeRendererComponent.h" />
+    <ClInclude Include="Rendering\Shapes\shapeBase.h" />
+    <ClInclude Include="Rendering\Shapes\shapeCube.h" />
+    <ClInclude Include="Rendering\Shapes\shapeLine.h" />
+    <ClInclude Include="Rendering\Shapes\shapePoint.h" />
     <ClInclude Include="Rendering\texture.h" />
     <ClInclude Include="ServiceLocator\locator.h" />
     <ClInclude Include="ServiceLocator\log.h" />

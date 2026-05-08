@@ -201,6 +201,7 @@ void Engine::run()
 			if (game) game->update(deltaTime);
 
 			ECS::Update(deltaTime);
+			GameplayStatics::UpdateDebugs(gamePaused ? 0.0f : deltaTime); //  debug draws don't expire if engine is paused
 
 			//Locator::getPhysics().UpdatePhysics(deltaTime);
 
@@ -211,7 +212,6 @@ void Engine::run()
 		//  rendering part
 		// ----------------
 		renderer->draw();
-		//renderer->updateDebugDraws(gamePaused ? 0.0f : deltaTime); //  debug draws don't expire if engine is paused
 
 
 
@@ -434,7 +434,7 @@ void Engine::windowResize(GLFWwindow* glWindow, int width, int height)
 	Locator::getLog().LogMessage_Category("Window: Size updated to [Width: " + std::to_string(width) + " | Height: " + std::to_string(height) + "]", LogCategory::Info);
 
 	Vector2Int window_size(width, height);
-	//renderer->setWindowSize(window_size);
+	renderer->setWindowSize(window_size);
 	GameplayStatics::SetWindowSize(window_size);
 	GameplayStatics::OnScrenResize.broadcast(window_size);
 }

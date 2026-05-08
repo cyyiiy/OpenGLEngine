@@ -4,15 +4,12 @@
 #include <ECS/ecs.h>
 #include <ECS/entity.h>
 #include <Rendering/modelRendererComponent.h>
+#include <Rendering/shapeRendererComponent.h>
 #include <Rendering/Lights/directionalLightComponent.h>
 #include <Rendering/Lights/pointLightComponent.h>
 #include <Rendering/Lights/spotLightComponent.h>
 #include <algorithm>
 #include <stdexcept>
-
-//#include "Debug/point.h"
-//#include "Debug/line.h"
-//#include "Debug/cube.h"
 
 
 
@@ -103,30 +100,37 @@ void RendererOpenGL::draw()
 		}
 	}
 
-	/*  WILL BE RE-IMPLEMENTED LATER (DEBUG + HUD)
-
 	//  draw debug part
 	Material& debug_draw_mat = AssetManager::GetMaterial("debug_draws");
 	Shader& debug_draw_shader = debug_draw_mat.getShader();
 	debug_draw_shader.use();
 	debug_draw_shader.setMatrix4("view", view.getAsFloatPtr());
 	debug_draw_shader.setMatrix4("projection", projection.getAsFloatPtr());
-
+	
 	debug_draw_mat.use();
+	Shader* debug_shader_ptr = debug_draw_mat.getShaderPtr();
 
-	for (auto& debug_draw : debugDraws)
+	auto& shape_renderers_manager = ECS::Manager<ShapeRendererComponent>();
+	shape_renderers_manager.ForEach([debug_shader_ptr](const ShapeRendererComponent& shape_renderer_component)
 	{
-		debug_draw->draw(debug_draw_mat, debug_draw->getColor());
-	}
+		shape_renderer_component.shape->draw(*debug_shader_ptr);
+	});
 
-	if (physicsDebugMode)
+
+
+	// TODO (when physics is back online):
+	// - Renderer get all collision components (only Box AABB) through ECS:
+	//   These components have informations (box, entity) for the renderer to draw them
+	// - Then renderer get all "RaycastRendererComponents" and draw their shapes
+	//   (raycasts objects only need to exist to render debug after the physic job is done)
+
+	/* if (physicsDebugMode)
 	{
 		Locator::getPhysics().DrawCollisionsDebug(debug_draw_mat);
-	}
+	}*/
 
 
-
-
+	/*  WILL BE RE-IMPLEMENTED LATER (HUD)
 
 	//  RENDERING HUD
 	// ===================
@@ -419,28 +423,6 @@ void RendererOpenGL::useSpotLight(const SpotLightComponent& spotLightComponent, 
 }
 
 
-/*void RendererOpenGL::updateDebugDraws(float dt)
-{
-	std::vector<DebugRenderBase*> expired_debug_draws;
-	for (auto& debug_draw : debugDraws)
-	{
-		if (debug_draw->updateLifetime(dt))
-		{
-			expired_debug_draws.push_back(debug_draw);
-		}
-	}
-
-	for (auto& expired_debug_draw : expired_debug_draws)
-	{
-		auto iter = std::find(debugDraws.begin(), debugDraws.end(), expired_debug_draw);
-		debugDraws.erase(iter);
-	}
-
-	debugDraws.shrink_to_fit();
-	expired_debug_draws.clear();
-}*/
-
-
 
 void RendererOpenGL::SetCamera(ComponentHandle<CameraComponent> camera)
 {
@@ -564,31 +546,7 @@ void RendererOpenGL::RemoveSprite(SpriteRendererComponent* sprite)
 	std::iter_swap(iter, sprites.end() - 1);
 	sprites.pop_back();
 }
-
-
-void RendererOpenGL::DrawDebugPoint(const Vector3& pointPosition, const Color& color, float duration)
-{
-	Point* debug_point = new Point();
-	debug_point->setupDebugDraw(color, duration);
-	debug_point->setPointPostition(pointPosition);
-	debugDraws.push_back(debug_point);
-}
-
-void RendererOpenGL::DrawDebugLine(const Vector3& pointA, const Vector3& pointB, const Color& color, float duration)
-{
-	Line* debug_line = new Line();
-	debug_line->setupDebugDraw(color, duration);
-	debug_line->setPoints(pointA, pointB);
-	debugDraws.push_back(debug_line);
-}
-
-void RendererOpenGL::DrawDebugCube(const Box& boxInfos, const Color& color, float duration)
-{
-	Cube* debug_cube = new Cube();
-	debug_cube->setupDebugDraw(color, duration);
-	debug_cube->setBox(boxInfos);
-	debugDraws.push_back(debug_cube);
-}*/
+*/
 
 
 CameraComponent& RendererOpenGL::selectCurrentCam()
