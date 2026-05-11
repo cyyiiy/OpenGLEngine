@@ -1,7 +1,7 @@
 == COURT TERME ==
 
-~ Amélioration du benchmark :
-	- Avoir une nouvelle scène de test Rendering 3D qui teste les performances de plein de materials différents, avec un seul model renderer component pour chaque material
+~ Amélioration du benchmark : - en cours
+	- Avoir une nouvelle scène de test Rendering 3D qui teste les performances de plein de materials différents, avec un seul model renderer component pour chaque material - fait
 	- Avoir une nouvelle scène de test Rendering 3D qui teste les performances en mouvement, avec des model renderer components et des point lights qui bougent en continu
 
 ~ Implémenter la V2 de l'ECS : - en cours sur une autre branche
@@ -22,9 +22,11 @@
 		> Ennemis
 
 ~ Petites updates d'améliorations :
+	- Modifier le service locator pour alléger la classe Engine. Les services sont stockés avec des unique_ptr, comme ça plus besoin de supprimer manuellement le pointeur (pas de stockage dans engine.h), et la classe engine ne touche aux services uniquement via le locator (plus d'accès direct pour supprimer complètement la dépendance de engine aux "vrais" services)
 	- Rajouter un component "lifetime" qui supprime son entité au bout d'un temps donné (component data-only avec système extérieur)
 	- Refactor le "load game asset" du doomlike pour utiliser plus de fonctions et moins de copier coller
 [Commencer à réfléchir au futur éditeur d'assets, comment il va pouvoir être utilisé pour le chargement aussi (chargement en cascade ?)]
+	- Essayer de créer un "debug manager" (avec le service locator ?) pour alléger la classe Engine (honteux de devoir stocker un text renderer component dans engine.h)
 	- Améliorer les textes debug
 [Réduire la taille du texte fps, ajouter la durée de la frame en ms, ajouter textes quand pause & freecam]
 	- Rajouter un repère visuel sur la position réelle des lights en mode draw debug

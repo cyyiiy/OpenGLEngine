@@ -132,6 +132,11 @@ void BenchmarkGame::updateGame(float dt)
 	{
 	case Rendering3D:
 		log.LogMessage_Category("Benchmark: =============== End 3D Rendering benchmark =================", LogCategory::Info);
+		startBenchmarkState(BenchmarkState::Materials);
+		break;
+
+	case Materials:
+		log.LogMessage_Category("Benchmark: =============== End Materials benchmark ====================", LogCategory::Info);
 		startBenchmarkState(BenchmarkState::Rendering2D);
 		break;
 
@@ -204,6 +209,12 @@ void BenchmarkGame::startBenchmarkState(BenchmarkState state)
 		log.LogMessage_Category("Benchmark: =============== Start 3D Rendering benchmark ===============", LogCategory::Info);
 		loadScene(&benchmarkRendering3D);
 		log.LogMessage_Category("Benchmark: Loaded 3D Rendering scene in " + std::to_string((glfwGetTime() - load_scene_time) * 1000.0) + " ms.", LogCategory::Info);
+		break;
+
+	case Materials:
+		log.LogMessage_Category("Benchmark: =============== Start Materials benchmark ==================", LogCategory::Info);
+		loadScene(&benchmarkMaterials);
+		log.LogMessage_Category("Benchmark: Loaded Materials scene in " + std::to_string((glfwGetTime() - load_scene_time) * 1000.0) + " ms.", LogCategory::Info);
 		break;
 
 	case Rendering2D:

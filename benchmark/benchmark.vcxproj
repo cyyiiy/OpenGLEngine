@@ -155,6 +155,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Scenes\benchmarkECS.cpp" />
     <ClCompile Include="Scenes\benchmarkEnd.cpp" />
+    <ClCompile Include="Scenes\benchmarkMaterials.cpp" />
     <ClCompile Include="Scenes\benchmarkPhysics.cpp" />
     <ClCompile Include="Scenes\benchmarkRendering2D.cpp" />
     <ClCompile Include="Scenes\benchmarkRendering3D.cpp" />
@@ -170,6 +171,7 @@
     <ClInclude Include="Components\benchmarkComponentB.h" />
     <ClInclude Include="Scenes\benchmarkECS.h" />
     <ClInclude Include="Scenes\benchmarkEnd.h" />
+    <ClInclude Include="Scenes\benchmarkMaterials.h" />
     <ClInclude Include="Scenes\benchmarkPhysics.h" />
     <ClInclude Include="Scenes\benchmarkRendering2D.h" />
     <ClInclude Include="Scenes\benchmarkRendering3D.h" />
