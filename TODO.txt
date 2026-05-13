@@ -1,8 +1,8 @@
 == COURT TERME ==
 
-~ Amélioration du benchmark : - en cours
+~ Amélioration du benchmark : - fait
 	- Avoir une nouvelle scène de test Rendering 3D qui teste les performances de plein de materials différents, avec un seul model renderer component pour chaque material - fait
-	- Avoir une nouvelle scène de test Rendering 3D qui teste les performances en mouvement, avec des model renderer components et des point lights qui bougent en continu
+	- Avoir une nouvelle scène de test Rendering 3D qui teste les performances en mouvement, avec des model renderer components et des point lights qui bougent en continu - fait
 
 ~ Implémenter la V2 de l'ECS : - en cours sur une autre branche
 	- Intégrer le code du nouvel ECS dans le moteur
@@ -56,6 +56,8 @@
 
 ~ Améliorer le système d'inputs (avoir la possiblité de se bind et de consommer les inputs ?)
 [Si possible, gérer les manettes ça serait insane]
+
+~ Améliorer l'HUD (vrai système d'HUD indépendant au lieu d'utiliser des composants classiques)
 
 ~ Mettre des particules (avec ces vidéos ? https://www.youtube.com/watch?v=4YhQJPD7ylQ)
 
