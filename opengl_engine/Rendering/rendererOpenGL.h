@@ -11,8 +11,6 @@
 
 #include <Rendering/cameraComponent.h>
 #include <Rendering/material.h>
-//#include <Rendering/Text/textRendererComponent.h>
-//#include <Rendering/Hud/spriteRendererComponent.h>
 
 #include <vector>
 #include <unordered_map>
@@ -55,12 +53,6 @@ public:
 	void AddMaterial(Material* material) override;
 	void RemoveMaterial(Material* material) override;
 
-	//void AddText(TextRendererComponent* text) override;
-	//void RemoveText(TextRendererComponent* text) override;
-
-	//void AddSprite(SpriteRendererComponent* sprite) override;
-	//void RemoveSprite(SpriteRendererComponent* sprite) override;
-
 
 
 private:
@@ -76,8 +68,6 @@ private:
 
 	std::unordered_map<Shader*, std::vector<Material*>> materials;
 	std::unordered_map<LightType, int> lights_count;
-	//std::vector<TextRendererComponent*> texts;
-	//std::vector<SpriteRendererComponent*> sprites;
 
 	Color clearColor{ Color::black };
 

@@ -487,68 +487,6 @@ void RendererOpenGL::RemoveMaterial(Material* material)
 }
 
 
-/*void RendererOpenGL::AddLight(LightComponent* light)
-{
-	lights[light->getLightType()].push_back(light);
-
-	if (lights[light->getLightType()].size() > LIGHTS_LIMITS.at(light->getLightType()))
-	{
-		Locator::getLog().LogMessage_Category("Renderer: A light has been added but will not be used as it overflow the lit shader array.", LogCategory::Warning);
-	}
-}
-
-void RendererOpenGL::RemoveLight(LightComponent* light)
-{
-	auto iter = std::find(lights[light->getLightType()].begin(), lights[light->getLightType()].end(), light);
-	if (iter == lights[light->getLightType()].end())
-	{
-		Locator::getLog().LogMessage_Category("Renderer: Tried to remove a light that doesn't exist.", LogCategory::Error);
-		return;
-	}
-
-	std::iter_swap(iter, lights[light->getLightType()].end() - 1);
-	lights[light->getLightType()].pop_back();
-}
-
-
-void RendererOpenGL::AddText(TextRendererComponent* text)
-{
-	texts.push_back(text);
-}
-
-void RendererOpenGL::RemoveText(TextRendererComponent* text)
-{
-	auto iter = std::find(texts.begin(), texts.end(), text);
-	if (iter == texts.end())
-	{
-		Locator::getLog().LogMessage_Category("Renderer: Tried to remove a text that doesn't exist.", LogCategory::Error);
-		return;
-	}
-
-	std::iter_swap(iter, texts.end() - 1);
-	texts.pop_back();
-}
-
-void RendererOpenGL::AddSprite(SpriteRendererComponent* sprite)
-{
-	sprites.push_back(sprite);
-}
-
-void RendererOpenGL::RemoveSprite(SpriteRendererComponent* sprite)
-{
-	auto iter = std::find(sprites.begin(), sprites.end(), sprite);
-	if (iter == sprites.end())
-	{
-		Locator::getLog().LogMessage_Category("Renderer: Tried to remove a sprite that doesn't exist.", LogCategory::Error);
-		return;
-	}
-
-	std::iter_swap(iter, sprites.end() - 1);
-	sprites.pop_back();
-}
-*/
-
-
 CameraComponent& RendererOpenGL::selectCurrentCam()
 {
 	return debugCamActivated ? ECS::GetComponent(debugCamera) : ECS::GetComponent(activeCamera);

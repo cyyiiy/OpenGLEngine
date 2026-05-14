@@ -72,43 +72,4 @@ public:
 	* @param	material	The material to unregister.
 	*/
 	virtual void RemoveMaterial(Material* material) = 0;
-
-
-	/**
-	* Register a light component to the renderer.
-	* @param	light	The light component to register.
-	*/
-	//virtual void AddLight(LightComponent* light) = 0;
-
-	/**
-	* Unregister a light component from the renderer.
-	* @param	light	The light component to unregister.
-	*/
-	//virtual void RemoveLight(LightComponent* light) = 0;
-
-
-	/**
-	* Register a text to the renderer.
-	* @param	text	The text to register.
-	*/
-	//virtual void AddText(TextRendererComponent* text) = 0;
-
-	/**
-	* Unregister a text from the renderer.
-	* @param	text	The text to unregister.
-	*/
-	//virtual void RemoveText(TextRendererComponent* text) = 0;
-
-
-	/**
-	* Register a sprite to the renderer.
-	* @param	sprite	The sprite to register.
-	*/
-	//virtual void AddSprite(SpriteRendererComponent* sprite) = 0;
-
-	/**
-	* Unregister a sprite from the renderer.
-	* @param	sprite	The sprite to unregister.
-	*/
-	//virtual void RemoveSprite(SpriteRendererComponent* sprite) = 0;
 };
