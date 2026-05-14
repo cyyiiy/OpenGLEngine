@@ -1,5 +1,6 @@
 #pragma once
 #include "positionBasedLight.h"
+#include <ECS/component.h>
 
 
 /** Spot Light Cutoff
@@ -15,7 +16,7 @@ struct SpotLightCutoffs
 /** Spot Light Component
 * A data-only component for a spot light.
 */
-class SpotLightComponent : public PositionBasedLight
+class SpotLightComponent : public Component, public PositionBasedLight
 {
 public:
 	/** The direction of the spot light. */

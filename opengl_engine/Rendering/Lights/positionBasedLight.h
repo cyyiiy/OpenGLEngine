@@ -1,5 +1,6 @@
 #pragma once
-#include "lightComponent.h"
+#include "lightBase.h"
+#include <ECS/component.h>
 #include <Maths/Vector3.h>
 
 
@@ -16,9 +17,9 @@ struct LightAttenuation
 
 
 /** Position Based Light
-* Abstract base class for light components that have a world position.
+* Shared base values for specific light components that have a world position.
 */
-class PositionBasedLight : public LightComponent
+class PositionBasedLight : public LightBase
 {
 public:
 	/** The offset position from entity of the light. */

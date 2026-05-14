@@ -1,12 +1,13 @@
 #pragma once
-#include "lightComponent.h"
+#include "lightBase.h"
+#include <ECS/component.h>
 #include <Maths/Vector3.h>
 
 
 /** Directional Light Component
 * A data-only component for a directional light.
 */
-class DirectionalLightComponent : public LightComponent
+class DirectionalLightComponent : public Component, public LightBase
 {
 public:
 	/** The direction of the directional light. */

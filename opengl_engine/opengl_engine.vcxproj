@@ -218,7 +218,7 @@
     <ClInclude Include="Rendering\Hud\hudElement.h" />
     <ClInclude Include="Rendering\Hud\spriteComponent.h" />
     <ClInclude Include="Rendering\Lights\directionalLightComponent.h" />
-    <ClInclude Include="Rendering\Lights\lightComponent.h" />
+    <ClInclude Include="Rendering\Lights\lightBase.h" />
     <ClInclude Include="Rendering\Lights\pointLightComponent.h" />
     <ClInclude Include="Rendering\Lights\positionBasedLight.h" />
     <ClInclude Include="Rendering\Lights\spotLightComponent.h" />

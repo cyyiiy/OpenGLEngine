@@ -1,12 +1,11 @@
 #pragma once
-#include <ECS/component.h>
 #include <Utils/color.h>
 
 
-/** Light Component
-* Abstract base class for specific light components.
+/** Light Base
+* Shared base values for specific light components.
 */
-class LightComponent : public Component
+class LightBase
 {
 public:
 	/** Wether or not the light is used by the renderer. */
