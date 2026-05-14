@@ -1,6 +1,8 @@
 #pragma once
 #include <Core/scene.h>
 #include <Rendering/cameraComponent.h>
+#include <Rendering/Hud/spriteComponent.h>
+
 
 class WipScene : public Scene
 {
@@ -13,6 +15,8 @@ private:
 	ComponentHandle<CameraComponent> cameraOne;
 	ComponentHandle<CameraComponent> cameraTwo;
 	ComponentHandle<CameraComponent> activeCamera;
+
+	ComponentHandle<SpriteComponent> sprite;
 	
 	Entity* cyanCube{ nullptr };
 	float cyanCubeTimer{ 0.0f };

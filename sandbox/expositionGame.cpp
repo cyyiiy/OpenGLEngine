@@ -31,6 +31,8 @@ void ExpositionGame::loadGameAssets()
 	AssetManager::LoadTexture("floor_wood_diffuse", "doomlike/textures/wood_floor_basecolor.jpg", false);
 	AssetManager::LoadTexture("floor_wood_specular", "doomlike/textures/wood_floor_specular.jpg", false);
 
+	AssetManager::LoadTexture("smileyface_sprite", "awesomeface.png", false);
+
 	Material& container_mat = AssetManager::CreateMaterial("container", AssetManager::GetShader("lit_object"));
 	container_mat.addTexture(&AssetManager::GetTexture("container_diffuse"), TextureType::Diffuse);
 	container_mat.addTexture(&AssetManager::GetTexture("container_specular"), TextureType::Specular);

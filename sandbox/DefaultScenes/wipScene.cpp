@@ -92,6 +92,16 @@ void WipScene::loadScene()
 	
 	ECS::GetComponent(cameraOne).setAsActiveCamera();
 	activeCamera = cameraOne;
+
+
+	// Hud
+
+	Entity* hud_entity = createEntity();
+	sprite = hud_entity->addComponentByClass<SpriteComponent>();
+	SpriteComponent& sprite_comp = ECS::GetComponent(sprite);
+	sprite_comp.texture = &AssetManager::GetTexture("smileyface_sprite");
+	sprite_comp.position = HudPosition{ Vector2{ 1.0f, 0.0f }, Vector2::halfUnit, Vector2{ -80.0f, 80.0f } };
+	sprite_comp.scale = Vector2{ 0.25f };
 }
 
 void WipScene::unloadScene()
@@ -162,6 +172,10 @@ void WipScene::updateScene(float dt)
 		Box debug_box{ cyanCube->getPosition(), Vector3::one * 0.1f };
 		GameplayStatics::DrawDebugCube(debug_box, Color::blue, 5.0f);
 	}
+
+	// Automatic rotation of the sprite
+	SpriteComponent& sprite_comp = ECS::GetComponent(sprite);
+	sprite_comp.rotAngle = Maths::fmod(sprite_comp.rotAngle + dt * 180.0f, 360.0f);
 
 
 	// TODO: Remove this at some point!

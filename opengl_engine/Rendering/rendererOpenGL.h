@@ -65,6 +65,8 @@ private:
 	void usePointLight(const class PointLightComponent& pointLightComponent, Shader& shaderInUsage);
 	void useSpotLight(const class SpotLightComponent& spotLightComponent, Shader& shaderInUsage);
 
+	void drawSpriteComponent(const class SpriteComponent& spriteComponent, Shader& shaderInUsage);
+
 
 	std::unordered_map<Shader*, std::vector<Material*>> materials;
 	std::unordered_map<LightType, int> lights_count;

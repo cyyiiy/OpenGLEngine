@@ -8,6 +8,7 @@
 #include <Rendering/Lights/directionalLightComponent.h>
 #include <Rendering/Lights/pointLightComponent.h>
 #include <Rendering/Lights/spotLightComponent.h>
+#include <Rendering/Hud/spriteComponent.h>
 #include <algorithm>
 #include <stdexcept>
 
@@ -100,7 +101,7 @@ void RendererOpenGL::draw()
 		}
 	}
 
-	//  draw debug part
+	// Draw debug part
 	Material& debug_draw_mat = AssetManager::GetMaterial("debug_draws");
 	Shader& debug_draw_shader = debug_draw_mat.getShader();
 	debug_draw_shader.use();
@@ -117,7 +118,6 @@ void RendererOpenGL::draw()
 	});
 
 
-
 	// TODO (when physics is back online):
 	// - Renderer get all collision components (only Box AABB) through ECS:
 	//   These components have informations (box, entity) for the renderer to draw them
@@ -129,9 +129,6 @@ void RendererOpenGL::draw()
 		Locator::getPhysics().DrawCollisionsDebug(debug_draw_mat);
 	}*/
 
-
-	/*  WILL BE RE-IMPLEMENTED LATER (HUD)
-
 	//  RENDERING HUD
 	// ===================
 
@@ -139,13 +136,16 @@ void RendererOpenGL::draw()
 
 	Matrix4 hud_projection = Matrix4::createSimpleViewProj(static_cast<float>(windowSize.x), static_cast<float>(windowSize.y));
 
+	// Bind the hud (char and sprite) vertex array
+	AssetManager::GetVertexArray("hud_quad").setActive();
+
+
+	/*  WILL BE RE-IMPLEMENTED LATER (TEXT RENDERING)
+
 	//  prepare the shader used in text rendering
 	Shader& text_render_shader = AssetManager::GetShader("text_render");
 	text_render_shader.use();
 	text_render_shader.setMatrix4("projection", hud_projection.getAsFloatPtr());
-
-	//  bind the char (and sprite) vertex array
-	AssetManager::GetVertexArray("hud_quad").setActive();
 
 	for (auto& text : texts)
 	{
@@ -254,40 +254,23 @@ void RendererOpenGL::draw()
 		//  unbind font texture array
 		glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 	}
+	*/
 
-	//  do not unbind char vertex array as it will also serve as sprite vertex array
 
-
-	//  prepare the shader used in sprite rendering
+	// Prepare the shader used in sprite rendering
 	Shader& sprite_render_shader = AssetManager::GetShader("sprite_render");
 	sprite_render_shader.use();
 	sprite_render_shader.setMatrix4("projection", hud_projection.getAsFloatPtr());
+	Shader* sprite_shader_ptr = &sprite_render_shader;
 
-	for (auto& sprite : sprites)
+	auto& hud_sprites_manager = ECS::Manager<SpriteComponent>();
+	hud_sprites_manager.ForEach([this, sprite_shader_ptr](const SpriteComponent& sprite_component)
 	{
-		//  check sprite enabled
-		if (!sprite->canDraw()) continue;
+		this->drawSpriteComponent(sprite_component, *sprite_shader_ptr);
+	});
 
-		//  use sprite texture
-		glActiveTexture(GL_TEXTURE0);
-		sprite->getSpriteTexture().use();
-
-		//  set sprite color
-		sprite_render_shader.setVec3("spriteColor", sprite->getTintColor().toVector());
-
-		//  set sprite transform
-		sprite_render_shader.setMatrix4("spriteTransform", sprite->getHudTransform().getAsFloatPtr());
-
-		//  draw
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-		//  unbind sprite texture
-		glActiveTexture(GL_TEXTURE0);
-	}
-
+	// Unbind the hud vertex array
 	glBindVertexArray(0);
-
-	*/
 }
 
 void RendererOpenGL::drawModelComponent(const ModelRendererComponent& modelComponent, Material& materialInUsage)
@@ -420,6 +403,39 @@ void RendererOpenGL::useSpotLight(const SpotLightComponent& spotLightComponent, 
 	{
 		Locator::getLog().LogMessage_Category("Renderer: There are more than " + std::to_string(limit) + " active spot lights.", LogCategory::Warning);
 	}
+}
+
+void RendererOpenGL::drawSpriteComponent(const SpriteComponent& spriteComponent, Shader& shaderInUsage)
+{
+	// 1. Check if the sprite renderer component is valid
+	Texture* sprite_texture = spriteComponent.texture;
+	if (sprite_texture == nullptr) return;
+
+	if (!spriteComponent.active) return;
+
+	// 2. Compute the hud matrix
+	const Vector2 sprite_size = sprite_texture->getTextureSize() * spriteComponent.scale;
+	const Vector2 pivot_inv_y = Vector2{ spriteComponent.position.pivot.x, 1.0f - spriteComponent.position.pivot.y };
+	const Vector2 screen_pos = (windowSize * (spriteComponent.position.screenAnchor - Vector2{ 0.5f })) + spriteComponent.position.offset;
+	const Matrix4 sprite_transform =
+		Matrix4::createScale(Vector3{ sprite_size, 1.0f }) *
+		Matrix4::createTranslation(sprite_size * -pivot_inv_y) *
+		Matrix4::createRotationZ(Maths::toRadians(spriteComponent.rotAngle)) *
+		Matrix4::createTranslation(screen_pos);
+
+	// 3. Bind the sprite texture
+	glActiveTexture(GL_TEXTURE0);
+	sprite_texture->use();
+
+	// 4. Set the values in the shader
+	shaderInUsage.setVec3("spriteColor", spriteComponent.tintColor.toVector());
+	shaderInUsage.setMatrix4("spriteTransform", sprite_transform.getAsFloatPtr());
+
+	// 5. Draw the texture
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+	// 6. Unbind the sprite texture
+	glActiveTexture(GL_TEXTURE0);
 }
 
 

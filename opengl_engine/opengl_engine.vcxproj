@@ -215,6 +215,8 @@
     <ClInclude Include="Core\transform.h" />
     <ClInclude Include="Core\window.h" />
     <ClInclude Include="Rendering\cameraComponent.h" />
+    <ClInclude Include="Rendering\Hud\hudElement.h" />
+    <ClInclude Include="Rendering\Hud\spriteComponent.h" />
     <ClInclude Include="Rendering\Lights\directionalLightComponent.h" />
     <ClInclude Include="Rendering\Lights\lightComponent.h" />
     <ClInclude Include="Rendering\Lights\pointLightComponent.h" />
