@@ -178,6 +178,8 @@
     <ClCompile Include="Rendering\Shapes\shapeLine.cpp" />
     <ClCompile Include="Rendering\Shapes\shapePoint.cpp" />
     <ClCompile Include="Rendering\texture.cpp" />
+    <ClCompile Include="Rendering\Text\font.cpp" />
+    <ClCompile Include="Rendering\Text\textRenderUtils.cpp" />
     <ClCompile Include="ServiceLocator\locator.cpp" />
     <ClCompile Include="Utils\color.cpp" />
   </ItemGroup>
@@ -235,6 +237,8 @@
     <ClInclude Include="Rendering\Shapes\shapeLine.h" />
     <ClInclude Include="Rendering\Shapes\shapePoint.h" />
     <ClInclude Include="Rendering\texture.h" />
+    <ClInclude Include="Rendering\Text\font.h" />
+    <ClInclude Include="Rendering\Text\textRenderUtils.h" />
     <ClInclude Include="ServiceLocator\locator.h" />
     <ClInclude Include="ServiceLocator\log.h" />
     <ClInclude Include="ServiceLocator\nullLog.h" />

@@ -15,7 +15,7 @@ std::unordered_map<std::string, std::unique_ptr<Model>> AssetManager::models;
 std::unordered_map<std::string, std::unique_ptr<Shader>> AssetManager::shaders;
 std::unordered_map<std::string, std::unique_ptr<Material>> AssetManager::materials;
 std::unordered_map<std::string, std::unique_ptr<MaterialCollection>> AssetManager::materialsCollection;
-//std::unordered_map<std::string, std::unique_ptr<Font>> AssetManager::fonts;
+std::unordered_map<std::string, std::unique_ptr<Font>> AssetManager::fonts;
 //std::unordered_map<std::string, std::unique_ptr<AudioSound>> AssetManager::sounds;
 //std::unordered_map<std::string, AudioCollisionOcclusion> AssetManager::audioCollisionTypes;
 
@@ -335,7 +335,6 @@ void AssetManager::DeleteMaterial(const std::string& name)
 }
 
 
-/*
 
 // --------------------------------------------------------------
 //            Fonts
@@ -375,7 +374,7 @@ void AssetManager::DeleteFont(const std::string& name)
 }
 
 
-
+/*
 // --------------------------------------------------------------
 //            Sounds
 // --------------------------------------------------------------
@@ -473,7 +472,7 @@ void AssetManager::LoadNullAssets()
 	shaders.emplace("null_shader", std::make_unique<Shader>());
 	materials.emplace("null_material", std::make_unique<Material>(GetShader("null_shader")));
 	materialsCollection.emplace("null_mat_collection", std::make_unique<MaterialCollection>());
-	//fonts.emplace("null_font", std::make_unique<Font>());
+	fonts.emplace("null_font", std::make_unique<Font>());
 	//sounds.emplace("null_sound", std::make_unique<AudioSound>(nullptr, 0));
 	//audioCollisionTypes.emplace("null_audio_collision_type", AudioCollisionOcclusion{ 0.0f, 0.0f });
 }
