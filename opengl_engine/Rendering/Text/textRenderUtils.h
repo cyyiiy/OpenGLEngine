@@ -4,10 +4,10 @@
 
 struct FontCharacter
 {
-	int TextureID;
-	Vector2Int Size;
-	Vector2Int Bearing;
-	int Advance;
+	int textureId;
+	Vector2Int size;
+	Vector2Int bearing;
+	int advance;
 
 	static FontCharacter errorChar;
 };

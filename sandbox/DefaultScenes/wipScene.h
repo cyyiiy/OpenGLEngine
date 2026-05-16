@@ -1,6 +1,7 @@
 #pragma once
 #include <Core/scene.h>
 #include <Rendering/cameraComponent.h>
+#include <Rendering/Text/textComponent.h>
 #include <Rendering/Hud/spriteComponent.h>
 
 
@@ -16,6 +17,7 @@ private:
 	ComponentHandle<CameraComponent> cameraTwo;
 	ComponentHandle<CameraComponent> activeCamera;
 
+	ComponentHandle<TextComponent> camText;
 	ComponentHandle<SpriteComponent> sprite;
 	
 	Entity* cyanCube{ nullptr };

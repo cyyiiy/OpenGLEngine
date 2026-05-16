@@ -70,6 +70,9 @@ void ExpositionGame::loadGameAssets()
 	AssetManager::CreateModel("white_emissive_cube").addMesh(AssetManager::GetSingleMesh("default_cube"), AssetManager::GetMaterial("flat_emissive_white"));
 	AssetManager::CreateModel("cyan_emissive_cube").addMesh(AssetManager::GetSingleMesh("default_cube"), AssetManager::GetMaterial("flat_emissive_cyan"));
 
+	// Load font
+	AssetManager::LoadFont("octosquares_32", "octosquares_font/octosquares.ttf", 32, CharacterLoading::ASCII_128);
+
 
 	/*
 	Renderer& renderer = Locator::getRenderer();

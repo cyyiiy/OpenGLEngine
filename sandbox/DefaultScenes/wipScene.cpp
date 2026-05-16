@@ -97,11 +97,21 @@ void WipScene::loadScene()
 	// Hud
 
 	Entity* hud_entity = createEntity();
+
 	sprite = hud_entity->addComponentByClass<SpriteComponent>();
 	SpriteComponent& sprite_comp = ECS::GetComponent(sprite);
 	sprite_comp.texture = &AssetManager::GetTexture("smileyface_sprite");
 	sprite_comp.position = HudPosition{ Vector2{ 1.0f, 0.0f }, Vector2::halfUnit, Vector2{ -80.0f, 80.0f } };
 	sprite_comp.scale = Vector2{ 0.25f };
+
+	TextComponent& text_comp = ECS::GetComponent(hud_entity->addComponentByClass<TextComponent>());
+	text_comp.setTextDatas("Sandbox project", AssetManager::GetFont("octosquares_32"));
+	text_comp.position = HudPosition{ Vector2{ 1.0f, 1.0f }, Vector2{ 1.0f, 1.0f }, Vector2{ -20.0f, -20.0f } };
+
+	camText = hud_entity->addComponentByClass<TextComponent>();
+	TextComponent& cam_text_comp = ECS::GetComponent(camText);
+	cam_text_comp.setTextDatas("Using camera 1", AssetManager::GetFont("octosquares_32"));
+	cam_text_comp.position = HudPosition{ Vector2{ 1.0f, 1.0f }, Vector2{ 1.0f, 1.0f }, Vector2{ -20.0f, -60.0f } };
 }
 
 void WipScene::unloadScene()
@@ -145,12 +155,14 @@ void WipScene::updateScene(float dt)
 	{
 		ECS::GetComponent(cameraOne).setAsActiveCamera();
 		activeCamera = cameraOne;
+		ECS::GetComponent(camText).setText("Using camera 1");
 	}
 
 	if (Input::IsKeyPressed(GLFW_KEY_KP_2))
 	{
 		ECS::GetComponent(cameraTwo).setAsActiveCamera();
 		activeCamera = cameraTwo;
+		ECS::GetComponent(camText).setText("Using camera 2");
 	}
 
 	// Draw debug shapes
@@ -176,7 +188,6 @@ void WipScene::updateScene(float dt)
 	// Automatic rotation of the sprite
 	SpriteComponent& sprite_comp = ECS::GetComponent(sprite);
 	sprite_comp.rotAngle = Maths::fmod(sprite_comp.rotAngle + dt * 180.0f, 360.0f);
-
 
 	// TODO: Remove this at some point!
 	if (Input::IsKeyPressed(GLFW_KEY_KP_0))

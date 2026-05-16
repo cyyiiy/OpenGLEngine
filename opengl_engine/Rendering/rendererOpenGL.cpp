@@ -8,6 +8,7 @@
 #include <Rendering/Lights/directionalLightComponent.h>
 #include <Rendering/Lights/pointLightComponent.h>
 #include <Rendering/Lights/spotLightComponent.h>
+#include <Rendering/Text/textComponent.h>
 #include <Rendering/Hud/spriteComponent.h>
 #include <algorithm>
 #include <stdexcept>
@@ -139,131 +140,25 @@ void RendererOpenGL::draw()
 	// Bind the hud (char and sprite) vertex array
 	AssetManager::GetVertexArray("hud_quad").setActive();
 
-
-	/*  WILL BE RE-IMPLEMENTED LATER (TEXT RENDERING)
-
-	//  prepare the shader used in text rendering
+	// Prepare the shader used in text rendering
 	Shader& text_render_shader = AssetManager::GetShader("text_render");
 	text_render_shader.use();
 	text_render_shader.setMatrix4("projection", hud_projection.getAsFloatPtr());
 
-	for (auto& text : texts)
+	auto& hud_texts_manager = ECS::Manager<TextComponent>();
+	Shader* text_shader_ptr = &text_render_shader;
+	hud_texts_manager.ForEach([this, text_shader_ptr](const TextComponent& text_component)
 	{
-		//  check text enabled
-		if (!text->getEnabled()) continue;
-
-		//  set text color
-		text_render_shader.setVec3("textColor", text->getTintColor().toVector());
-
-		//  check if computing angle is needed or not
-		float text_angle = text->getRotAngle();
-		const bool compute_angle = text_angle != 0.0f;
-		text_angle = Maths::toRadians(text_angle);
-
-		//  prepare arrays of datas that will be sent to the shader
-		int char_map_ids[TEXT_CHARS_LIMIT]{ 0 };
-		Matrix4 char_transforms[TEXT_CHARS_LIMIT]{ Matrix4::identity };
-
-		//  retrieve datas of the text
-		float x = text->getScreenPos().x;
-		float y = text->getScreenPos().y;
-		const float begin_x = x;
-
-		const std::string& text_text = text->getText();
-		const Vector2 text_scale = text->getScale();
-
-		Vector2 text_pivot = text->getPivot(); //  pivot need a little treatment to be used properly
-		text_pivot.x = -text_pivot.x;
-		text_pivot.y = 1.0f - text_pivot.y;
-		const Vector2 text_size = text->getSize();
-
-		//  get font and bind font texture array
-		const Font& text_font = text->getTextFont();
-		text_font.use();
-		const int font_size = text_font.getFontSize();
-
-		//  allow the text pivot to be applied correctly  
-		y -= (float)(font_size) * text_scale.y;
-
-		//  iterate through all characters
-		std::string::const_iterator c;
-		int index = 0;
-		for (c = text_text.begin(); c != text_text.end(); c++)
-		{
-			if (index >= TEXT_CHARS_LIMIT)
-			{
-				break;
-			}
-
-			FontCharacter ch = text_font.getCharacter(*c);
-
-			if (*c == '\n')
-			{
-				y -= ((ch.Size.y)) * 1.6f * text_scale.y;
-				x = begin_x;
-			}
-			else if (*c == ' ')
-			{
-				x += (ch.Advance >> 6) * text_scale.x; // bitshift by 6 (2^6 = 64) to advance the space character size
-			}
-			else
-			{
-				//  compute pos and scale of the char
-				const Vector2 ch_pos = Vector2{ x + ch.Bearing.x * text_scale.x, y - (float(font_size) - ch.Bearing.y) * text_scale.y };
-				const Vector2 ch_scale = Vector2{ float(font_size) * text_scale.x, float(font_size) * text_scale.y };
-
-				if (compute_angle)
-				{
-					char_transforms[index] =
-						Matrix4::createScale(Vector3(ch_scale, 1.0f)) *
-						Matrix4::createTranslation(ch_pos - text->getScreenPos() + (text_size * text_pivot)) *
-						Matrix4::createRotationZ(text_angle) *
-						Matrix4::createTranslation(text->getScreenPos());
-				}
-				else
-				{
-					char_transforms[index] =
-						Matrix4::createScale(Vector3(ch_scale, 1.0f)) *
-						Matrix4::createTranslation(ch_pos + (text_size * text_pivot));
-				}
-				char_map_ids[index] = ch.TextureID;
-
-				x += (ch.Advance >> 6) * text_scale.x; // bitshift by 6 (2^6 = 64) to advance the character size
-
-				index++;
-				if (index >= TEXT_CHARS_LIMIT)
-				{
-					//  draw array of max TEXT_CHARS_LIMIT chars
-					text_render_shader.setMatrix4Array("textTransforms", char_transforms[0].getAsFloatPtr(), index);
-					text_render_shader.setIntArray("letterMap", &char_map_ids[0], index);
-					glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, index);
-
-					index = 0;
-				}
-			}
-		}
-
-		//  draw array of remaining chars
-		if (index > 0)
-		{
-			text_render_shader.setMatrix4Array("textTransforms", char_transforms[0].getAsFloatPtr(), index);
-			text_render_shader.setIntArray("letterMap", &char_map_ids[0], index);
-			glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, index);
-		}
-
-		//  unbind font texture array
-		glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
-	}
-	*/
-
+		this->drawTextComponent(text_component, *text_shader_ptr);
+	});
 
 	// Prepare the shader used in sprite rendering
 	Shader& sprite_render_shader = AssetManager::GetShader("sprite_render");
 	sprite_render_shader.use();
 	sprite_render_shader.setMatrix4("projection", hud_projection.getAsFloatPtr());
-	Shader* sprite_shader_ptr = &sprite_render_shader;
 
 	auto& hud_sprites_manager = ECS::Manager<SpriteComponent>();
+	Shader* sprite_shader_ptr = &sprite_render_shader;
 	hud_sprites_manager.ForEach([this, sprite_shader_ptr](const SpriteComponent& sprite_component)
 	{
 		this->drawSpriteComponent(sprite_component, *sprite_shader_ptr);
@@ -405,23 +300,139 @@ void RendererOpenGL::useSpotLight(const SpotLightComponent& spotLightComponent, 
 	}
 }
 
+void RendererOpenGL::drawTextComponent(const TextComponent& textComponent, Shader& shaderInUsage)
+{
+	// 1. Check if the text renderer component is valid
+	if (!textComponent.active) return;
+
+	const std::string text = textComponent.getText();
+	if (text.empty()) return;
+
+	const Font* text_font = textComponent.getFont();
+	if (text_font == nullptr) return;
+
+	// 2. Prepare char rotation angle values
+	const bool compute_angle = textComponent.rotAngle != 0.0f;
+	const float text_angle_rad = Maths::toRadians(textComponent.rotAngle);
+
+	// 3. Precompute text screen pos and pivot point
+	const Vector2 screen_pos = (windowSize * (textComponent.position.screenAnchor - Vector2{ 0.5f })) + textComponent.position.offset;
+	Vector2 text_pivot = textComponent.position.pivot;
+	text_pivot.x = -text_pivot.x;
+	text_pivot.y = 1.0f - text_pivot.y;
+
+	// 4. Create local const for easy access to size and scale values
+	const Vector2 text_scale = textComponent.scale;
+	const Vector2 text_size = textComponent.getTextSize();
+	const int font_size = text_font->getFontSize();
+
+	// 5. Prepare data for char iteration (const text chars limit is the max number of chars the shader can treat as one)
+	int char_map_ids[TEXT_CHARS_LIMIT]{ 0 };
+	Matrix4 char_transforms[TEXT_CHARS_LIMIT]{ Matrix4::identity };
+	float x = screen_pos.x;
+	const float begin_x = x;
+	float y = screen_pos.y;
+	y -= (float)(font_size)*text_scale.y; // Allow the text pivot to be applied correctly
+
+	// 6. Set text tint color in the shader and bind font texture array
+	shaderInUsage.setVec3("textColor", textComponent.tintColor.toVector());
+	text_font->use();
+
+	// 7. Iterate through every character of the text
+	std::string::const_iterator c;
+	int index = 0;
+	for (c = text.begin(); c != text.end(); c++)
+	{
+		// a. Check if the shader char limit has been reached (security, should never happen)
+		if (index >= TEXT_CHARS_LIMIT)
+		{
+			break;
+		}
+
+		// b. Get the font character
+		FontCharacter ch = text_font->getCharacter(*c);
+
+		// c. Process line breaks and spaces separatly
+		if (*c == '\n')
+		{
+			y -= ((ch.size.y)) * 1.6f * text_scale.y;
+			x = begin_x;
+		}
+		else if (*c == ' ')
+		{
+			x += (ch.advance >> 6) * text_scale.x; // Bitshift by 6 (2^6 = 64) to advance the space character size
+		}
+		else
+		{
+			// d. Compute the position and scale of the char
+			const Vector2 ch_pos = Vector2{ x + ch.bearing.x * text_scale.x, y - (float(font_size) - ch.bearing.y) * text_scale.y };
+			const Vector2 ch_scale = Vector2{ float(font_size) * text_scale.x, float(font_size) * text_scale.y };
+
+			// e. Compute the char transform matrix and set it in the array
+			if (compute_angle)
+			{
+				char_transforms[index] =
+					Matrix4::createScale(Vector3(ch_scale, 1.0f)) * // Scale to the size of the char
+					Matrix4::createTranslation(ch_pos - screen_pos + (text_size * text_pivot)) * // Translate to use the pivot (for rotation)
+					Matrix4::createRotationZ(text_angle_rad) * // Rotate the char around the pivot
+					Matrix4::createTranslation(screen_pos); // Translate back to the real position of the char
+			}
+			else
+			{
+				char_transforms[index] =
+					Matrix4::createScale(Vector3(ch_scale, 1.0f)) * // Scale to the size of the char
+					Matrix4::createTranslation(ch_pos + (text_size * text_pivot)); // Translate to the position of the char
+			}
+			
+			// f. Set the char texture index in the array
+			char_map_ids[index] = ch.textureId;
+
+			// g. Advance the x position to prepare the next character
+			x += (ch.advance >> 6) * text_scale.x; // Bitshift by 6 (2^6 = 64) to advance the space character size
+
+			// h. Increment the index and draw the batch of chars if the shader char limit has been reached
+			index++;
+			if (index >= TEXT_CHARS_LIMIT)
+			{
+				shaderInUsage.setMatrix4Array("textTransforms", char_transforms[0].getAsFloatPtr(), index);
+				shaderInUsage.setIntArray("letterMap", &char_map_ids[0], index);
+				glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, index);
+
+				// i. Reset the index to prepare a new batch of chars
+				index = 0;
+			}
+		}
+	}
+
+	// 8. Draw the remaining batch of chars
+	if (index > 0)
+	{
+		shaderInUsage.setMatrix4Array("textTransforms", char_transforms[0].getAsFloatPtr(), index);
+		shaderInUsage.setIntArray("letterMap", &char_map_ids[0], index);
+		glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, index);
+	}
+
+	// 9. Unbind the font texture array
+	glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
+}
+
 void RendererOpenGL::drawSpriteComponent(const SpriteComponent& spriteComponent, Shader& shaderInUsage)
 {
 	// 1. Check if the sprite renderer component is valid
+	if (!spriteComponent.active) return;
+
 	Texture* sprite_texture = spriteComponent.texture;
 	if (sprite_texture == nullptr) return;
-
-	if (!spriteComponent.active) return;
 
 	// 2. Compute the hud matrix
 	const Vector2 sprite_size = sprite_texture->getTextureSize() * spriteComponent.scale;
 	const Vector2 pivot_inv_y = Vector2{ spriteComponent.position.pivot.x, 1.0f - spriteComponent.position.pivot.y };
 	const Vector2 screen_pos = (windowSize * (spriteComponent.position.screenAnchor - Vector2{ 0.5f })) + spriteComponent.position.offset;
 	const Matrix4 sprite_transform =
-		Matrix4::createScale(Vector3{ sprite_size, 1.0f }) *
-		Matrix4::createTranslation(sprite_size * -pivot_inv_y) *
-		Matrix4::createRotationZ(Maths::toRadians(spriteComponent.rotAngle)) *
-		Matrix4::createTranslation(screen_pos);
+		Matrix4::createScale(Vector3{ sprite_size, 1.0f }) * // Scale to the size of the sprite
+		Matrix4::createTranslation(sprite_size * -pivot_inv_y) * // Translate to use the pivot (for rotation)
+		Matrix4::createRotationZ(Maths::toRadians(spriteComponent.rotAngle)) * // Rotate the sprite around the pivot
+		Matrix4::createTranslation(screen_pos); // Translate back to the real position of the sprite
 
 	// 3. Bind the sprite texture
 	glActiveTexture(GL_TEXTURE0);

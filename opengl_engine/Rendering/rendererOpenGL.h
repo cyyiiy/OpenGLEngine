@@ -33,7 +33,7 @@ const std::unordered_map<LightType, int> LIGHTS_LIMITS
 };
 
 
-//const int TEXT_CHARS_LIMIT{ 200 };
+const int TEXT_CHARS_LIMIT{ 200 };
 
 
 /**
@@ -65,6 +65,7 @@ private:
 	void usePointLight(const class PointLightComponent& pointLightComponent, Shader& shaderInUsage);
 	void useSpotLight(const class SpotLightComponent& spotLightComponent, Shader& shaderInUsage);
 
+	void drawTextComponent(const class TextComponent& textComponent, Shader& shaderInUsage);
 	void drawSpriteComponent(const class SpriteComponent& spriteComponent, Shader& shaderInUsage);
 
 
