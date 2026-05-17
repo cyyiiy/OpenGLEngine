@@ -12,7 +12,7 @@
 //#include <Audio/audioManager.h>
 //#include <Audio/audioSound.h>
 
-//#include <Log/logManager.h>
+#include <Log/logManager.h>
 
 #include <Maths/matrix4.h>
 #include <Maths/vector3.h>
@@ -54,7 +54,7 @@ private:
 	//AudioManager* audio{ nullptr };
 
 	//  log manager
-	//LogManager* log{ nullptr };
+	LogManager* log{ nullptr };
 
 	//  cameras
 	Entity* debugCamEntity{ nullptr };

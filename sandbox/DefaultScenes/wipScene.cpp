@@ -165,6 +165,12 @@ void WipScene::updateScene(float dt)
 		ECS::GetComponent(camText).setText("Using camera 2");
 	}
 
+	// Write log on screen message
+	if (Input::IsKeyPressed(GLFW_KEY_KP_3))
+	{
+		Locator::getLog().LogMessageToScreen("Log test message number " + std::to_string(++logCounter), Color::cyan, 5.0f);
+	}
+
 	// Draw debug shapes
 	if (Input::IsKeyPressed(GLFW_KEY_KP_4))
 	{

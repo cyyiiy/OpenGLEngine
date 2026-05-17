@@ -25,5 +25,7 @@ private:
 
 	const float cameraSpeed{ 4.0f };
 	const float cameraSensitivity{ 0.1f };
+
+	int logCounter{ 0 };
 };
 

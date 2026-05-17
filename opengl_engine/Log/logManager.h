@@ -2,7 +2,8 @@
 #include <ServiceLocator/log.h>
 #include "logUtils.h"
 #include "logFile.h"
-#include <Rendering/Text/textRendererComponent.h>
+#include <ECS/ecs.h>
+#include <Rendering/Text/textComponent.h>
 #include <Maths/Vector2.h>
 #include <unordered_map>
 #include <vector>
@@ -13,22 +14,22 @@ class Entity;
 struct LogMessageScreen
 {
 	std::string index;
-	std::shared_ptr<TextRendererComponent> text;
+	ComponentHandle<TextComponent> text;
 	float timer;
 	float yOffset;
 
 	LogMessageScreen()
 	{
 		index = "";
-		text = nullptr;
+		text = ComponentHandle<TextComponent>(); // Initialize invalid (empty) component handle 
 		timer = 0.0f;
 		yOffset = 0.0f;
 	}
 
-	LogMessageScreen(const std::string& index_, const std::weak_ptr<TextRendererComponent> text_, const float timer_, const float yOffset_)
+	LogMessageScreen(const std::string& index_, const ComponentHandle<TextComponent> text_, const float timer_, const float yOffset_)
 	{
 		index = index_;
-		text = text_.lock();
+		text = text_;
 		timer = timer_;
 		yOffset = yOffset_;
 	}
@@ -57,7 +58,7 @@ struct LogMessageScreen
 
 	operator bool() const
 	{
-		return text.operator bool();
+		return ECS::IsComponentHandleValid(text);
 	}
 
 	bool hasSameIndex(const std::string otherIndex) const
@@ -88,7 +89,7 @@ public:
 	void SetConsoleLogDisplayRule(LogCategory logCategory) override;
 
 
-	//  for the engine class (which is the only class that have access to the full log manager)
+	// For the engine class (which is the only class that have access to the full log manager)
 	void initialize();
 	void updateScreenLogs(float dt);
 

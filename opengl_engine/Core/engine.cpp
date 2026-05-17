@@ -89,9 +89,9 @@ bool Engine::initialize(int wndw_width, int wndw_height, std::string wndw_name, 
 
 	//  create log manager
 	std::cout << "Initializing log...";
-	//log = new LogManager(createEntity());
-	//Locator::provideLog(log);
-	//log->initialize();
+	log = new LogManager(createEntity());
+	Locator::provideLog(log);
+	log->initialize();
 	std::cout << " Done.\n";
 
 
@@ -227,7 +227,7 @@ void Engine::run()
 		
 		//  log part
 		// ----------
-		//log->updateScreenLogs(deltaTime);
+		log->updateScreenLogs(deltaTime);
 
 
 		if (game) game->lateUpdate();
@@ -251,7 +251,7 @@ void Engine::run()
 	clearEntities();
 	ECS::Clear(true);
 	//audio->Quit();
-	//delete log;
+	delete log;
 	//delete audio;
 }
 
