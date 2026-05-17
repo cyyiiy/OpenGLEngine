@@ -145,9 +145,12 @@ bool Engine::initialize(int wndw_width, int wndw_height, std::string wndw_name, 
 
 
 	//  intialize debug fps text
-	//fpsText = createEntity()->addComponentByClass<TextRendererComponent>();
-	//fpsText->setTextDatas("FPS: 0", AssetManager::GetFont("arial_64"), Vector2::one, Vector2::one, Vector2{ -20.0f, -20.0f }, Vector2{ 0.5f }, 0.0f, Color::white);
-	//fpsText->setEnabled(false);
+	fpsText = createEntity()->addComponentByClass<TextComponent>();
+	TextComponent& fps_text_comp = ECS::GetComponent(fpsText);
+	fps_text_comp.setTextDatas("FPS: 0", AssetManager::GetFont("arial_64"));
+	fps_text_comp.position = HudPosition{ Vector2::one, Vector2::one, Vector2{ -20.0f, -20.0f } };
+	fps_text_comp.scale = Vector2{ 0.5f };
+	fps_text_comp.active = false;
 
 
 	//  initialize debug camera
@@ -354,14 +357,14 @@ void Engine::engineUpdate(GLFWwindow* glWindow)
 	if (debugViewMode)
 	{
 		//  update fps counter
-		/*frameCounter++;
+		frameCounter++;
 		frameTimeCounter += deltaTime;
 		if (frameTimeCounter >= 1.0f)
 		{
 			frameTimeCounter -= 1.0f;
-			fpsText->setText("FPS: " + std::to_string(frameCounter));
+			ECS::GetComponent(fpsText).setText("FPS: " + std::to_string(frameCounter));
 			frameCounter = 0;
-		}*/
+		}
 	}
 }
 
@@ -410,18 +413,18 @@ void Engine::disableFreecam()
 
 void Engine::enableDebugView()
 {
-	/*debugViewMode = true;
+	debugViewMode = true;
 	Locator::getLog().LogMessage_Category("Debug: Debug mode view enabled", LogCategory::Info);
 	renderer->physicsDebugMode = true;
-	fpsText->setEnabled(true);*/
+	ECS::GetComponent(fpsText).active = true;
 }
 
 void Engine::disableDebugView()
 {
-	/*debugViewMode = false;
+	debugViewMode = false;
 	Locator::getLog().LogMessage_Category("Debug: Debug mode view disabled", LogCategory::Info);
 	renderer->physicsDebugMode = false;
-	fpsText->setEnabled(false);*/
+	ECS::GetComponent(fpsText).active = false;
 }
 
 

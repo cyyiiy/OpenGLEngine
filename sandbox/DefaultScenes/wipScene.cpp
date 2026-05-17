@@ -106,12 +106,12 @@ void WipScene::loadScene()
 
 	TextComponent& text_comp = ECS::GetComponent(hud_entity->addComponentByClass<TextComponent>());
 	text_comp.setTextDatas("Sandbox project", AssetManager::GetFont("octosquares_32"));
-	text_comp.position = HudPosition{ Vector2{ 1.0f, 1.0f }, Vector2{ 1.0f, 1.0f }, Vector2{ -20.0f, -20.0f } };
+	text_comp.position = HudPosition{ Vector2{ 0.0f, 0.0f }, Vector2{ 0.0f, 0.0f }, Vector2{ 20.0f, 20.0f } };
 
 	camText = hud_entity->addComponentByClass<TextComponent>();
 	TextComponent& cam_text_comp = ECS::GetComponent(camText);
 	cam_text_comp.setTextDatas("Using camera 1", AssetManager::GetFont("octosquares_32"));
-	cam_text_comp.position = HudPosition{ Vector2{ 1.0f, 1.0f }, Vector2{ 1.0f, 1.0f }, Vector2{ -20.0f, -60.0f } };
+	cam_text_comp.position = HudPosition{ Vector2{ 0.0f, 0.0f }, Vector2{ 0.0f, 0.0f }, Vector2{ 20.0f, 60.0f } };
 }
 
 void WipScene::unloadScene()
