@@ -6,7 +6,7 @@
 	  (Note: penser à regarder le ClasseParent::fonction() et l'utiliser si c'est pertinent)
 		> Game & Scene system - fait
 		> Rendering - fait
-		> UI - en cours
+		> UI - fait
 		> Audio
 		> Physique
 	- Expérimenter dans Sandbox avec des behavior components et confirmer l'implémentation de l'ECS
@@ -17,9 +17,6 @@
 		> Player Controller
 		> Objets interagissables
 		> Ennemis
-
-~ Améliorations du benchmark (peut être fait en parallèle de l'ECS V2) :
-	- Avoir une nouvelle scène de test Rendering 3D qui teste les performances de plein de materials différents, avec un seul model renderer component pour chaque material
 
 ~ Petites updates d'améliorations :
 	- Rajouter une option à la création d'une entity pour lui mettre un lifetime
