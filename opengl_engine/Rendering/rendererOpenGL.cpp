@@ -216,9 +216,9 @@ void RendererOpenGL::useDirectionalLight(const DirectionalLightComponent& dirLig
 	shaderInUsage.setVec3("dirLight.diffuse", dirLightComponent.diffuseStrength * dirLightComponent.lightColor.toVector());
 	shaderInUsage.setVec3("dirLight.specular", Color::white.toVector());
 
-	// 3. Increase the directional lights limit
+	// 3. Increase the directional lights count
 	lights_count[EDirectionalLight]++;
-	if (lights_count[EDirectionalLight] >= limit)
+	if (lights_count[EDirectionalLight] > limit)
 	{
 		Locator::getLog().LogMessage_Category("Renderer: There are more than " + std::to_string(limit) + " active directional lights.", LogCategory::Warning);
 	}
@@ -252,9 +252,9 @@ void RendererOpenGL::usePointLight(const PointLightComponent& pointLightComponen
 	shaderInUsage.setFloat("pointLights[" + light_index + "].linear", pointLightComponent.attenuation.linear);
 	shaderInUsage.setFloat("pointLights[" + light_index + "].quadratic", pointLightComponent.attenuation.quadratic);
 
-	// 4. Increase the point lights limit
+	// 4. Increase the point lights count
 	lights_count[EPointLight]++;
-	if (lights_count[EPointLight] >= limit)
+	if (lights_count[EPointLight] > limit)
 	{
 		Locator::getLog().LogMessage_Category("Renderer: There are more than " + std::to_string(limit) + " active point lights.", LogCategory::Warning);
 	}
@@ -292,9 +292,9 @@ void RendererOpenGL::useSpotLight(const SpotLightComponent& spotLightComponent, 
 	shaderInUsage.setFloat("spotLights[" + light_index + "].linear", spotLightComponent.attenuation.linear);
 	shaderInUsage.setFloat("spotLights[" + light_index + "].quadratic", spotLightComponent.attenuation.quadratic);
 
-	// 4. Increase the spot lights limit
+	// 4. Increase the spot lights count
 	lights_count[ESpotLight]++;
-	if (lights_count[ESpotLight] >= limit)
+	if (lights_count[ESpotLight] > limit)
 	{
 		Locator::getLog().LogMessage_Category("Renderer: There are more than " + std::to_string(limit) + " active spot lights.", LogCategory::Warning);
 	}
