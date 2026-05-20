@@ -145,6 +145,7 @@
     <ClCompile Include="Assets\assetMesh.cpp" />
     <ClCompile Include="Assets\assetsIDs.cpp" />
     <ClCompile Include="Assets\defaultAssets.cpp" />
+    <ClCompile Include="Audio\audioSound.cpp" />
     <ClCompile Include="Core\Gameplay\gameplayTag.cpp" />
     <ClCompile Include="ECS\behaviorComponent.cpp" />
     <ClCompile Include="ECS\component.cpp" />
@@ -191,6 +192,8 @@
     <ClInclude Include="Assets\assetMesh.h" />
     <ClInclude Include="Assets\assetsIDs.h" />
     <ClInclude Include="Assets\defaultAssets.h" />
+    <ClInclude Include="Audio\audioSound.h" />
+    <ClInclude Include="Audio\audioUtils.h" />
     <ClInclude Include="Core\Gameplay\gameplayTag.h" />
     <ClInclude Include="ECS\behaviorComponent.h" />
     <ClInclude Include="ECS\component.h" />
@@ -245,8 +248,10 @@
     <ClInclude Include="Rendering\Text\font.h" />
     <ClInclude Include="Rendering\Text\textComponent.h" />
     <ClInclude Include="Rendering\Text\textRenderUtils.h" />
+    <ClInclude Include="ServiceLocator\audio.h" />
     <ClInclude Include="ServiceLocator\locator.h" />
     <ClInclude Include="ServiceLocator\log.h" />
+    <ClInclude Include="ServiceLocator\nullAudio.h" />
     <ClInclude Include="ServiceLocator\nullLog.h" />
     <ClInclude Include="ServiceLocator\nullRenderer.h" />
     <ClInclude Include="ServiceLocator\renderer.h" />

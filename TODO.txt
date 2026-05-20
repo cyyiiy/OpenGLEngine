@@ -7,7 +7,7 @@
 		> Game & Scene system - fait
 		> Rendering - fait
 		> UI - fait
-		> Audio
+		> Audio - en cours
 		> Physique
 	- Expérimenter dans Sandbox avec des behavior components et confirmer l'implémentation de l'ECS
 	  (Note: penser à retirer les print debugs du nouvel ECS)

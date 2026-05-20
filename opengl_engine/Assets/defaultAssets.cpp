@@ -85,7 +85,7 @@ void DefaultAssets::LoadDefaultAssets()
 
 
 	//  default audio collision
-	//AssetManager::RegisterAudioCollisionType("default_audio_collision", AudioCollisionOcclusion{ 1.0f, 0.5f });
+	AssetManager::RegisterAudioCollisionType("default_audio_collision", AudioCollisionOcclusion{ 1.0f, 0.5f });
 }
 
 

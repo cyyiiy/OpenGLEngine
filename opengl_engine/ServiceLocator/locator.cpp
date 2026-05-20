@@ -1,16 +1,16 @@
 #include "locator.h"
 #include "nullRenderer.h"
 //#include "nullPhysics.h"
-//#include "nullAudio.h"
+#include "nullAudio.h"
 #include "nullLog.h"
 
 Renderer* Locator::rendererService;
 //Physics* Locator::physicsService;
-//Audio* Locator::audioService;
+Audio* Locator::audioService;
 Log* Locator::logService;
 NullRenderer Locator::nullRendererService;
 //NullPhysics Locator::nullPhysicsService;
-//NullAudio Locator::nullAudioService;
+NullAudio Locator::nullAudioService;
 NullLog Locator::nullLogService;
 
 
@@ -52,6 +52,7 @@ Physics& Locator::providePhysics(Physics* physicsService_)
 		return getPhysics();
 	}
 }
+*/
 
 Audio& Locator::getAudio()
 {
@@ -71,7 +72,6 @@ Audio& Locator::provideAudio(Audio* audioService_)
 		return getAudio();
 	}
 }
-*/
 
 Log& Locator::getLog()
 {
@@ -96,6 +96,6 @@ void Locator::initialize()
 {
 	rendererService = &nullRendererService;
 	//physicsService = &nullPhysicsService;
-	//audioService = &nullAudioService;
+	audioService = &nullAudioService;
 	logService = &nullLogService;
 }

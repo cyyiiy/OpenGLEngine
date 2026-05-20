@@ -1,7 +1,7 @@
 #pragma once
 #include "renderer.h"
 //#include "physics.h"
-//#include "audio.h"
+#include "audio.h"
 #include "log.h"
 
 class NullRenderer;
@@ -18,10 +18,10 @@ public:
 	/*
 	static Physics& getPhysics();
 	static Physics& providePhysics(Physics* physicsService_);
+	*/
 
 	static Audio& getAudio();
 	static Audio& provideAudio(Audio* audioService_);
-	*/
 
 	static Log& getLog();
 	static Log& provideLog(Log* logService_);
@@ -33,10 +33,10 @@ private:
 	/*
 	static Physics* physicsService;
 	static NullPhysics nullPhysicsService;
+	*/
 
 	static Audio* audioService;
 	static NullAudio nullAudioService;
-	*/
 
 	static Log* logService;
 	static NullLog nullLogService;
