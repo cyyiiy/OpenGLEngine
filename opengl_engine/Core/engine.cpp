@@ -126,9 +126,9 @@ bool Engine::initialize(int wndw_width, int wndw_height, std::string wndw_name, 
 
 	//  initialize audio manager
 	std::cout << "Initializing audio...";
-	//audio = new AudioManager();
-	//Locator::provideAudio(audio);
-	//audio->Initialize(100.0f);
+	audio = new AudioManager();
+	Locator::provideAudio(audio);
+	audio->Initialize(100.0f);
 	std::cout << " Done.\n";
 
 
@@ -220,9 +220,9 @@ void Engine::run()
 
 		//  audio part
 		// ------------
-		//const CameraComponent& active_cam = *renderer->GetCamera();
-		//audio->UpdateListener(active_cam.getCamPosition(), active_cam.getCamUp(), active_cam.getCamForward());
-		//audio->Update();
+		const CameraComponent& active_cam = renderer->GetCamera();
+		audio->UpdateListener(active_cam.getCamPosition(), active_cam.getCamUp(), active_cam.getCamForward());
+		audio->Update();
 
 		
 		//  log part
@@ -250,9 +250,9 @@ void Engine::run()
 	unloadGame();
 	clearEntities();
 	ECS::Clear(true);
-	//audio->Quit();
+	audio->Quit();
 	delete log;
-	//delete audio;
+	delete audio;
 }
 
 
@@ -372,14 +372,14 @@ void Engine::engineUpdate(GLFWwindow* glWindow)
 void Engine::pauseGame()
 {
 	gamePaused = true;
-	//audio->PauseAll();
+	audio->PauseAll();
 	Locator::getLog().LogMessage_Category("Game paused", LogCategory::Info);
 }
 
 void Engine::unpauseGame()
 {
 	gamePaused = false;
-	//audio->ResumeAll();
+	audio->ResumeAll();
 	if (freecamMode) disableFreecam();
 	Locator::getLog().LogMessage_Category("Game unpaused", LogCategory::Info);
 }

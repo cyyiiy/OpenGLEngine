@@ -145,6 +145,7 @@
     <ClCompile Include="Assets\assetMesh.cpp" />
     <ClCompile Include="Assets\assetsIDs.cpp" />
     <ClCompile Include="Assets\defaultAssets.cpp" />
+    <ClCompile Include="Audio\audioManager.cpp" />
     <ClCompile Include="Audio\audioSound.cpp" />
     <ClCompile Include="Core\Gameplay\gameplayTag.cpp" />
     <ClCompile Include="ECS\behaviorComponent.cpp" />
@@ -192,6 +193,7 @@
     <ClInclude Include="Assets\assetMesh.h" />
     <ClInclude Include="Assets\assetsIDs.h" />
     <ClInclude Include="Assets\defaultAssets.h" />
+    <ClInclude Include="Audio\audioManager.h" />
     <ClInclude Include="Audio\audioSound.h" />
     <ClInclude Include="Audio\audioUtils.h" />
     <ClInclude Include="Core\Gameplay\gameplayTag.h" />

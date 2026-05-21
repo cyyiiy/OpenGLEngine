@@ -9,8 +9,7 @@
 #include <Rendering/cameraComponent.h>
 #include <Rendering/Text/textComponent.h>
 
-//#include <Audio/audioManager.h>
-//#include <Audio/audioSound.h>
+#include <Audio/audioManager.h>
 
 #include <Log/logManager.h>
 
@@ -51,7 +50,7 @@ private:
 	RendererOpenGL* renderer{ nullptr };
 
 	//  audio manager
-	//AudioManager* audio{ nullptr };
+	AudioManager* audio{ nullptr };
 
 	//  log manager
 	LogManager* log{ nullptr };

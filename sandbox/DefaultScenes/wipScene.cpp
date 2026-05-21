@@ -191,6 +191,12 @@ void WipScene::updateScene(float dt)
 		GameplayStatics::DrawDebugCube(debug_box, Color::blue, 5.0f);
 	}
 
+	// Play 2D sound (without audio source component)
+	if (Input::IsKeyPressed(GLFW_KEY_KP_7))
+	{
+		Locator::getAudio().InstantPlaySound2D(AssetManager::GetSound("sound"));
+	}
+
 	// Automatic rotation of the sprite
 	SpriteComponent& sprite_comp = ECS::GetComponent(sprite);
 	sprite_comp.rotAngle = Maths::fmod(sprite_comp.rotAngle + dt * 180.0f, 360.0f);
