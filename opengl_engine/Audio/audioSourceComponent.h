@@ -1,5 +1,5 @@
 #pragma once
-#include <ECS/component.h>
+#include <ECS/behaviorComponent.h>
 #include <Events/observer.h>
 #include <Audio/audioUtils.h>
 #include <Maths/Vector3.h>
@@ -11,7 +11,7 @@ class AudioSound;
 * Component for a persistant Audio Source that can play sounds.
 * Default spatialization of the Audio Source is 3D.
 */
-class AudioSourceComponent : public Component, public Observer
+class AudioSourceComponent : public BehaviorComponent, public Observer
 {
 public:
 	/**
@@ -82,13 +82,11 @@ public:
 	std::uint32_t getChannelIndex() const { return channelIndex; }
 
 
-private:
-	virtual void registerComponent() override;
-	virtual void unregisterComponent() override;
-
 	void init() override;
 	void exit() override;
 
+
+private:
 	void onEntityMoved();
 
 	std::uint32_t channelIndex{ std::numeric_limits<std::uint32_t>::max() };

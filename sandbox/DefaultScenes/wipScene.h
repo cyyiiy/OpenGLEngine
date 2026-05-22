@@ -3,6 +3,7 @@
 #include <Rendering/cameraComponent.h>
 #include <Rendering/Text/textComponent.h>
 #include <Rendering/Hud/spriteComponent.h>
+#include <Audio/audioSourceComponent.h>
 
 
 class WipScene : public Scene
@@ -19,6 +20,8 @@ private:
 
 	ComponentHandle<TextComponent> camText;
 	ComponentHandle<SpriteComponent> sprite;
+
+	ComponentHandle<AudioSourceComponent> musicSource;
 	
 	Entity* cyanCube{ nullptr };
 	float cyanCubeTimer{ 0.0f };

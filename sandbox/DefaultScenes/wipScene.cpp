@@ -112,6 +112,14 @@ void WipScene::loadScene()
 	TextComponent& cam_text_comp = ECS::GetComponent(camText);
 	cam_text_comp.setTextDatas("Using camera 1", AssetManager::GetFont("octosquares_32"));
 	cam_text_comp.position = HudPosition{ Vector2{ 0.0f, 0.0f }, Vector2{ 0.0f, 0.0f }, Vector2{ 20.0f, 60.0f } };
+
+
+	// Audio
+
+	musicSource = backpack->addComponentByClass<AudioSourceComponent>();
+	AudioSourceComponent& music_source_comp = ECS::GetComponent(musicSource);
+	music_source_comp.playSound(AssetManager::GetSound("music"), -1);
+	music_source_comp.setPause(true);
 }
 
 void WipScene::unloadScene()
@@ -195,6 +203,13 @@ void WipScene::updateScene(float dt)
 	if (Input::IsKeyPressed(GLFW_KEY_KP_7))
 	{
 		Locator::getAudio().InstantPlaySound2D(AssetManager::GetSound("sound"));
+	}
+
+	// Pause (and play) music on audio source component
+	if (Input::IsKeyPressed(GLFW_KEY_KP_8))
+	{
+		AudioSourceComponent& music_source_comp = ECS::GetComponent(musicSource);
+		music_source_comp.setPause(!music_source_comp.getPaused());
 	}
 
 	// Automatic rotation of the sprite
