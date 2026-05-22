@@ -74,6 +74,7 @@ void AudioSourceComponent::init()
 	channelIndex = audioManagerRef->CreateAudioSourceGroup(ChannelSpatialization::Channel3D);
 
 	getOwner()->onTransformUpdated.registerObserver(this, Bind_0(&AudioSourceComponent::onEntityMoved));
+	setUpdateActivated(false);
 }
 
 void AudioSourceComponent::exit()

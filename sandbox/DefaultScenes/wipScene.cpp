@@ -202,7 +202,7 @@ void WipScene::updateScene(float dt)
 	// Play 2D sound (without audio source component)
 	if (Input::IsKeyPressed(GLFW_KEY_KP_7))
 	{
-		Locator::getAudio().InstantPlaySound2D(AssetManager::GetSound("sound"));
+		Locator::getAudio().InstantPlaySound2D(AssetManager::GetSound("sound"), 0.2f);
 	}
 
 	// Pause (and play) music on audio source component

@@ -97,3 +97,10 @@ private:
 	class Audio* audioManagerRef{ nullptr };
 };
 
+
+// Specify sublist size for 'AudioSourceComponent'
+template<>
+struct ComponentSublistSize<AudioSourceComponent>
+{
+	static constexpr size_t value = 8;
+};

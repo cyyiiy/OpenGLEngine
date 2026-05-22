@@ -76,8 +76,8 @@ void ExpositionGame::loadGameAssets()
 
 
 	// Load audio
-	AssetManager::CreateSound("sound", "fartreverb.mp3", ACTIVATE_LOOP);
-	AudioSound& music = AssetManager::CreateSound("music", "TestMusic.mp3", ACTIVATE_3D | ACTIVATE_STREAM);
+	AssetManager::CreateSound("sound", "vineboom.mp3", ACTIVATE_LOOP);
+	AudioSound& music = AssetManager::CreateSound("music", "TestMusic.mp3", ACTIVATE_3D | ACTIVATE_STREAM | ACTIVATE_LOOP);
 	music.setMinMaxDistance(50.0f, 100.0f);
 
 
