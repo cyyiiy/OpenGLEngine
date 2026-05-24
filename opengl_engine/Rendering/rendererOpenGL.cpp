@@ -10,6 +10,7 @@
 #include <Rendering/Lights/spotLightComponent.h>
 #include <Rendering/Text/textComponent.h>
 #include <Rendering/Hud/spriteComponent.h>
+#include <PhysicsAABB/boxCollisionComponent.h>
 #include <algorithm>
 #include <stdexcept>
 
@@ -117,6 +118,17 @@ void RendererOpenGL::draw()
 	{
 		shape_renderer_component.shape->draw(*debug_shader_ptr);
 	});
+
+
+	if (physicsDebugMode)
+	{
+		// Draw collisions components
+		auto& box_col_renderers_manager = ECS::Manager<BoxCollisionComponent>();
+		box_col_renderers_manager.ForEach([this, debug_shader_ptr](const BoxCollisionComponent& box_col_component)
+		{
+			this->drawBoxCollision(box_col_component, *debug_shader_ptr);
+		});
+	}
 
 
 	// TODO (when physics is back online):
@@ -447,6 +459,26 @@ void RendererOpenGL::drawSpriteComponent(const SpriteComponent& spriteComponent,
 
 	// 6. Unbind the sprite texture
 	glActiveTexture(GL_TEXTURE0);
+}
+
+void RendererOpenGL::drawBoxCollision(const BoxCollisionComponent& boxColComponent, Shader& shaderInUsage)
+{
+	// 1. Compute the model matrix
+	const Box collision_box = boxColComponent.getTransformedBox();
+	const Matrix4 model_matrix =
+		Matrix4::createScale(collision_box.getHalfExtents() * 2.0f) *
+		Matrix4::createTranslation(collision_box.getCenterPoint());
+
+	// 2. Choose the debug color
+	const Color debug_color = boxColComponent.debugIntersectedLastFrame ? Color::red : Color::green;
+
+	// 3. Set the informations in the shader
+	shaderInUsage.setMatrix4("model", model_matrix.getAsFloatPtr());
+	shaderInUsage.setVec3("color", debug_color.toVector());
+
+	// 4. Draw the debug cube mesh
+	Mesh& cube_mesh = AssetManager::GetSingleMesh("debug_cube");
+	cube_mesh.draw(true);
 }
 
 

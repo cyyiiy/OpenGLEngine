@@ -68,6 +68,8 @@ private:
 	void drawTextComponent(const class TextComponent& textComponent, Shader& shaderInUsage);
 	void drawSpriteComponent(const class SpriteComponent& spriteComponent, Shader& shaderInUsage);
 
+	void drawBoxCollision(const class BoxCollisionComponent& boxColComponent, Shader& shaderInUsage);
+
 
 	std::unordered_map<Shader*, std::vector<Material*>> materials;
 	std::unordered_map<LightType, int> lights_count;

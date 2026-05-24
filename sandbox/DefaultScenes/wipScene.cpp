@@ -7,6 +7,7 @@
 #include <Rendering/Lights/directionalLightComponent.h>
 #include <Rendering/Lights/pointLightComponent.h>
 #include <Rendering/Lights/spotLightComponent.h>
+#include <PhysicsAABB/boxCollisionComponent.h>
 #include <Maths/Geometry/box.h>
 
 
@@ -120,6 +121,19 @@ void WipScene::loadScene()
 	AudioSourceComponent& music_source_comp = ECS::GetComponent(musicSource);
 	music_source_comp.playSound(AssetManager::GetSound("music"), -1);
 	music_source_comp.setPause(true);
+
+
+	// Physics
+
+	BoxCollisionComponent& crate_1_col = ECS::GetComponent(crate_1->addComponentByClass<BoxCollisionComponent>());
+	crate_1_col.collisionChannel = "solid";
+
+	BoxCollisionComponent& crate_2_col = ECS::GetComponent(crate_2->addComponentByClass<BoxCollisionComponent>());
+	crate_2_col.collisionChannel = "solid";
+
+	BoxCollisionComponent& floor_col = ECS::GetComponent(floor->addComponentByClass<BoxCollisionComponent>());
+	floor_col.collisionBox = Box{ Vector3{ 0.0f, -0.01f, 0.0f }, Vector3{ 0.5f, 0.01f, 0.5f } };
+	floor_col.collisionChannel = "solid";
 }
 
 void WipScene::unloadScene()

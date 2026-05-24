@@ -172,6 +172,7 @@
     <ClCompile Include="Maths\vector3.cpp" />
     <ClCompile Include="Core\transform.cpp" />
     <ClCompile Include="Core\window.cpp" />
+    <ClCompile Include="PhysicsAABB\boxCollisionComponent.cpp" />
     <ClCompile Include="Rendering\cameraComponent.cpp" />
     <ClCompile Include="Rendering\material.cpp" />
     <ClCompile Include="Rendering\Model\mesh.cpp" />
@@ -228,6 +229,7 @@
     <ClInclude Include="Maths\vector3.h" />
     <ClInclude Include="Core\transform.h" />
     <ClInclude Include="Core\window.h" />
+    <ClInclude Include="PhysicsAABB\boxCollisionComponent.h" />
     <ClInclude Include="Rendering\cameraComponent.h" />
     <ClInclude Include="Rendering\Hud\hudElement.h" />
     <ClInclude Include="Rendering\Hud\spriteComponent.h" />
