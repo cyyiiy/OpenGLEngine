@@ -36,5 +36,5 @@ private:
 template<>
 struct ComponentSublistSize<TextComponent>
 {
-	static constexpr size_t value = 8;
+	static constexpr size_t value = 16;
 };

@@ -89,7 +89,7 @@ bool Engine::initialize(int wndw_width, int wndw_height, std::string wndw_name, 
 
 	//  create log manager
 	std::cout << "Initializing log...";
-	log = new LogManager(createEntity());
+	log = new LogManager();
 	Locator::provideLog(log);
 	log->initialize();
 	std::cout << " Done.\n";

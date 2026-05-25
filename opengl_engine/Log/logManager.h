@@ -78,7 +78,6 @@ const float SCREEN_NEW_LOG_OFFSET{ 10.0f };
 class LogManager : public Log
 {
 public:
-	LogManager(Entity* screenLogOwner_);
 	~LogManager();
 
 	void LogMessageToScreen(const std::string& logText, const Color& logColor, const float logDuration, const std::string logIndex = "") override;
@@ -109,5 +108,4 @@ private:
 	std::vector<LogMessageScreen> logMessagesOnScreen;
 
 	LogFile logFileWriter;
-	Entity* screenLogsOwner;
 };

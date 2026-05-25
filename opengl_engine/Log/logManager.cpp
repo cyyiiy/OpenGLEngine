@@ -6,10 +6,6 @@
 #include <algorithm>
 
 
-LogManager::LogManager(Entity* screenLogOwner_) : screenLogsOwner(screenLogOwner_)
-{
-}
-
 LogManager::~LogManager()
 {
 	logFileWriter.exit();
@@ -75,7 +71,7 @@ void LogManager::updateScreenLogs(float dt)
 
 	for (auto& expired_log : expired_logs)
 	{
-		screenLogsOwner->removeComponent(expired_log.text);
+		ECS::DeleteComponent(expired_log.text);
 		auto iter = std::find(logMessagesOnScreen.begin(), logMessagesOnScreen.end(), expired_log);
 		logMessagesOnScreen.erase(iter);
 	}
@@ -127,7 +123,7 @@ void LogManager::displayLogToScreen(const std::string& logText, LogCategory logC
 	logMessagesOnScreen.emplace_back(LogMessageScreen
 		(
 			logIndex,
-			screenLogsOwner->addComponentByClass<TextComponent>(),
+			ECS::CreateComponent<TextComponent>(),
 			logDuration,
 			y_offset
 		)
