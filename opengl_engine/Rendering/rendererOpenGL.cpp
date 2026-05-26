@@ -11,6 +11,7 @@
 #include <Rendering/Text/textComponent.h>
 #include <Rendering/Hud/spriteComponent.h>
 #include <PhysicsAABB/boxCollisionComponent.h>
+#include <PhysicsAABB/raycastRendererComponent.h>
 #include <algorithm>
 #include <stdexcept>
 
@@ -128,19 +129,18 @@ void RendererOpenGL::draw()
 		{
 			this->drawBoxCollision(box_col_component, *debug_shader_ptr);
 		});
+
+		// Draw raycasts
+		auto& raycast_renderers_manager = ECS::Manager<RaycastRendererComponent>();
+		raycast_renderers_manager.ForEach([debug_shader_ptr](const RaycastRendererComponent& raycast_renderer_component)
+		{
+			for (auto& shape : raycast_renderer_component.shapes)
+			{
+				shape->draw(*debug_shader_ptr);
+			}
+		});
 	}
 
-
-	// TODO (when physics is back online):
-	// - Renderer get all collision components (only Box AABB) through ECS:
-	//   These components have informations (box, entity) for the renderer to draw them
-	// - Then renderer get all "RaycastRendererComponents" and draw their shapes
-	//   (raycasts objects only need to exist to render debug after the physic job is done)
-
-	/* if (physicsDebugMode)
-	{
-		Locator::getPhysics().DrawCollisionsDebug(debug_draw_mat);
-	}*/
 
 	//  RENDERING HUD
 	// ===================

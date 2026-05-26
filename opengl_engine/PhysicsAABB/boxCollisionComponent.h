@@ -1,6 +1,8 @@
 #pragma once
 #include <ECS/component.h>
 #include <Maths/Geometry/box.h>
+#include <Events/event.h>
+#include "raycastUtils.h"
 #include <string>
 
 
@@ -26,6 +28,10 @@ public:
 	bool useEntityScaleForBoxCenter{ true };
 
 
+	/** Event triggered if this collision is intersected by a raycast. */
+	Event<RaycastType, const Vector3&> onRaycastIntersect;
+
+
 	/** Returns the world-space box of this collision, transformed by the entity owning this collision. */
 	Box getTransformedBox() const;
 
@@ -34,5 +40,13 @@ public:
 
 	
 	/** DON'T SET MANUALLY. Debug value set to true for a frame if the collision has been intersected by a rigidbody. */
-	mutable bool debugIntersectedLastFrame{ false };
+	bool debugIntersectedLastFrame{ false };
+};
+
+
+// Specify sublist size for 'BoxCollisionComponent'
+template<>
+struct ComponentSublistSize<BoxCollisionComponent>
+{
+	static constexpr size_t value = 32;
 };

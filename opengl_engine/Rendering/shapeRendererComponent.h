@@ -12,7 +12,7 @@ class ShapeRendererComponent : public Component
 {
 public:
 	/** The shape to draw. */
-	std::unique_ptr<ShapeBase> shape;
+	std::shared_ptr<ShapeBase> shape;
 
 	/** Duration (in seconds) before this shape expires. */
 	float lifetime{ 0.0f };

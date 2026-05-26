@@ -4,13 +4,14 @@
 using Maths::max;
 using Maths::min;
 
-bool CollisionsAABB::IntersectPoint(const BoxAABBColComp& boxAABB, const Vector3& point)
+
+bool CollisionsAABB::IntersectPoint(const BoxCollisionComponent& boxAABB, const Vector3& point)
 {
 	Box box = boxAABB.getTransformedBox();
 	return BoxPointIntersection(box, point);
 }
 
-bool CollisionsAABB::IntersectLineRaycast(const BoxAABBColComp& boxAABB, const Ray& raycast, RaycastHitInfos& outHitInfos)
+bool CollisionsAABB::IntersectLineRaycast(const BoxCollisionComponent& boxAABB, const Ray& raycast, RaycastHitInfos& outHitInfos)
 {
 	Box box = boxAABB.getTransformedBox();
 
@@ -19,19 +20,19 @@ bool CollisionsAABB::IntersectLineRaycast(const BoxAABBColComp& boxAABB, const R
 
 	bool intersect = BoxRayIntersection(box, raycast, hit_distance, hit_location);
 
-	//  check if it is the closest collision found
+	// Check if it is the closest collision found
 	if (hit_distance < outHitInfos.hitDistance)
 	{
 		outHitInfos.hitDistance = hit_distance;
 		outHitInfos.hitLocation = hit_location;
-		outHitInfos.hitNormal = boxAABB.getNormal(hit_location);
-		outHitInfos.hitCollision = &boxAABB;
+		outHitInfos.hitNormal = box.getNormalAtPoint(hit_location);
+		outHitInfos.hitCollision = boxAABB.getSelfHandle<BoxCollisionComponent>();
 	}
 
 	return intersect;
 }
 
-bool CollisionsAABB::IntersectAABBRaycast(const BoxAABBColComp& boxAABB, const Box& raycast)
+bool CollisionsAABB::IntersectAABBRaycast(const BoxCollisionComponent& boxAABB, const Box& raycast)
 {
 	Box box = boxAABB.getTransformedBox();
 
@@ -40,7 +41,7 @@ bool CollisionsAABB::IntersectAABBRaycast(const BoxAABBColComp& boxAABB, const B
 	return intersect;
 }
 
-bool CollisionsAABB::IntersectAABBSweepRaycast(const BoxAABBColComp& boxAABB, const Ray& raycast, const Box& boxRaycast, RaycastHitInfos& outHitInfos, bool forCollisionTest)
+bool CollisionsAABB::IntersectAABBSweepRaycast(const BoxCollisionComponent& boxAABB, const Ray& raycast, const Box& boxRaycast, RaycastHitInfos& outHitInfos, bool forCollisionTest)
 {
 	Box box = boxAABB.getTransformedBox();
 
@@ -49,20 +50,20 @@ bool CollisionsAABB::IntersectAABBSweepRaycast(const BoxAABBColComp& boxAABB, co
 
 	bool intersect = CCDBoxIntersectionRaycast(boxRaycast, raycast, box, hit_distance, hit_location, forCollisionTest);
 
-	//  check if it is trigger
-	if(intersect && boxAABB.getCollisionType() == CollisionType::Trigger)
+	// Check if it is trigger
+	if(intersect && boxAABB.isTrigger)
 	{
-		outHitInfos.triggersDetected.push_back(&boxAABB);
+		outHitInfos.triggersDetected.push_back(boxAABB.getSelfHandle<BoxCollisionComponent>());
 		return false;
 	}
 
-	//  check if it is the closest collision found
+	// Check if it is the closest collision found
 	if (intersect && hit_distance < outHitInfos.hitDistance)
 	{
 		outHitInfos.hitDistance = hit_distance;
 		outHitInfos.hitLocation = hit_location;
 		outHitInfos.hitNormal = box.getNearestFaceNormal(Box{ hit_location, boxRaycast.getHalfExtents() });
-		outHitInfos.hitCollision = &boxAABB;
+		outHitInfos.hitCollision = boxAABB.getSelfHandle<BoxCollisionComponent>();
 	}
 
 	return intersect;
@@ -113,33 +114,33 @@ bool CollisionsAABB::BoxRayIntersection(const Box& box, const Ray& ray, float& d
 
 	distance = std::numeric_limits<float>::max();
 
-	//  if tmax == 0, origin of the ray is on the edge of AABB
-	//  it is fine that it return true for most cases, but when using raycasts for computing collisions, it should return false
+	// If tmax == 0, origin of the ray is on the edge of AABB
+	// It is fine that it return true for most cases, but when using raycasts for computing collisions, it should return false
 	if (tmax == 0.0f && computeCollision)
 	{
 		return false;
 	}
 
-	//  if tmin > tmax, ray doesn't intersect AABB
+	// If tmin > tmax, ray doesn't intersect AABB
 	if (tmin > tmax)
 	{
 		return false;
 	}
 
-	//  if tmax < 0, ray (line) is intersecting AABB, but the whole AABB is behind us
+	// If tmax < 0, ray (line) is intersecting AABB, but the whole AABB is behind us
 	if (tmax < 0.0f)
 	{
 		return false;
 	}
 
-	//  if tmin > length, ray (line) is intersecting AABB, but the whole AABB is after the end of the raycast
+	// If tmin > length, ray (line) is intersecting AABB, but the whole AABB is after the end of the raycast
 	if (tmin > ray_length)
 	{
 		return false;
 	}
 
-	//  if tmin > 0, origin of the ray is inside of AABB
-	//  when computing collisions, it shouldn't return a location on the ray direction axis, but the nearest location outside of the box 
+	// If tmin > 0, origin of the ray is inside of AABB
+	// When computing collisions, it shouldn't return a location on the ray direction axis, but the nearest location outside of the box 
 	if (tmin < 0.0f && computeCollision)
 	{
 		location = box.getPointOnPerimeter(ray_origin);
@@ -158,7 +159,7 @@ bool CollisionsAABB::CCDBoxIntersectionRaycast(const Box& boxRaycast, const Ray&
 {
 	Vector3 box_raycast_pos = boxRaycast.getCenterPoint();
 
-	if (box_raycast_pos == ray.getEnd()) //  raycast AABB Sweep but without the sweep (??)
+	if (box_raycast_pos == ray.getEnd()) // Raycast AABB Sweep but without the sweep (??)
 	{
 		bool intersect = BoxesIntersection(boxRaycast, boxObject);
 		distance = 0.0f;

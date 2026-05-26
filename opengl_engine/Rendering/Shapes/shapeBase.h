@@ -10,7 +10,7 @@ class ShapeBase
 {
 public:
 	ShapeBase(const Color& color) : shapeColor(color) {}
-	~ShapeBase() {}
+	virtual ~ShapeBase() {}
 
 	/**
 	* Draw the shape. Don't call outside the rendering pipeline.

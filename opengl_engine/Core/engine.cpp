@@ -4,7 +4,7 @@
 #include <Assets/assetsIDs.h>
 #include <Inputs/input.h>
 #include <ServiceLocator/locator.h>
-//#include <Physics/physicsManager.h>
+#include <PhysicsAABB/physicsManager.h>
 #include <GameplayStatics/gameplayStatics.h>
 #include <ECS/ecs.h>
 #include <iostream>
@@ -120,8 +120,7 @@ bool Engine::initialize(int wndw_width, int wndw_height, std::string wndw_name, 
 
 	//  initialize physics
 	std::cout << "Initializing physics...";
-	//Physics& physics = Locator::providePhysics(new PhysicsManager());
-	//physics.InitialisePhysics();
+	Physics& physics = Locator::providePhysics(new PhysicsManager());
 	std::cout << " Done.\n";
 
 	//  initialize audio manager
@@ -206,7 +205,7 @@ void Engine::run()
 			ECS::Update(deltaTime);
 			GameplayStatics::UpdateDebugs(gamePaused ? 0.0f : deltaTime); //  debug draws don't expire if engine is paused
 
-			//Locator::getPhysics().UpdatePhysics(deltaTime);
+			Locator::getPhysics().UpdatePhysics(deltaTime);
 
 			oneFrame = false;
 		}

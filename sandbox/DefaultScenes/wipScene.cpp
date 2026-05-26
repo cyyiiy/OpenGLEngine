@@ -226,6 +226,16 @@ void WipScene::updateScene(float dt)
 		music_source_comp.setPause(!music_source_comp.getPaused());
 	}
 
+	// Shoot a line raycast in front of the camera
+	if (Input::IsKeyPressed(GLFW_MOUSE_BUTTON_1))
+	{
+		Physics& physics = Locator::getPhysics();
+		const CameraComponent& camera = ECS::GetComponent(activeCamera);
+
+		const Vector3 raycast_end_pos = camera.getCamPosition() + camera.getCamForward() * 50.0f;
+		physics.LineRaycast(camera.getCamPosition(), raycast_end_pos, { "solid" });
+	}
+
 	// Automatic rotation of the sprite
 	SpriteComponent& sprite_comp = ECS::GetComponent(sprite);
 	sprite_comp.rotAngle = Maths::fmod(sprite_comp.rotAngle + dt * 180.0f, 360.0f);

@@ -173,6 +173,9 @@
     <ClCompile Include="Core\transform.cpp" />
     <ClCompile Include="Core\window.cpp" />
     <ClCompile Include="PhysicsAABB\boxCollisionComponent.cpp" />
+    <ClCompile Include="PhysicsAABB\collisionsAABB.cpp" />
+    <ClCompile Include="PhysicsAABB\physicsManager.cpp" />
+    <ClCompile Include="PhysicsAABB\raycastUtils.cpp" />
     <ClCompile Include="Rendering\cameraComponent.cpp" />
     <ClCompile Include="Rendering\material.cpp" />
     <ClCompile Include="Rendering\Model\mesh.cpp" />
@@ -230,6 +233,10 @@
     <ClInclude Include="Core\transform.h" />
     <ClInclude Include="Core\window.h" />
     <ClInclude Include="PhysicsAABB\boxCollisionComponent.h" />
+    <ClInclude Include="PhysicsAABB\collisionsAABB.h" />
+    <ClInclude Include="PhysicsAABB\physicsManager.h" />
+    <ClInclude Include="PhysicsAABB\raycastRendererComponent.h" />
+    <ClInclude Include="PhysicsAABB\raycastUtils.h" />
     <ClInclude Include="Rendering\cameraComponent.h" />
     <ClInclude Include="Rendering\Hud\hudElement.h" />
     <ClInclude Include="Rendering\Hud\spriteComponent.h" />
@@ -259,7 +266,9 @@
     <ClInclude Include="ServiceLocator\log.h" />
     <ClInclude Include="ServiceLocator\nullAudio.h" />
     <ClInclude Include="ServiceLocator\nullLog.h" />
+    <ClInclude Include="ServiceLocator\nullPhysics.h" />
     <ClInclude Include="ServiceLocator\nullRenderer.h" />
+    <ClInclude Include="ServiceLocator\physics.h" />
     <ClInclude Include="ServiceLocator\renderer.h" />
     <ClInclude Include="Utils\color.h" />
     <ClInclude Include="Utils\defines.h" />

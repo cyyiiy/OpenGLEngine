@@ -1,6 +1,6 @@
 #pragma once
 #include "renderer.h"
-//#include "physics.h"
+#include "physics.h"
 #include "audio.h"
 #include "log.h"
 
@@ -15,10 +15,8 @@ public:
 	static Renderer& getRenderer();
 	static Renderer& provideRenderer(Renderer* rendererService_);
 
-	/*
 	static Physics& getPhysics();
 	static Physics& providePhysics(Physics* physicsService_);
-	*/
 
 	static Audio& getAudio();
 	static Audio& provideAudio(Audio* audioService_);
@@ -30,10 +28,8 @@ private:
 	static Renderer* rendererService;
 	static NullRenderer nullRendererService;
 
-	/*
 	static Physics* physicsService;
 	static NullPhysics nullPhysicsService;
-	*/
 
 	static Audio* audioService;
 	static NullAudio nullAudioService;

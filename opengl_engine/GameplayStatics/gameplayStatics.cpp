@@ -54,21 +54,21 @@ float GameplayStatics::GetEngineTime()
 void GameplayStatics::DrawDebugPoint(const Vector3& pointPosition, const Color& color, float duration)
 {
 	ShapeRendererComponent& shape_renderer_component = ECS::GetComponent(ECS::CreateComponent<ShapeRendererComponent>());
-	shape_renderer_component.shape = std::make_unique<ShapePoint>(pointPosition, color);
+	shape_renderer_component.shape = std::make_shared<ShapePoint>(pointPosition, color);
 	shape_renderer_component.lifetime = duration;
 }
 
 void GameplayStatics::DrawDebugLine(const Vector3& pointA, const Vector3& pointB, const Color& color, float duration)
 {
 	ShapeRendererComponent& shape_renderer_component = ECS::GetComponent(ECS::CreateComponent<ShapeRendererComponent>());
-	shape_renderer_component.shape = std::make_unique<ShapeLine>(pointA, pointB, color);
+	shape_renderer_component.shape = std::make_shared<ShapeLine>(pointA, pointB, color);
 	shape_renderer_component.lifetime = duration;
 }
 
 void GameplayStatics::DrawDebugCube(const Box& boxInfos, const Color& color, float duration)
 {
 	ShapeRendererComponent& shape_renderer_component = ECS::GetComponent(ECS::CreateComponent<ShapeRendererComponent>());
-	shape_renderer_component.shape = std::make_unique<ShapeCube>(boxInfos, color);
+	shape_renderer_component.shape = std::make_shared<ShapeCube>(boxInfos, color);
 	shape_renderer_component.lifetime = duration;
 }
 

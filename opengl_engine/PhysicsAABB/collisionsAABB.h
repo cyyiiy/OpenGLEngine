@@ -1,6 +1,8 @@
 #pragma once
-#include "boxAABBColComp.h"
-#include <Physics/rigidbodyComponent.h>
+#include <Maths/Geometry/ray.h>
+#include "boxCollisionComponent.h"
+#include "raycastUtils.h"
+
 
 /** Collisions AABB
 * Static functions that will check collisions that involves AABB components.
@@ -8,13 +10,13 @@
 class CollisionsAABB
 {
 public:
-	static bool IntersectPoint(const BoxAABBColComp& boxAABB, const Vector3& point);
+	static bool IntersectPoint(const BoxCollisionComponent& boxAABB, const Vector3& point);
 
-	static bool IntersectLineRaycast(const BoxAABBColComp& boxAABB, const Ray& raycast, RaycastHitInfos& outHitInfos);
+	static bool IntersectLineRaycast(const BoxCollisionComponent& boxAABB, const Ray& raycast, RaycastHitInfos& outHitInfos);
 
-	static bool IntersectAABBRaycast(const BoxAABBColComp& boxAABB, const Box& raycast);
+	static bool IntersectAABBRaycast(const BoxCollisionComponent& boxAABB, const Box& raycast);
 
-	static bool IntersectAABBSweepRaycast(const BoxAABBColComp& boxAABB, const Ray& raycast, const Box& boxRaycast, RaycastHitInfos& outHitInfos, bool forCollisionTest);
+	static bool IntersectAABBSweepRaycast(const BoxCollisionComponent& boxAABB, const Ray& raycast, const Box& boxRaycast, RaycastHitInfos& outHitInfos, bool forCollisionTest);
 
 
 private:
