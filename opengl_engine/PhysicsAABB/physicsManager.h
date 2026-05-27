@@ -5,6 +5,8 @@
 #include <Maths/Geometry/ray.h>
 #include <vector>
 
+class BoxCollisionComponent;
+
 
 /**
 * The physics service provider class.
@@ -13,14 +15,21 @@ class PhysicsManager : public Physics
 {
 public:
 	bool LineRaycast(const Vector3& start, const Vector3& end, const std::vector<std::string> testChannels, RaycastHitInfos& outHitInfos, float drawDebugTime, bool createOnScene) override;
+	bool AABBRaycast(const Vector3& location, const Box& aabbBox, const std::vector<std::string> testChannels, float drawDebugTime, bool createOnScene) override;
+	bool AABBSweepRaycast(const Vector3& start, const Vector3& end, const Box& aabbBox, const std::vector<std::string> testChannels, RaycastHitInfos& outHitInfos, float drawDebugTime, bool createOnScene) override;
 
+
+	void SetEnableInfoLogs(bool enable) override;
 	void UpdatePhysics(float dt) override;
 	void ClearRaycastOnSceneUnload(bool exitGame) override;
 
 private:
 	bool channelTest(const std::string& collisionChannel, const std::vector<std::string>& testChannels);
-	bool resolveLineRaycast(const class BoxCollisionComponent& boxColComponent, const Ray& ray, const std::vector<std::string> testChannels, RaycastHitInfos& outHitInfos);
+	bool resolveLineRaycast(const BoxCollisionComponent& boxColComponent, const Ray& ray, const std::vector<std::string> testChannels, RaycastHitInfos& outHitInfos);
+	bool resolveAABBRaycast(const BoxCollisionComponent& boxColComponent, const Box& box, const std::vector<std::string> testChannels, std::vector<ComponentHandle<BoxCollisionComponent>>& intersectedCols);
+	bool resolveAABBSweepRaycast(const BoxCollisionComponent& boxColComponent, const Ray& ray, const Box& box, const std::vector<std::string> testChannels, RaycastHitInfos& outHitInfos, bool forCollisionTest);
 
 	std::vector<ComponentHandle<RaycastRendererComponent>> sceneRaycasts;
-};
 
+	bool enableInfoLog{ false };
+};

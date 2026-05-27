@@ -23,10 +23,10 @@ void WipScene::loadScene()
 	ModelRendererComponent& floor_model = ECS::GetComponent(floor->addComponentByClass<ModelRendererComponent>());
 	floor_model.model = &AssetManager::GetModel("floor_wood");
 
-	Entity* white_cube = createEntity();
-	white_cube->setPosition(Vector3{ -2.0f, 0.4f, 1.5f });
-	white_cube->setScale(0.2f);
-	ModelRendererComponent& white_cube_model = ECS::GetComponent(white_cube->addComponentByClass<ModelRendererComponent>());
+	whiteCube = createEntity();
+	whiteCube->setPosition(Vector3{ -2.0f, 0.4f, 1.5f });
+	whiteCube->setScale(0.2f);
+	ModelRendererComponent& white_cube_model = ECS::GetComponent(whiteCube->addComponentByClass<ModelRendererComponent>());
 	white_cube_model.model = &AssetManager::GetModel("white_emissive_cube");
 
 	cyanCube = createEntity();
@@ -61,7 +61,7 @@ void WipScene::loadScene()
 	directional_light.ambientStrength = 0.2f;
 	directional_light.diffuseStrength = 0.9f;
 
-	PointLightComponent& white_point_light = ECS::GetComponent(white_cube->addComponentByClass<PointLightComponent>());
+	PointLightComponent& white_point_light = ECS::GetComponent(whiteCube->addComponentByClass<PointLightComponent>());
 	white_point_light.lightColor = Color::white;
 
 	PointLightComponent& cyan_point_light = ECS::GetComponent(cyanCube->addComponentByClass<PointLightComponent>());
@@ -234,6 +234,13 @@ void WipScene::updateScene(float dt)
 
 		const Vector3 raycast_end_pos = camera.getCamPosition() + camera.getCamForward() * 50.0f;
 		physics.LineRaycast(camera.getCamPosition(), raycast_end_pos, { "solid" });
+	}
+
+	// Shoot an AABB sweep raycast between the two light cubes
+	if (Input::IsKeyPressed(GLFW_MOUSE_BUTTON_2))
+	{
+		Physics& physics = Locator::getPhysics();
+		physics.AABBSweepRaycast(whiteCube->getPosition(), cyanCube->getPosition(), Box{ Vector3::zero, Vector3::one * 0.1f }, { "solid" });
 	}
 
 	// Automatic rotation of the sprite

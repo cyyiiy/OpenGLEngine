@@ -23,6 +23,7 @@ private:
 
 	ComponentHandle<AudioSourceComponent> musicSource;
 	
+	Entity* whiteCube{ nullptr };
 	Entity* cyanCube{ nullptr };
 	float cyanCubeTimer{ 0.0f };
 

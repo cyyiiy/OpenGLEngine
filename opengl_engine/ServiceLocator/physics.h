@@ -2,8 +2,7 @@
 #include <PhysicsAABB/raycastUtils.h>
 
 struct Vector3;
-//class Box;
-//class Material;
+class Box;
 
 
 /**
@@ -29,6 +28,7 @@ public:
 
 	/**
 	* Creates an AABB box-shaped raycast at a location.
+	* Note: this raycast type doesn't output a RaycastHitInfos.
 	* @param	location		Location of the raycast (world coordinates).
 	* @param	aabbBox			Box shape of the raycast.
 	* @param	testChannels	Collision channels the raycast will test. If the vector is empty, it will test everything.
@@ -36,20 +36,20 @@ public:
 	* @param	createOnScene	Is the raycast registered on the scene (delete if scene change) or on the game (persist when changing scene).
 	* @return					True if at least one collision intersect the aabb box raycast.
 	*/
-	//virtual bool AABBRaycast(const Vector3& location, const Box& aabbBox, const std::vector<std::string> testChannels = {}, float drawDebugTime = 5.0f, bool createOnScene = true) = 0;
+	virtual bool AABBRaycast(const Vector3& location, const Box& aabbBox, const std::vector<std::string> testChannels = {}, float drawDebugTime = 5.0f, bool createOnScene = true) = 0;
 
 	/**
 	* Sweep an AABB box-shaped raycast between two points.
 	* @param	start				Start point of the sweep (world coordinates).
 	* @param	end					End point of the sweep (world coordinates).
-	* @param	aabbBox				Box shape of the raycast.
+	* @param	aabbBox				Box shape of the raycast. Note: the center point of the box will be ignored.
 	* @param	testChannels		Collision channels the raycast will test. If the vector is empty, it will test everything.
 	* @param	outHitInfos			Informations on the closest encountered collision.
 	* @param	drawDebugTime		Duration of the raycast debug draw. (0 = no draw debug, negative = infinite draw debug).
 	* @param	createOnScene		Is the raycast registered on the scene (delete if scene change) or on the game (persist when changing scene).
 	* @return						True if at least one collision intersect the sweeped aabb box raycast.
 	*/
-	//virtual bool AABBSweepRaycast(const Vector3& start, const Vector3& end, const Box& aabbBox, const std::vector<std::string> testChannels = {}, RaycastHitInfos& outHitInfos = RaycastHitInfos::defaultInfos, float drawDebugTime = 5.0f, bool createOnScene = true) = 0;
+	virtual bool AABBSweepRaycast(const Vector3& start, const Vector3& end, const Box& aabbBox, const std::vector<std::string> testChannels = {}, RaycastHitInfos& outHitInfos = RaycastHitInfos::defaultInfos, float drawDebugTime = 5.0f, bool createOnScene = true) = 0;
 
 	/**
 	* Sweep an AABB box-shaped raycast between two points. Variant for the physic test.
@@ -74,7 +74,7 @@ public:
 	* Set if the physics can log infos.
 	* @param	enable		Enable state of info logging.
 	*/
-	//virtual void SetEnableInfoLogs(bool enable) = 0;
+	virtual void SetEnableInfoLogs(bool enable) = 0;
 
 
 	/** Physics system update. Automatically called by the engine each frame. */
