@@ -3,6 +3,8 @@
 
 struct Vector3;
 class Box;
+class BoxCollisionComponent;
+class Entity;
 
 
 /**
@@ -57,17 +59,17 @@ public:
 	* @param	end					End point of the sweep (world coordinates).
 	* @param	aabbBox				Box shape of the raycast.
 	* @param	testChannels		Collision channels the raycast will test. If the vector is empty, it will test everything.
-	* @param	testedCol			The collision component that is currently tested for the physic.
+	* @param	testedEntity		The entity that is currently tested for the physic.
 	* @param	outHitInfos			Informations on the closest encountered collision.
 	* @return						True if at least one collision intersect the sweeped aabb box raycast.
 	*/
-	//virtual bool AABBSweepPhysicTest(const Vector3& start, const Vector3& end, const Box& aabbBox, const std::vector<std::string> testChannels, const CollisionComponent* testedCol, RaycastHitInfos& outHitInfos) = 0;
+	virtual bool AABBSweepPhysicTest(const Vector3& start, const Vector3& end, const Box& aabbBox, const std::vector<std::string> testChannels, Entity* testedEntity, RaycastHitInfos& outHitInfos) = 0;
 
 	/**
-	* Retrieve the gravity strength.
+	* Retrieve the gravity value.
 	* @return	Gravity value.
 	*/
-	//virtual float GetGravityValue() = 0;
+	virtual const Vector3& GetGravityValue() = 0;
 
 
 	/**

@@ -1,5 +1,6 @@
 #include "boxCollisionComponent.h"
-#include "ECS/entity.h"
+#include "rigidbodyComponent.h"
+#include <ECS/entity.h>
 
 
 Box BoxCollisionComponent::getTransformedBox() const
@@ -24,4 +25,9 @@ Vector3 BoxCollisionComponent::getCenterDownPos() const
 	center_down += Vector3{ 0.0f, -transformed_box.getHalfExtents().y, 0.0f };
 
 	return center_down;
+}
+
+ComponentHandle<RigidbodyComponent> BoxCollisionComponent::getOwningRigidbody() const
+{
+	return owningRigidbody;
 }

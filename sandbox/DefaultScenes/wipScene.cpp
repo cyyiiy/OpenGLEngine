@@ -8,6 +8,7 @@
 #include <Rendering/Lights/pointLightComponent.h>
 #include <Rendering/Lights/spotLightComponent.h>
 #include <PhysicsAABB/boxCollisionComponent.h>
+#include <PhysicsAABB/rigidbodyComponent.h>
 #include <Maths/Geometry/box.h>
 
 
@@ -35,15 +36,15 @@ void WipScene::loadScene()
 	ModelRendererComponent& cyan_cube_model = ECS::GetComponent(cyanCube->addComponentByClass<ModelRendererComponent>());
 	cyan_cube_model.model = &AssetManager::GetModel("cyan_emissive_cube");
 
-	Entity* crate_1 = createEntity();
-	crate_1->setPosition(Vector3{ 1.0f, 0.5f, 2.5f });
-	ModelRendererComponent& crate_1_model = ECS::GetComponent(crate_1->addComponentByClass<ModelRendererComponent>());
-	crate_1_model.model = &AssetManager::GetModel("container");
+	Entity* crate = createEntity();
+	crate->setPosition(Vector3{ 1.0f, 0.5f, 2.5f });
+	ModelRendererComponent& crate_model = ECS::GetComponent(crate->addComponentByClass<ModelRendererComponent>());
+	crate_model.model = &AssetManager::GetModel("container");
 
-	Entity* crate_2 = createEntity();
-	crate_2->setPosition(Vector3{ 2.0f, 0.5f, -1.5f });
-	ModelRendererComponent& crate_2_model = ECS::GetComponent(crate_2->addComponentByClass<ModelRendererComponent>());
-	crate_2_model.model = &AssetManager::GetModel("container");
+	gravityCrate = createEntity();
+	gravityCrate->setPosition(Vector3{ 2.0f, 5.0f, -1.5f });
+	ModelRendererComponent& gravity_crate_model = ECS::GetComponent(gravityCrate->addComponentByClass<ModelRendererComponent>());
+	gravity_crate_model.model = &AssetManager::GetModel("container");
 
 	Entity* backpack = createEntity();
 	backpack->setPosition(Vector3{ -1.0f, 0.5f, -2.5f });
@@ -90,7 +91,7 @@ void WipScene::loadScene()
 	cameraTwo = cam_two_entity->addComponentByClass<CameraComponent>();
 	ECS::GetComponent(cameraTwo).setYaw(45.0f);
 	ECS::GetComponent(cameraTwo).setPitch(-10.0f);
-	
+
 	ECS::GetComponent(cameraOne).setAsActiveCamera();
 	activeCamera = cameraOne;
 
@@ -125,11 +126,13 @@ void WipScene::loadScene()
 
 	// Physics
 
-	BoxCollisionComponent& crate_1_col = ECS::GetComponent(crate_1->addComponentByClass<BoxCollisionComponent>());
-	crate_1_col.collisionChannel = "solid";
+	BoxCollisionComponent& crate_col = ECS::GetComponent(crate->addComponentByClass<BoxCollisionComponent>());
+	crate_col.collisionChannel = "solid";
 
-	BoxCollisionComponent& crate_2_col = ECS::GetComponent(crate_2->addComponentByClass<BoxCollisionComponent>());
-	crate_2_col.collisionChannel = "solid";
+	BoxCollisionComponent& gravity_crate_col = ECS::GetComponent(gravityCrate->addComponentByClass<BoxCollisionComponent>());
+	gravity_crate_col.collisionChannel = "solid";
+	RigidbodyComponent& gravity_crate_rigidbody = ECS::GetComponent(gravityCrate->addComponentByClass<RigidbodyComponent>());
+	gravity_crate_rigidbody.associateCollision(gravityCrate->getComponentOfClass<BoxCollisionComponent>());
 
 	BoxCollisionComponent& floor_col = ECS::GetComponent(floor->addComponentByClass<BoxCollisionComponent>());
 	floor_col.collisionBox = Box{ Vector3{ 0.0f, -0.01f, 0.0f }, Vector3{ 0.5f, 0.01f, 0.5f } };
@@ -224,6 +227,12 @@ void WipScene::updateScene(float dt)
 	{
 		AudioSourceComponent& music_source_comp = ECS::GetComponent(musicSource);
 		music_source_comp.setPause(!music_source_comp.getPaused());
+	}
+
+	// Move the gravity crate upwards
+	if (Input::IsKeyPressed(GLFW_KEY_KP_9))
+	{
+		gravityCrate->addPosition(Vector3::unitY * 5.0f);
 	}
 
 	// Shoot a line raycast in front of the camera

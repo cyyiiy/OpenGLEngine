@@ -174,8 +174,10 @@
     <ClCompile Include="Core\window.cpp" />
     <ClCompile Include="PhysicsAABB\boxCollisionComponent.cpp" />
     <ClCompile Include="PhysicsAABB\collisionsAABB.cpp" />
+    <ClCompile Include="PhysicsAABB\collisionTests.cpp" />
     <ClCompile Include="PhysicsAABB\physicsManager.cpp" />
     <ClCompile Include="PhysicsAABB\raycastUtils.cpp" />
+    <ClCompile Include="PhysicsAABB\rigidbodyComponent.cpp" />
     <ClCompile Include="Rendering\cameraComponent.cpp" />
     <ClCompile Include="Rendering\material.cpp" />
     <ClCompile Include="Rendering\Model\mesh.cpp" />
@@ -234,9 +236,11 @@
     <ClInclude Include="Core\window.h" />
     <ClInclude Include="PhysicsAABB\boxCollisionComponent.h" />
     <ClInclude Include="PhysicsAABB\collisionsAABB.h" />
+    <ClInclude Include="PhysicsAABB\collisionTests.h" />
     <ClInclude Include="PhysicsAABB\physicsManager.h" />
     <ClInclude Include="PhysicsAABB\raycastRendererComponent.h" />
     <ClInclude Include="PhysicsAABB\raycastUtils.h" />
+    <ClInclude Include="PhysicsAABB\rigidbodyComponent.h" />
     <ClInclude Include="Rendering\cameraComponent.h" />
     <ClInclude Include="Rendering\Hud\hudElement.h" />
     <ClInclude Include="Rendering\Hud\spriteComponent.h" />
