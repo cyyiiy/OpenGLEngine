@@ -1,42 +1,36 @@
 #pragma once
 #include <Core/scene.h>
 
-#include <Rendering/cameraComponent.h>
-#include <Audio/audioSourceComponent.h>
-#include <Rendering/Text/textRendererComponent.h>
-#include <Rendering/Hud/spriteRendererComponent.h>
-
-#include <Maths/vector3.h>
-#include <Utils/color.h>
+class CameraComponent;
+class TextComponent;
+class SpriteComponent;
+class AudioSourceComponent;
 
 
 class ExpositionScene : public Scene
 {
-public:
-	void updateScene(float dt) override;
-
 protected:
 	void loadScene() override;
-
 	void unloadScene() override;
+	void updateScene(float dt) override;
 
 private:
-	Entity* player{ nullptr };
-	std::shared_ptr<CameraComponent> camera;
+	ComponentHandle<CameraComponent> cameraOne;
+	ComponentHandle<CameraComponent> cameraTwo;
+	ComponentHandle<CameraComponent> activeCamera;
 
-	Entity* movingCube{ nullptr };
-	Entity* flashlight{ nullptr };
-	Entity* physicsCube{ nullptr };
+	ComponentHandle<TextComponent> camText;
+	ComponentHandle<SpriteComponent> sprite;
 
-	std::shared_ptr<AudioSourceComponent> musicAudioSource;
-	std::shared_ptr<TextRendererComponent> sandboxText;
-	std::shared_ptr<SpriteRendererComponent> sandboxSprite;
+	ComponentHandle<AudioSourceComponent> musicSource;
 
-	float playerCamSpeed{ 4.0f };
-	float playerCamSensitivity{ 0.1f };
+	Entity* gravityCrate{ nullptr };
+	Entity* whiteCube{ nullptr };
+	Entity* cyanCube{ nullptr };
+	float cyanCubeTimer{ 0.0f };
 
-	float time{ 0.0f };
+	const float cameraSpeed{ 4.0f };
+	const float cameraSensitivity{ 0.1f };
 
-	float textAnimationTimer{ -1.0f };
+	int logCounter{ 0 };
 };
-

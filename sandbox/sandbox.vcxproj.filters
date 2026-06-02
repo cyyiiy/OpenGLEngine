@@ -21,7 +21,7 @@
     <ClCompile Include="expositionGame.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="DefaultScenes\wipScene.cpp">
+    <ClCompile Include="DefaultScenes\expositionScene.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -29,7 +29,7 @@
     <ClInclude Include="expositionGame.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="DefaultScenes\wipScene.h">
+    <ClInclude Include="DefaultScenes\expositionScene.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>
