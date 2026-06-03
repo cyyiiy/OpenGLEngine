@@ -1,5 +1,9 @@
 == COURT TERME ==
 
+~ Amélioration du benchmark : - fait
+	- Avoir une nouvelle scène de test Rendering 3D qui teste les performances de plein de materials différents, avec un seul model renderer component pour chaque material - fait
+	- Avoir une nouvelle scène de test Rendering 3D qui teste les performances en mouvement, avec des model renderer components et des point lights qui bougent en continu - fait
+
 ~ Implémenter la V2 de l'ECS : - en cours
 	- Intégrer le code du nouvel ECS dans le moteur - fait
 	- Changer les systèmes du moteur pour utiliser le nouvel ECS :
@@ -8,7 +12,7 @@
 		> UI - fait
 		> Audio - fait
 		> Physique - fait
-	- Mettre à jour le projet Benchmark et comparer les performances du nouvel ECS avec l'ancien
+	- Mettre à jour le projet Benchmark et comparer les performances du nouvel ECS avec l'ancien - en cours
 	- Mettre à jour le Doomlike pour le nouvel ECS :
 		> Prefabs
 		> Player Controller
@@ -18,59 +22,56 @@
 	  (Note: penser à retirer les print debugs du nouvel ECS)
 
 ~ Petites updates d'améliorations :
-	- Rajouter une option à la création d'une entity pour lui mettre un lifetime
-[Fonctionnerai en créant un component si l'option a une valeur différente de 0 pour pas ajouter de fonctionnalité à la classe entity]
-	- Changer le nom de la "model matrix" du transform en "entity matrix" (techniquement c'est plus la matrice du modèle)
-	- Essayer une optimisation sur les transform (notamment pour le rendering 3D), qui permet de savoir quand est-ce que le transform a été update pour la dernière fois, et de ne recalculer les matrices modèle et normale que si nécessaire (un peu comme l'ancien système mais sans utiliser d'event et de logique sur le composant)
+	- Modifier le service locator pour alléger la classe Engine. Les services sont stockés avec des unique_ptr, comme ça plus besoin de supprimer manuellement le pointeur (pas de stockage dans engine.h), et la classe engine ne touche aux services uniquement via le locator (plus d'accès direct pour supprimer complètement la dépendance de engine aux "vrais" services)
+	- Rajouter un component "lifetime" qui supprime son entité au bout d'un temps donné (component data-only avec système extérieur)
 	- Refactor le "load game asset" du doomlike pour utiliser plus de fonctions et moins de copier coller
 [Commencer à réfléchir au futur éditeur d'assets, comment il va pouvoir être utilisé pour le chargement aussi (chargement en cascade ?)]
+	- Essayer de créer un "debug manager" (avec le service locator ?) pour alléger la classe Engine (honteux de devoir stocker un text renderer component dans engine.h)
 	- Améliorer les textes debug
 [Réduire la taille du texte fps, ajouter la durée de la frame en ms, ajouter textes quand pause & freecam]
 	- Rajouter un repère visuel sur la position réelle des lights en mode draw debug
 [Besoin de créer un bilboard renderer ?]
 	- Regarder si c'est possible de récupérer le nom d'une classe pour les print warning de template ("unable to find component of given class")
-	- Pour les systèmes enregistrés dans le Service Locator, faire en sorte qu'ils ne soient jamais appelés directement (par exemple par la classe Engine), pour qu'il suffisse de ne pas les enregistrer pour les désactiver
 
 
-== MOYEN TERME ==
+== MOYEN TERME == (possible pour fin 2026 ?)
 
 ~ Faire un éditeur d'assets (utiliser ImGUI pour l'interface)
+
+~ Créer et implémenter l'ECS V3 :
+	- rework du transform pour un système proche d'Unreal, avec des composants qui peuvent s'attacher à d'autres composants
+	- rework des entités pour que ça ne soit plus que des "id" et qu'elles n'aient plus aucune logique propre
 
 ~ Etendre l'éditeur d'assets pour faire un éditeur de préfab
 
 ~ Améliorer le doomlike avec l'éditeur de préfab
 
 
-== LONG TERME == (étudier lequel est le plus important)
+== LONG TERME == (améliorer d'autres systèmes au niveau de finition de l'ECS V3)
+
+~ Intégrer une librairie physique beaucoup plus complète (adieu le AABB custom)
+
+~ Améliorer le rendu (il faut mieux que le phong lighting, et avoir au moins des normal map ça serait bien)
+[Regarder "Advanced OpenGL", "Advanced Lighting" et "PBR Lighting" de learnopengl.com]
+
+~ Améliorer le système d'inputs (avoir la possiblité de se bind et de consommer les inputs ?)
+[Si possible, gérer les manettes ça serait insane]
+
+~ Améliorer l'HUD (vrai système d'HUD indépendant au lieu d'utiliser des composants classiques)
 
 ~ Mettre des particules (avec ces vidéos ? https://www.youtube.com/watch?v=4YhQJPD7ylQ)
 
-~ Animations 3D : https://ogldev.org/www/tutorial38/tutorial38.html
+~ Créer un éditeur de level à partir de l'éditeur de prefabs
 
-~ Mettre un éditeur de level à partir de l'éditeur de prefabs
+~ Mettre des animations 3D : https://ogldev.org/www/tutorial38/tutorial38.html
 
-
-== PROGRAMMATION GRAPHIQUE == (aka j'ai envie mais pas le focus principal (au moins jusqu'à ce que j'ai trouvé un taff))
-
-~ Partie "Advanced OpenGL" de learnopengl.com
-
-~ Partie "Advanced Lighting" de learnopengl.com
-
-~ Partie "PBR Lighting" de learnopengl.com
-
-
-== TRES LONG TERME == (aka ça sera jamais fait)
-
-~ "Finir" la physique avec la répulsion des collisions body/body (imagine pousser une caisse dans un mur oskour)
-
-~ Mettre un système de physique supportant plus que du AABB
-
-~ Mettre un éditeur complet :skull:
+~ Créer un système de build/package pour le moteur, pour pouvoir faire des vraies releases des jeux
 
 
 == AUTRES ==
 
 ~ Compute la direction des Spot Light en fonction de la rotation de l'Entity (avoir une rotation offset ? avoir un vecteur de direction offset ?)
+[Probablement obsolète une fois l'ECS V3 implémenté, à voir]
 
 ~ Finir les sons dans le doomlike (mouvement ennemis, mur qui bouge, lumière qui s'allume)
 
@@ -89,8 +90,7 @@
 ~ Intégrer des cullings pour le rendering (au moins le frustum culling)
 
 ~ Intégrer l'oct-tree pour les collisions
-
-~ Améliorer les draw call: remplacer la liste de model renderer component, la liste de text renderer component, etc. par une liste de draw call avec toutes les infos nécessaires, ce qui permettrait au moins de les trier par shader et par material, ce qui serait beaucoup mieux que maintenant
+[À voir une fois la vraie librairie physique implémentée]
 
 
 == REFLEXIONS / PROBLEMES CONNUS ==

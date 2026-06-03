@@ -1,6 +1,8 @@
 #pragma once
 #include <Core/game.h>
 #include <Scenes/benchmarkRendering3D.h>
+#include <Scenes/benchmarkMaterials.h>
+#include <Scenes/benchmarkMovement.h>
 #include <Scenes/benchmarkRendering2D.h>
 #include <Scenes/benchmarkPhysics.h>
 #include <Scenes/benchmarkECS.h>
@@ -13,6 +15,8 @@ class BenchmarkGame : public Game
 	{
 		Null,
 		Rendering3D,
+		Materials,
+		Movement,
 		Rendering2D,
 		Physics,
 		ECS
@@ -32,6 +36,8 @@ private:
 
 	// Scenes
 	BenchmarkRendering3D benchmarkRendering3D;
+	BenchmarkMaterials benchmarkMaterials;
+	BenchmarkMovement benchmarkMovement;
 	BenchmarkRendering2D benchmarkRendering2D;
 	BenchmarkPhysics benchmarkPhysics;
 	BenchmarkECS benchmarkECS;
