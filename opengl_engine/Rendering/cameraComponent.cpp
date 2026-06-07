@@ -3,6 +3,7 @@
 #include <ServiceLocator/locator.h>
 #include <Maths/Maths.h>
 
+
 Matrix4 CameraComponent::getViewMatrix()
 {
 	return Matrix4::createLookAt(computedPos, computedPos + computedForward, computedUp);
@@ -118,15 +119,21 @@ void CameraComponent::setFov(float fov_)
 
 void CameraComponent::init()
 {
-	getOwner()->onTransformUpdated.registerObserver(this, Bind_0(&CameraComponent::onEntityMoved));
+	Entity* owner = getOwner();
+	if (!owner)
+	{
+		Locator::getLog().LogMessage_Category("Camera Component: A camera component was created without an owner!", LogCategory::Error);
+		ECS::DeleteComponent(getSelfHandle<CameraComponent>());
+		return;
+	}
+
+	owner->onTransformUpdated.subscribe(this, &CameraComponent::onEntityMoved);
 	computeCameraVectors(true, true);
 	setUpdateActivated(false);
 }
 
 void CameraComponent::exit()
 {
-	getOwner()->onTransformUpdated.unregisterObserver(this);
-
 	if (isActiveCamera())
 	{
 		Locator::getRenderer().RemoveActiveCamera();

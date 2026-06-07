@@ -154,6 +154,7 @@
     <ClCompile Include="ECS\ecs.cpp" />
     <ClCompile Include="ECS\entity.cpp" />
     <ClCompile Include="ECS\entityContainer.cpp" />
+    <ClCompile Include="Events\observer.cpp" />
     <ClCompile Include="GameplayStatics\gameplayStatics.cpp" />
     <ClCompile Include="Log\logFile.cpp" />
     <ClCompile Include="Log\logManager.cpp" />

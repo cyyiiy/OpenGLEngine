@@ -14,7 +14,7 @@
 		> Physique - fait
 	- Mettre à jour le projet Benchmark et comparer les performances du nouvel ECS avec l'ancien - en cours
 		> Modifier l'ECS pour que quand une entité est supprimée (pas pending, réellement supprimée), ses composants le soient instantanément - fait
-		> Refactor le système d'event / observer 
+		> Refactor le système d'event / observer - fait
 	- Mettre à jour le Doomlike pour le nouvel ECS :
 		> Prefabs
 		> Player Controller

@@ -246,8 +246,11 @@ void RigidbodyComponent::applyComputedMovements(const Vector3& computedMovement,
 
 void RigidbodyComponent::applyMovementsToEntity()
 {
-	getOwner()->addPosition(movement);
-	getOwner()->addPosition(gravityMovement);
+	Entity* owner = getOwner();
+	if (!owner) return;
+
+	owner->addPosition(movement);
+	owner->addPosition(gravityMovement);
 
 	movement = Vector3::zero;
 	gravityMovement = Vector3::zero;
