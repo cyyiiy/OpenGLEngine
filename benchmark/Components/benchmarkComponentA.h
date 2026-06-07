@@ -1,13 +1,12 @@
 #pragma once
-#include <ECS/component.h>
+#include <ECS/behaviorComponent.h>
 
 
-class BenchmarkComponentA : public Component
+class BenchmarkComponentA : public BehaviorComponent
 {
 public:
-	void SetPointers(Entity* dummy, int* counter);
+	void setPointers(Entity* dummy, int* counter);
 
-protected:
 	void update(float deltaTime) override;
 
 private:

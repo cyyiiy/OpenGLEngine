@@ -1,5 +1,5 @@
 #pragma once
-#include <ECS/component.h>
+#include <ECS/behaviorComponent.h>
 
 
 enum class MovementMode : uint8_t
@@ -10,12 +10,11 @@ enum class MovementMode : uint8_t
 };
 
 
-class BenchmarkComponentMovement : public Component
+class BenchmarkComponentMovement : public BehaviorComponent
 {
 public:
 	void initializeTimer(float timer, MovementMode movementMode);
 
-protected:
 	void update(float deltaTime) override;
 
 private:

@@ -1,5 +1,8 @@
 #pragma once
 #include <Core/scene.h>
+#include <ECS/ecsTypes.h>
+
+class TextComponent;
 
 
 class BenchmarkRendering2D : public Scene
@@ -10,6 +13,6 @@ protected:
 	void updateScene(float dt) override;
 
 private:
-	std::vector<std::shared_ptr<class TextRendererComponent>> spinning_texts;
+	std::vector<ComponentHandle<TextComponent>> spinning_texts;
 };
 

@@ -1,13 +1,12 @@
 #pragma once
-#include <ECS/component.h>
+#include <ECS/behaviorComponent.h>
 
 
-class BenchmarkComponentB : public Component
+class BenchmarkComponentB : public BehaviorComponent
 {
 public:
 	void incrementCounter(int* counter);
 
-protected:
 	void init() override;
 	
 private:

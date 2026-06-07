@@ -45,8 +45,9 @@ void BenchmarkMaterials::loadScene()
 
 	// Initialize camera
 	camera = createEntity();
-	camera->addComponentByClass<CameraComponent>()->setAsActiveCamera();
-	camera->getComponentByClass<CameraComponent>()->setYaw(-90.0f);
+	CameraComponent& camera_comp = ECS::GetComponent(camera->addComponentByClass<CameraComponent>());
+	camera_comp.setAsActiveCamera();
+	camera_comp.setYaw(-90.0f);
 	camera->setPosition(Vector3{ -1.0f * CAMERA_RADIUS, CAMERA_HEIGHT, 0.0f });
 	camera->setRotation(Quaternion::createLookAt(camera->getPosition(), CAMERA_TARGET, Vector3::unitY));
 
@@ -62,7 +63,7 @@ void BenchmarkMaterials::loadScene()
 
 				std::stringstream model_name;
 				model_name << "model_" << x << "_" << y << "_" << z;
-				cube->addComponentByClass<ModelRendererComponent>()->setModel(&AssetManager::GetModel(model_name.str()));
+				ECS::GetComponent(cube->addComponentByClass<ModelRendererComponent>()).model = &AssetManager::GetModel(model_name.str());
 			}
 		}
 	}
@@ -70,7 +71,7 @@ void BenchmarkMaterials::loadScene()
 
 void BenchmarkMaterials::unloadScene()
 {
-	// Delete the materials
+	// Delete the materials and models
 	for (int r = 0; r < 9; r++)
 	{
 		for (int g = 0; g < 9; g++)

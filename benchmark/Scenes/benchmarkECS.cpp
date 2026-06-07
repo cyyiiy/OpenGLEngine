@@ -1,7 +1,7 @@
 #include "benchmarkECS.h"
 #include <ServiceLocator/locator.h>
 #include <Assets/assetManager.h>
-#include <Rendering/Text/textRendererComponent.h>
+#include <Rendering/Text/textComponent.h>
 #include <Components/benchmarkComponentA.h>
 
 
@@ -13,27 +13,24 @@ void BenchmarkECS::loadScene()
 	// Create some text to explain this benchmark
 	Entity* text = createEntity();
 
-	text->addComponentByClass<TextRendererComponent>()->setTextDatas(
-		"ECS Benchmark", 
-		AssetManager::GetFont("arial_64"), Vector2{ 0.5f, 1.0f }, Vector2{ 0.5f, 1.0f },
-		Vector2{ 0.0f, -40.0f }, Vector2{ 1.0f }, 0.0f, Color::white
-	);
+	TextComponent& text_comp_1 = ECS::GetComponent(text->addComponentByClass<TextComponent>());
+	text_comp_1.setTextDatas("ECS Benchmark", AssetManager::GetFont("arial_64"));
+	text_comp_1.position = HudPosition{ Vector2{ 0.5f, 1.0f }, Vector2{ 0.5f, 1.0f }, Vector2{ 0.0f, -40.0f } };
 
-	text->addComponentByClass<TextRendererComponent>()->setTextDatas(
+	TextComponent& text_comp_2 = ECS::GetComponent(text->addComponentByClass<TextComponent>());
+	text_comp_2.setTextDatas(
 		"Test ECS functions 'Create', 'Get', 'Delete' and 'Update'\n"
 		"There are 1000 components. Each frame, they create another component, get it,\n"
 		"make it add a random number to a shared counter then finally delete the component.",
-		AssetManager::GetFont("arial_24"), Vector2{ 0.0f, 1.0f }, Vector2{ 0.0f, 1.0f },
-		Vector2{ 25.0f, -200.0f }, Vector2{ 1.0f }, 0.0f, Color::white
-	);
+		AssetManager::GetFont("arial_64"));
+	text_comp_2.position = HudPosition{ Vector2{ 0.5f, 1.0f }, Vector2{ 0.0f, 1.0f }, Vector2{ 25.0f, -200.0f } };
 
 	// Create text to show the shared counter
-	counterText = text->addComponentByClass<TextRendererComponent>();
-	counterText->setTextDatas(
-		"Shared counter value for this frame: 0",
-		AssetManager::GetFont("arial_24"), Vector2{ 0.0f, 1.0f }, Vector2{ 0.0f, 1.0f },
-		Vector2{ 25.0f, -400.0f }, Vector2{ 1.0f }, 0.0f, Color::cyan
-	);
+	counterText = text->addComponentByClass<TextComponent>();
+	TextComponent& counter_text_comp = ECS::GetComponent(counterText);
+	counter_text_comp.setTextDatas("Shared counter value for this frame: 0", AssetManager::GetFont("arial_24"));
+	counter_text_comp.position = HudPosition{ Vector2{ 0.0f, 1.0f }, Vector2{ 0.0f, 1.0f }, Vector2{ 25.0f, -400.0f } };
+	counter_text_comp.tintColor = Color::cyan;
 
 	// Create entities
 	dummyEntity = createEntity();
@@ -42,8 +39,8 @@ void BenchmarkECS::loadScene()
 	// Create 1000 benchmark components
 	for (int i = 0; i < 1000; i++)
 	{
-		std::shared_ptr<BenchmarkComponentA> comp = comp_entity->addComponentByClass<BenchmarkComponentA>();
-		comp->SetPointers(dummyEntity, &sharedCounter);
+		BenchmarkComponentA& comp = ECS::GetComponent(comp_entity->addComponentByClass<BenchmarkComponentA>());
+		comp.setPointers(dummyEntity, &sharedCounter);
 	}
 }
 
@@ -53,6 +50,6 @@ void BenchmarkECS::unloadScene()
 
 void BenchmarkECS::updateScene(float dt)
 {
-	counterText->setText("Shared counter value for this frame: " + std::to_string(sharedCounter));
+	ECS::GetComponent(counterText).setText("Shared counter value for this frame: " + std::to_string(sharedCounter));
 	sharedCounter = 0;
 }

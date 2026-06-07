@@ -4,7 +4,7 @@
 #include <ServiceLocator/locator.h>
 
 
-void BenchmarkComponentA::SetPointers(Entity* dummy, int* counter)
+void BenchmarkComponentA::setPointers(Entity* dummy, int* counter)
 {
 	dummyEntity = dummy;
 	sharedCounter = counter;
@@ -25,7 +25,7 @@ void BenchmarkComponentA::update(float deltaTime)
 	}
 
 	dummyEntity->addComponentByClass<BenchmarkComponentB>();
-	std::shared_ptr<BenchmarkComponentB> comp = dummyEntity->getComponentByClass<BenchmarkComponentB>();
-	comp->incrementCounter(sharedCounter);
+	ComponentHandle<BenchmarkComponentB> comp = dummyEntity->getComponentOfClass<BenchmarkComponentB>();
+	ECS::GetComponent(comp).incrementCounter(sharedCounter);
 	dummyEntity->removeComponent(comp);
 }
