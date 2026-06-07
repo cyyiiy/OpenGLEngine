@@ -6,7 +6,7 @@ Entity::Entity(EntityContainer& containerRef_) : Transform(), containerRef(conta
 {
 }
 
-void Entity::clearAllComponents()
+void Entity::clearAllComponents(bool instantDestroy)
 {
     // 'pair' is: std::pair<ComponentTypeId, std::vector<StoredComponent>>
     for (auto& pair : components)
@@ -14,7 +14,7 @@ void Entity::clearAllComponents()
         // Loop through all components of a class
         for (StoredComponent& stored_component : pair.second)
         {
-            stored_component.deleteFunction(stored_component.raw_handle);
+            stored_component.deleteFunction(stored_component.raw_handle, instantDestroy);
         }
     }
     

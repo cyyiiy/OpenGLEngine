@@ -19,7 +19,7 @@ void EntityContainer::updateEntities()
 		auto iter = std::find(entities.begin(), entities.end(), pending_entity);
 		if (iter != entities.end())
 		{
-			(*iter)->clearAllComponents();
+			(*iter)->clearAllComponents(true);
 			delete* iter;
 			entities.erase(iter);
 		}
@@ -32,7 +32,7 @@ void EntityContainer::clearEntities()
 {
 	for (auto& entity : entities)
 	{
-		entity->clearAllComponents();
+		entity->clearAllComponents(true);
 		delete entity;
 	}
 	entities.clear();
