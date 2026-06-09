@@ -3,7 +3,6 @@
 #include <Assets/assetManager.h>
 #include <ServiceLocator/locator.h>
 #include <ECS/componentManager.h>
-#include <Physics/ObjectChannels/collisionChannels.h>
 #include <Inputs/Input.h>
 #include <GameplayStatics/gameplayStatics.h>
 
@@ -29,14 +28,6 @@ void DoomlikeGame::loadGameAssets()
 	log.LogMessage_Category("Doomlike: Start loading doomlike assets...", LogCategory::Info);
 	double load_time = glfwGetTime();
 	double full_load_time = load_time;
-
-	ComponentManager::RegisterComponentDataByClass<CameraLagComponent>(ComponentClassData{ true, 1 });
-	ComponentManager::RegisterComponentDataByClass<PlayerComponent>(ComponentClassData{ true, 1 });
-	ComponentManager::RegisterComponentDataByClass<GunComponent>(ComponentClassData{ true, 1 });
-	ComponentManager::RegisterComponentDataByClass<MovingPlatformComponent>(ComponentClassData{ true, 10 });
-	ComponentManager::RegisterComponentDataByClass<TargetComponent>(ComponentClassData{ false, 20 });
-	ComponentManager::RegisterComponentDataByClass<BulletComponent>(ComponentClassData{ true, 20 });
-	ComponentManager::RegisterComponentDataByClass<EnemyComponent>(ComponentClassData{ true, 10 });
 
 	DefaultAssets::LoadDefaultAssets();
 
@@ -154,8 +145,8 @@ void DoomlikeGame::loadGameAssets()
 
 
 	//  object channels
-	CollisionChannels::RegisterTestChannel("PlayerEntity", { "solid", "enemy", "trigger_zone" }); //  for player and player bullets
-	CollisionChannels::RegisterTestChannel("Enemy", { "solid", "player", "bullet" });
+	//CollisionChannels::RegisterTestChannel("PlayerEntity", { "solid", "enemy", "trigger_zone" }); //  for player and player bullets
+	//CollisionChannels::RegisterTestChannel("Enemy", { "solid", "player", "bullet" });
 
 
 	log.LogMessage_Category("Doomlike: Finished loading doomlike assets in " + std::to_string(glfwGetTime() - full_load_time) + " seconds.", LogCategory::Info);

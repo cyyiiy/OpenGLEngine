@@ -2,7 +2,7 @@
 #include <Assets/assetManager.h>
 #include <ECS/entityContainer.h>
 #include <Rendering/modelRendererComponent.h>
-#include <Physics/AABB/boxAABBColComp.h>
+#include <PhysicsAABB/boxCollisionComponent.h>
 
 
 Entity* WallFactory::CreateWall(EntityContainer* entityContainer, WallFacingDirection facingDirection, const Vector3& position, const Vector2& scale, bool isAltTex, bool createCollision)
@@ -41,15 +41,16 @@ Entity* WallFactory::CreateWall(EntityContainer* entityContainer, WallFacingDire
 		break;
 	}
 
-	wall_entity->addComponentByClass<ModelRendererComponent>()->setModel(&AssetManager::GetModel(isAltTex ? "wall_alt" : "wall"));
+	ModelRendererComponent& wall_model_comp = ECS::GetComponent(wall_entity->addComponentByClass<ModelRendererComponent>());
+	wall_model_comp.model = &AssetManager::GetModel(isAltTex ? "wall_alt" : "wall");
 
 	if (createCollision)
 	{
-		std::shared_ptr<BoxAABBColComp> wall_col_comp = wall_entity->addComponentByClass<BoxAABBColComp>();
-		wall_col_comp->setBox(wall_col_box);
-		wall_col_comp->setCollisionChannel("solid");
-		wall_col_comp->useOwnerScaleForBoxCenter = false;
-		wall_col_comp->useOwnerScaleForBoxSize = false;
+		BoxCollisionComponent& wall_col_comp = ECS::GetComponent(wall_entity->addComponentByClass<BoxCollisionComponent>());
+		wall_col_comp.collisionBox = wall_col_box;
+		wall_col_comp.collisionChannel = "solid";
+		wall_col_comp.useEntityScaleForBoxCenter = false;
+		wall_col_comp.useEntityScaleForBoxSize = false;
 	}
 
 	return wall_entity;

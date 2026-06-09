@@ -13,5 +13,3 @@ namespace FloorCeilingFactory
 	void SetupFloorCeilingAssets();
 	void ReleaseFloorCeilingAssets();
 };
-
-// TODO: the definition in a .cpp of static function declared in a .h seems to not work, see if it is possible to avoid having everything 

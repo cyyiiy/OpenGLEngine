@@ -2,7 +2,8 @@
 #include <Assets/assetManager.h>
 #include <ECS/entityContainer.h>
 #include <Rendering/modelRendererComponent.h>
-#include <Physics/AABB/boxAABBColComp.h>
+#include <PhysicsAABB/boxCollisionComponent.h>
+
 
 Entity* FloorCeilingFactory::CreateFloor(EntityContainer* entityContainer, const Vector3& position, const Vector2& scale, bool isWood, bool createCollision)
 {
@@ -11,13 +12,14 @@ Entity* FloorCeilingFactory::CreateFloor(EntityContainer* entityContainer, const
 	floor_entity->setPosition(position);
 	floor_entity->setScale(scale.x, 1.0f, scale.y);
 
-	floor_entity->addComponentByClass<ModelRendererComponent>()->setModel(&AssetManager::GetModel(isWood ? "floor_wood" : "floor"));
+	ModelRendererComponent& floor_model_comp = ECS::GetComponent(floor_entity->addComponentByClass<ModelRendererComponent>());
+	floor_model_comp.model = &AssetManager::GetModel(isWood ? "floor_wood" : "floor");
 
 	if (createCollision)
 	{
-		std::shared_ptr<BoxAABBColComp> floor_col_comp = floor_entity->addComponentByClass<BoxAABBColComp>();
-		floor_col_comp->setBox(Box{ Vector3{0.0f, -0.1f, 0.0f}, Vector3{0.5f, 0.1f, 0.5f} });
-		floor_col_comp->setCollisionChannel("solid");
+		BoxCollisionComponent& floor_col_comp = ECS::GetComponent(floor_entity->addComponentByClass<BoxCollisionComponent>());
+		floor_col_comp.collisionBox = Box{ Vector3{0.0f, -0.1f, 0.0f}, Vector3{0.5f, 0.1f, 0.5f} };
+		floor_col_comp.collisionChannel = "solid";
 	}
 
 	return floor_entity;
@@ -31,13 +33,14 @@ Entity* FloorCeilingFactory::CreateCeiling(EntityContainer* entityContainer, con
 	ceiling_entity->setScale(scale.x, 1.0f, scale.y);
 	ceiling_entity->setRotation(Quaternion::fromEuler(0.0f, Maths::toRadians(180.0f), 0.0f));
 
-	ceiling_entity->addComponentByClass<ModelRendererComponent>()->setModel(&AssetManager::GetModel("ceiling"));
+	ModelRendererComponent& ceiling_model_comp = ECS::GetComponent(ceiling_entity->addComponentByClass<ModelRendererComponent>());
+	ceiling_model_comp.model = &AssetManager::GetModel("ceiling");
 
 	if (createCollision)
 	{
-		std::shared_ptr<BoxAABBColComp> ceiling_col_comp = ceiling_entity->addComponentByClass<BoxAABBColComp>();
-		ceiling_col_comp->setBox(Box{ Vector3{0.0f, 0.2f, 0.0f}, Vector3{0.5f, 0.2f, 0.5f} });
-		ceiling_col_comp->setCollisionChannel("solid");
+		BoxCollisionComponent& ceiling_col_comp = ECS::GetComponent(ceiling_entity->addComponentByClass<BoxCollisionComponent>());
+		ceiling_col_comp.collisionBox = Box{ Vector3{0.0f, 0.2f, 0.0f}, Vector3{0.5f, 0.2f, 0.5f} };
+		ceiling_col_comp.collisionChannel = "solid";
 	}
 
 	return ceiling_entity;
