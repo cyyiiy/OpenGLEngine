@@ -475,3 +475,18 @@ void AssetManager::LoadNullAssets()
 	sounds.emplace("null_sound", std::make_unique<AudioSound>(nullptr, 0));
 	audioCollisionTypes.emplace("null_audio_collision_type", AudioCollisionOcclusion{ 0.0f, 0.0f });
 }
+
+void AssetManager::ClearAllAssets()
+{
+	textures.clear();
+	vertexArrays.clear();
+	meshesSingle.clear();
+	meshesCollection.clear();
+	models.clear();
+	shaders.clear();
+	materials.clear();
+	materialsCollection.clear();
+	fonts.clear();
+	sounds.clear();
+	audioCollisionTypes.clear();
+}

@@ -249,7 +249,9 @@ void Engine::run()
 	unloadGame();
 	clearEntities();
 	ECS::Clear(true);
+	AssetManager::ClearAllAssets();
 	audio->Quit();
+	Locator::initialize(); //  reset locator to null services
 	delete log;
 	delete audio;
 }

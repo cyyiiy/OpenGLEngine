@@ -14,10 +14,11 @@
 class AssetManager
 {
 public:
-	/**
-	* Load the "null" assest (the assets that will be returned if user ask for a non-existing asset.
-	*/
+	/** Load the "null" assest (the assets that will be returned if user ask for a non-existing asset. */
 	static void LoadNullAssets();
+
+	/** Delete all loaded assets. */
+	static void ClearAllAssets();
 
 
 
