@@ -201,11 +201,6 @@ bool RigidbodyComponent::isOnGround() const
 	return isAssociatedCollisionValid() && !isKinematic && useGravity && onGround;
 }
 
-Vector3 RigidbodyComponent::getGravityVelocity() const
-{
-	return gravityVelocity;
-}
-
 Vector3 RigidbodyComponent::getTheoricalMovement() const
 {
 	if (!inPhysicComputation)

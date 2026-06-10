@@ -37,6 +37,9 @@ public:
 	/** The movement this rigidbody will perform. In meter per second. */
 	Vector3 velocity{ Vector3::zero };
 
+	/** The gravity movement this rigidbody will perform. In meter per second. */
+	Vector3 gravityVelocity{ Vector3::zero };
+
 
 	/**
 	* Event triggered if this rigidbody collide a collision.
@@ -61,9 +64,6 @@ private:
 
 	/** True if this rigidbody was grounded last frame (use for reverse step mechanic). */
 	bool groundedLastFrame{ false };
-
-	/** The gravity movement this rigidbody will perform. In meter per second. */
-	Vector3 gravityVelocity{ Vector3::zero };
 
 	/** An additional movement this rigidbody will perform, but used a single frame. */
 	Vector3 velocityOneFrame{ Vector3::zero };
@@ -128,9 +128,6 @@ public:
 	
 	/** Know if this rigidbody is currently on ground (when using gravity). */
 	bool isOnGround() const;
-
-	/** Get the gravity velocity of this rigidbody. In meter per second. */
-	Vector3 getGravityVelocity() const;
 
 
 	/** Get the pre-computed movement of this rigidbody. Only works during the physics phase. */
