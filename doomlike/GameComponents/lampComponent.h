@@ -11,7 +11,6 @@ public:
 	void setup(ComponentHandle<PointLightComponent> lightComp, ComponentHandle<ModelRendererComponent> modelRendererComp, bool setupChandelier);
 	void changeStatus(bool lightOn);
 
-protected:
 	void update(float deltaTime) override;
 
 private:

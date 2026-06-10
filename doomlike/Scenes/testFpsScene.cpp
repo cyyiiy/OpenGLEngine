@@ -4,9 +4,8 @@
 
 #include <Rendering/Lights/directionalLightComponent.h>
 #include <Rendering/modelRendererComponent.h>
-#include <Physics/AABB/boxAABBColComp.h>
-#include <Physics/ObjectChannels/collisionChannels.h>
-#include <GameComponents/targetComponent.h>
+#include <PhysicsAABB/boxCollisionComponent.h>
+//#include <GameComponents/targetComponent.h>
 
 #include <PrefabFactories/floorCeilingFactory.h>
 
@@ -17,10 +16,10 @@ void TestFpsScene::loadScene()
 	renderer.SetClearColor(Color{ 50, 75, 75, 255 });
 
 
-	//  prefabs
+	// Prefabs
 	FloorCeilingFactory::CreateFloor(this, Vector3{ 0.0f, 0.0f, 0.0f }, Vector2{ 10.0f, 10.0f }, false);
 
-	//  entities
+	// Entities
 	Entity* crate1 = createEntity();
 	Entity* crate2 = createEntity();
 	Entity* crate3 = createEntity();
@@ -36,35 +35,38 @@ void TestFpsScene::loadScene()
 	taxi->setPosition(Vector3{ -7.0f, 1.0f, 0.0f });
 	taxi->setScale(0.01f);
 
-	//  components
-	crate1->addComponentByClass<ModelRendererComponent>()->setModel(&AssetManager::GetModel("crate"));
-	crate2->addComponentByClass<ModelRendererComponent>()->setModel(&AssetManager::GetModel("crate"));
-	crate3->addComponentByClass<ModelRendererComponent>()->setModel(&AssetManager::GetModel("crate"));
-	target->addComponentByClass<ModelRendererComponent>()->setModel(&AssetManager::GetModel("crate"));
-	taxi->addComponentByClass<ModelRendererComponent>()->setModel(&AssetManager::GetModel("taxi"));
+	// Model components
+	ECS::GetComponent(crate1->addComponentByClass<ModelRendererComponent>()).model = &AssetManager::GetModel("crate");
+	ECS::GetComponent(crate2->addComponentByClass<ModelRendererComponent>()).model = &AssetManager::GetModel("crate");
+	ECS::GetComponent(crate3->addComponentByClass<ModelRendererComponent>()).model = &AssetManager::GetModel("crate");
+	ECS::GetComponent(target->addComponentByClass<ModelRendererComponent>()).model = &AssetManager::GetModel("crate");
+	ECS::GetComponent(taxi->addComponentByClass<ModelRendererComponent>()).model = &AssetManager::GetModel("taxi");
 
-	crate1->addComponentByClass<BoxAABBColComp>()->setCollisionChannel("solid");
-	crate2->addComponentByClass<BoxAABBColComp>()->setCollisionChannel("solid");
-	crate3->addComponentByClass<BoxAABBColComp>()->setCollisionChannel("solid");
-	target->addComponentByClass<BoxAABBColComp>()->setCollisionChannel("solid");
+	// Collision components
+	ECS::GetComponent(crate1->addComponentByClass<BoxCollisionComponent>()).collisionChannel = "solid";
+	ECS::GetComponent(crate2->addComponentByClass<BoxCollisionComponent>()).collisionChannel = "solid";
+	ECS::GetComponent(crate3->addComponentByClass<BoxCollisionComponent>()).collisionChannel = "solid";
+	ECS::GetComponent(target->addComponentByClass<BoxCollisionComponent>()).collisionChannel = "solid";
 
-	target->addComponentByClass<TargetComponent>();
+	// Custom components
+	//target->addComponentByClass<TargetComponent>();
 
-	std::shared_ptr<DirectionalLightComponent> dir_light_comp = light->addComponentByClass<DirectionalLightComponent>();
-	dir_light_comp->setColor(Color::white);
-	dir_light_comp->setDirection(Vector3::normalize(Vector3{ 0.5f, -1.0f, 0.75f }));
-	dir_light_comp->setAmbientStrength(0.1f);
-	dir_light_comp->setDiffuseStrength(0.7f);
+	// Directional light
+	DirectionalLightComponent& dir_light_comp = ECS::GetComponent(light->addComponentByClass<DirectionalLightComponent>());
+	dir_light_comp.lightColor = Color::white;
+	dir_light_comp.direction = Vector3::normalize(Vector3{ 0.5f, -1.0f, 0.75f });
+	dir_light_comp.ambientStrength = 0.1f;
+	dir_light_comp.diffuseStrength = 0.7f;
 
-	//  raycast tests
+	// Raycast tests
 	Physics& physics = Locator::getPhysics();
 	RaycastHitInfos out_raycast;
-	physics.LineRaycast(Vector3{ -1.0f, 3.5f, 3.0f }, Vector3{ -1.0f, -1.5f, 3.0f }, CollisionChannels::GetRegisteredTestChannel("TestEverything"), out_raycast);
-	physics.LineRaycast(Vector3{ -4.5f, 0.5f, -3.0f }, Vector3{ 0.0f, 0.5f, 5.0f }, CollisionChannels::GetRegisteredTestChannel("TestEverything"), out_raycast, -1.0f);
+	physics.LineRaycast(Vector3{ -1.0f, 3.5f, 3.0f }, Vector3{ -1.0f, -1.5f, 3.0f }, { }, out_raycast);
+	physics.LineRaycast(Vector3{ -4.5f, 0.5f, -3.0f }, Vector3{ 0.0f, 0.5f, 5.0f }, { }, out_raycast, -1.0f);
 	physics.AABBRaycast(Vector3{ 4.2f, 0.3f, -2.0f }, Box::one);
 
 
-	//  player spawn point
+	// Player spawn point
 	spawnPoint = createEntity();
 	spawnPoint->setPosition(Vector3::zero);
 }

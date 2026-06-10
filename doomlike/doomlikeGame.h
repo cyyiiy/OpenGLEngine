@@ -1,9 +1,9 @@
 #pragma once
 #include <Core/game.h>
 #include <Scenes/testFpsScene.h>
-#include <Scenes/doomlikeLevelDebug.h>
-#include <Scenes/doomlikeLevelStart.h>
-#include <Scenes/doomlikeLevelAdvanced.h>
+//#include <Scenes/doomlikeLevelDebug.h>
+//#include <Scenes/doomlikeLevelStart.h>
+//#include <Scenes/doomlikeLevelAdvanced.h>
 
 class PlayerComponent;
 
@@ -11,7 +11,7 @@ class PlayerComponent;
 class DoomlikeGame : public Game
 {
 public:
-	std::weak_ptr<PlayerComponent> getPlayer() { return player; }
+	ComponentHandle<PlayerComponent> getPlayer() { return player; }
 
 	void restartLevel();
 	void changeLevel(int levelIndex);
@@ -27,13 +27,13 @@ private:
 
 	//  scenes
 	TestFpsScene testScene;
-	DoomlikeLevelDebug levelDebugScene;
-	DoomlikeLevelStart levelStartScene;
-	DoomlikeLevelAdvanced levelAdvancedScene;
+	//DoomlikeLevelDebug levelDebugScene;
+	//DoomlikeLevelStart levelStartScene;
+	//DoomlikeLevelAdvanced levelAdvancedScene;
 	int currentLevel = 0;
 	bool mustRestartLevel{ false };
 
 	//  player
-	std::shared_ptr<PlayerComponent> player;
+	ComponentHandle<PlayerComponent> player;
 };
 

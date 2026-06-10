@@ -17,7 +17,7 @@
 		> Refactor le système d'event / observer - fait
 	- Mettre à jour le Doomlike pour le nouvel ECS :
 		> Prefabs - fait
-		> Player Controller
+		> Player Controller - en cours
 		> Objets interagissables
 		> Ennemis
 	- Tester les rigidbody (on ground & velocity one frame & step mechanic) pour être sur que rien n'est cassé
