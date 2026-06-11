@@ -19,9 +19,9 @@ public:
 	void update(float dt) override;
 
 private:
-	Entity* targetEntity;
-	float lagSpeed;
-	float lagMaxDist;
+	Entity* targetEntity{ nullptr };
+	float lagSpeed{ 0.0f };
+	float lagMaxDist{ 0.0f };
 };
 
 

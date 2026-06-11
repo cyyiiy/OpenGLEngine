@@ -12,7 +12,7 @@
 #include <PrefabFactories/lampFactory.h>
 
 #include <GameComponents/playerComponent.h>
-//#include <GameComponents/gunComponent.h>
+#include <GameComponents/gunComponent.h>
 
 
 void DoomlikeGame::loadGameAssets()
@@ -152,7 +152,7 @@ void DoomlikeGame::loadGame()
 	Entity* player_entity = createEntity();
 	Entity* player_camera_entity = createEntity();
 	player = player_entity->addComponentByClass<PlayerComponent>();
-	//player_entity->addComponentByClass<GunComponent>();
+	player_entity->addComponentByClass<GunComponent>();
 	ECS::GetComponent(player).setupPlayer(player_camera_entity, 1.5f, 5.0f, 7.0f, 0.3f);
 
 	loadLevel(0);

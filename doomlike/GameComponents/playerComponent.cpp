@@ -11,7 +11,7 @@
 #include <PhysicsAABB/boxCollisionComponent.h>
 #include <PhysicsAABB/rigidbodyComponent.h>
 #include <Audio/audioSourceComponent.h>
-//#include <GameComponents/gunComponent.h>
+#include <GameComponents/gunComponent.h>
 
 
 void PlayerComponent::setupPlayer(Entity* camEntity, float camHeight_, float moveSpeed_, float jumpForce_, float stepHeight_)
@@ -65,8 +65,10 @@ void PlayerComponent::respawn(const Transform& respawnTransform)
 	camera_comp.setPitch(0.0f);
 	lag_movement_comp.teleport();
 
-	//std::shared_ptr<GunComponent> gun = entity->getComponentByClass<GunComponent>();
-	//if (gun) gun->reset();
+	if (entity->hasComponentOfClass<GunComponent>())
+	{
+		ECS::GetComponent(entity->getComponentOfClass<GunComponent>()).reset();
+	}
 }
 
 Vector3 PlayerComponent::getCamPosition() const

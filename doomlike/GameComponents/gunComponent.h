@@ -1,42 +1,55 @@
 #pragma once
-#include <ECS/component.h>
+#include <ECS/BehaviorComponent.h>
 #include <Events/observer.h>
 #include <vector>
 
+class PlayerComponent;
+class ModelRendererComponent;
+class TextComponent;
+class SpriteComponent;
+class BulletComponent;
+
 
 /**
-* This component is responsible of the shoot.
+* Component to add to an entity with the player component to add it a gun.
 * It automatically create the needed components on its entity.
 */
-class GunComponent : public Component, public Observer
+class GunComponent : public BehaviorComponent, public Observer
 {
+	const int MAX_AMMO = 5;
+	const float RELOAD_DURATION = 0.5f;
+	const float SHOOT_VELOCITY = 15.0f;
+	const float BULLET_LIFETIME = 3.0f;
+
 public:
 	void reset();
 
-protected:
 	void init() override;
 	void exit() override;
-	void update(float deltaTime) override;
+	void update(float dt) override;
+
 	void onPlayerTransformUpdated();
 
 private:
 	Entity* entity{ nullptr };
-	std::shared_ptr<class PlayerComponent> player;
-	std::shared_ptr<class ModelRendererComponent> gunModel;
-	std::shared_ptr<class TextRendererComponent> ammoText;
-	std::shared_ptr<class SpriteRendererComponent> crosshairSprite;
+	ComponentHandle<PlayerComponent> player;
+	ComponentHandle<ModelRendererComponent> gunModel;
+	ComponentHandle<TextComponent> ammoText;
+	ComponentHandle<SpriteComponent> crosshairSprite;
 
-	std::vector<std::shared_ptr<class BulletComponent>> activeBullets;
+	std::vector<ComponentHandle<BulletComponent>> activeBullets;
 
 	bool gunValid{ false };
 	int ammoCount{ 0 };
 	float reloadTimer{ 0.0f };
 
 	void writeAmmoText();
-
-	const int ammoMax{ 5 };
-	const float reloadDuration{ 0.5f };
-	const float shootVelocity{ 15.0f };
-	const float bulletLifetime{ 3.0f };
 };
 
+
+// Specify sublist size for 'GunComponent'
+template<>
+struct ComponentSublistSize<GunComponent>
+{
+	static constexpr size_t value = 1;
+};
