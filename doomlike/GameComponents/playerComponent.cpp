@@ -148,8 +148,8 @@ void PlayerComponent::update(float deltaTime)
 		Vector3 raycast_end = raycast_start + camera_comp.getCamForward() * 5.0f;
 
 		Physics& physics = Locator::getPhysics();
-		//physics.LineRaycast(raycast_start, raycast_end, { "solid", "enemy", "trigger_zone" });
-		physics.AABBSweepRaycast(raycast_start, raycast_end, Box{ Vector3::zero, Vector3{ 0.1f, 0.1f, 0.1f } }, { "solid", "enemy", "trigger_zone" });
+		physics.LineRaycast(raycast_start, raycast_end, { "solid", "enemy", "trigger_zone" });
+		//physics.AABBSweepRaycast(raycast_start, raycast_end, Box{ Vector3::zero, Vector3{ 0.1f, 0.1f, 0.1f } }, { "solid", "enemy", "trigger_zone" });
 	}
 
 

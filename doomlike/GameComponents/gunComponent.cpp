@@ -85,7 +85,7 @@ void GunComponent::update(float deltaTime)
 		RaycastHitInfos raycast_out;
 		CameraComponent& player_camera = ECS::GetComponent(ECS::GetComponent(player).camera);
 		const Vector3 raycast_target = player_camera.getCamPosition() + player_camera.getCamForward() * 1000.0f;
-		bool raycast_hit = physics.LineRaycast(player_camera.getCamPosition(), raycast_target, { "solid", "enemy", "trigger_zone" }, raycast_out, 1.0f);
+		bool raycast_hit = physics.LineRaycast(player_camera.getCamPosition(), raycast_target, { "solid", "enemy" }, raycast_out, 1.0f);
 
 		Quaternion bullet_rotation;
 		Vector3 bullet_direction;

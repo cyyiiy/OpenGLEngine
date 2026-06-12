@@ -155,7 +155,9 @@
     <ClCompile Include="GameComponents\gunComponent.cpp" />
     <ClCompile Include="GameComponents\lagMovementComponent.cpp" />
     <ClCompile Include="GameComponents\lampComponent.cpp" />
+    <ClCompile Include="GameComponents\movingPlatformComponent.cpp" />
     <ClCompile Include="GameComponents\playerComponent.cpp" />
+    <ClCompile Include="GameComponents\targetComponent.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PrefabFactories\floorCeilingFactory.cpp" />
     <ClCompile Include="PrefabFactories\lampFactory.cpp" />
@@ -174,7 +176,9 @@
     <ClInclude Include="GameComponents\gunComponent.h" />
     <ClInclude Include="GameComponents\lagMovementComponent.h" />
     <ClInclude Include="GameComponents\lampComponent.h" />
+    <ClInclude Include="GameComponents\movingPlatformComponent.h" />
     <ClInclude Include="GameComponents\playerComponent.h" />
+    <ClInclude Include="GameComponents\targetComponent.h" />
     <ClInclude Include="GameLogic\playerSpawnPoint.h" />
     <ClInclude Include="PrefabFactories\floorCeilingFactory.h" />
     <ClInclude Include="PrefabFactories\lampFactory.h" />

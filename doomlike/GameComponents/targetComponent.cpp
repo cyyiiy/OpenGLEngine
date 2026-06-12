@@ -1,6 +1,6 @@
 #include "targetComponent.h"
 #include <ECS/entity.h>
-#include <Physics/collisionComponent.h>
+#include <PhysicsAABB/boxCollisionComponent.h>
 #include <ServiceLocator/locator.h>
 
 
@@ -12,21 +12,13 @@ void TargetComponent::onIntersectedByRaycast(RaycastType type, const Vector3& in
 
 void TargetComponent::init()
 {
-	collision = getOwner()->getComponentByClass<CollisionComponent>();
-
-	if (!collision)
+	if (!getOwner()->hasComponentOfClass<BoxCollisionComponent>())
 	{
 		Locator::getLog().LogMessage_Category("Doomlike: A target component was added on an entity that doesn't have a collision component!", LogCategory::Warning);
 		return;
 	}
 
-	collision->onRaycastIntersect.registerObserver(this, Bind_2(&TargetComponent::onIntersectedByRaycast));
-}
+	collision = getOwner()->getComponentOfClass<BoxCollisionComponent>();
 
-void TargetComponent::exit()
-{
-	if (collision) collision->onRaycastIntersect.unregisterObserver(this);
-
-	//  release shared ptr
-	collision = nullptr;
+	ECS::GetComponent(collision).onRaycastIntersect.subscribe(this, &TargetComponent::onIntersectedByRaycast);
 }

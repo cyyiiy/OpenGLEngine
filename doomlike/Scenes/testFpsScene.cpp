@@ -5,7 +5,7 @@
 #include <Rendering/Lights/directionalLightComponent.h>
 #include <Rendering/modelRendererComponent.h>
 #include <PhysicsAABB/boxCollisionComponent.h>
-//#include <GameComponents/targetComponent.h>
+#include <GameComponents/targetComponent.h>
 
 #include <PrefabFactories/floorCeilingFactory.h>
 
@@ -49,7 +49,7 @@ void TestFpsScene::loadScene()
 	ECS::GetComponent(target->addComponentByClass<BoxCollisionComponent>()).collisionChannel = "solid";
 
 	// Custom components
-	//target->addComponentByClass<TargetComponent>();
+	target->addComponentByClass<TargetComponent>();
 
 	// Directional light
 	DirectionalLightComponent& dir_light_comp = ECS::GetComponent(light->addComponentByClass<DirectionalLightComponent>());
