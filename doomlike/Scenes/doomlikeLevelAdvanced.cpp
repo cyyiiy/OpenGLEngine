@@ -4,11 +4,11 @@
 
 #include <Rendering/Lights/directionalLightComponent.h>
 #include <Rendering/modelRendererComponent.h>
-#include <Physics/AABB/boxAABBColComp.h>
-#include <Physics/rigidbodyComponent.h>
+#include <PhysicsAABB/boxCollisionComponent.h>
+#include <PhysicsAABB/rigidbodyComponent.h>
 #include <GameComponents/lampComponent.h>
 #include <GameComponents/movingPlatformComponent.h>
-#include <GameComponents/enemyComponent.h>
+//#include <GameComponents/enemyComponent.h>
 
 #include <PrefabFactories/wallFactory.h>
 #include <PrefabFactories/floorCeilingFactory.h>
@@ -23,7 +23,7 @@ void DoomlikeLevelAdvanced::loadScene()
 	renderer.SetClearColor(Color{ 50, 75, 75, 255 });
 
 
-	//  prefabs - static
+	// Prefabs - static
 	FloorCeilingFactory::CreateFloor(this, Vector3{ 0.0f, 0.0f, 0.0f }, Vector2{ 20.0f, 20.0f }, false);
 	FloorCeilingFactory::CreateFloor(this, Vector3{ 0.0f, 7.0f, 0.0f }, Vector2{  2.5f,  2.5f }, true);
 	FloorCeilingFactory::CreateCeiling(this, Vector3{ 0.0f, 10.0f, 0.0f }, Vector2{ 20.0f, 20.0f });
@@ -38,7 +38,7 @@ void DoomlikeLevelAdvanced::loadScene()
 	WallFactory::CreateWall(this, WallFacingDirection::WallFacingNegativeX, Vector3{  10.0f, 5.0f,   0.0f }, Vector2{ 20.0f, 10.0f }, false);
 	WallFactory::CreateWall(this, WallFacingDirection::WallFacingPositiveZ, Vector3{   0.0f, 5.0f, -10.0f }, Vector2{ 20.0f, 10.0f }, false);
 
-	//  prefabs - dynamic
+	// Prefabs - dynamic
 	ceilLamp1 = LampFactory::CreateLamp(this, Vector3{ -8.0f, 10.0f, -8.0f }, 1.0f, true, true);
 	ceilLamp2 = LampFactory::CreateLamp(this, Vector3{  8.0f, 10.0f, -8.0f }, 1.0f, true, true);
 	ceilLamp3 = LampFactory::CreateLamp(this, Vector3{ -8.0f, 10.0f,  8.0f }, 1.0f, true, true);
@@ -49,46 +49,46 @@ void DoomlikeLevelAdvanced::loadScene()
 	ceilLamp8 = LampFactory::CreateLamp(this, Vector3{  0.0f, 10.0f,  8.0f }, 1.0f, true, true);
 	floorLamp = LampFactory::CreateLamp(this, Vector3{  6.0f,  0.0f,  0.0f }, 2.0f, false, false);
 
-	//  directional light
+	// Directional light
 	Entity* light = createEntity();
-	std::shared_ptr<DirectionalLightComponent> dir_light_comp = light->addComponentByClass<DirectionalLightComponent>();
-	dir_light_comp->setColor(Color{ 255, 238, 209, 255 });
-	dir_light_comp->setDirection(Vector3::unitY);
-	dir_light_comp->setAmbientStrength(0.15f);
-	dir_light_comp->setDiffuseStrength(0.0f);
+	DirectionalLightComponent& dir_light_comp = ECS::GetComponent(light->addComponentByClass<DirectionalLightComponent>());
+	dir_light_comp.lightColor = Color{ 255, 238, 209, 255 };
+	dir_light_comp.direction = Vector3::unitY;
+	dir_light_comp.ambientStrength = 0.15f;
+	dir_light_comp.diffuseStrength = 0.0f;
 
 
-	//  elevator
+	// Elevator
 	elevator = createEntity();
 	elevator->setPosition(Vector3{ 2.5f, 0.1f, 0.0f });
 	elevator->setScale(Vector3{ 2.0f, 0.2f, 2.0f });
-	elevator->addComponentByClass<ModelRendererComponent>()->setModel(&AssetManager::GetModel("crate"));
-	std::shared_ptr<MovingPlatformComponent> elevator_comp = elevator->addComponentByClass<MovingPlatformComponent>();
-	elevator_comp->setupMovingPlatform(Vector3{ 2.5f, 0.1f, 0.0f }, Vector3{ 2.5f, 6.9f, 0.0f }, 2.5f, 2.0f);
-	elevator_comp->pauseMovement();
+	ECS::GetComponent(elevator->addComponentByClass<ModelRendererComponent>()).model = &AssetManager::GetModel("crate");
+	MovingPlatformComponent& elevator_comp = ECS::GetComponent(elevator->addComponentByClass<MovingPlatformComponent>());
+	elevator_comp.setupMovingPlatform(Vector3{ 2.5f, 0.1f, 0.0f }, Vector3{ 2.5f, 6.9f, 0.0f }, 2.5f, 2.0f);
+	elevator_comp.pauseMovement();
 
 
-	//  trigger zones
+	// Trigger zones
 	elevatorUpZone = createEntity();
 	elevatorUpZone->setPosition(Vector3{ 2.5f, 1.0f, 0.0f });
 	elevatorUpZone->setScale(Vector3{ 0.3f, 0.3f, 0.3f });
-	std::shared_ptr<BoxAABBColComp> elevator_trigger_comp = elevatorUpZone->addComponentByClass<BoxAABBColComp>();
-	elevator_trigger_comp->setBox(Box::one);
-	elevator_trigger_comp->setCollisionChannel("trigger_zone");
-	elevator_trigger_comp->setCollisionType(CollisionType::Trigger);
-	elevator_trigger_comp->onTriggerEnter.registerObserver(this, Bind_1(&DoomlikeLevelAdvanced::onEnterElevatorUpZone));
+	BoxCollisionComponent& elevator_trigger_comp = ECS::GetComponent(elevatorUpZone->addComponentByClass<BoxCollisionComponent>());
+	elevator_trigger_comp.collisionBox = Box::one;
+	elevator_trigger_comp.collisionChannel = "trigger_zone";
+	elevator_trigger_comp.isTrigger = true;
+	elevator_trigger_comp.onTriggerEnter.subscribe(this, &DoomlikeLevelAdvanced::onEnterElevatorUpZone);
 
 	enemySpawnZone = createEntity();
 	enemySpawnZone->setPosition(Vector3{ 0.0f, 7.5f, 0.0f });
 	enemySpawnZone->setScale(Vector3{ 0.2f, 0.2f, 0.2f });
-	std::shared_ptr<BoxAABBColComp> enemy_trigger_comp = enemySpawnZone->addComponentByClass<BoxAABBColComp>();
-	enemy_trigger_comp->setBox(Box::one);
-	enemy_trigger_comp->setCollisionChannel("trigger_zone");
-	enemy_trigger_comp->setCollisionType(CollisionType::Trigger);
-	enemy_trigger_comp->onTriggerEnter.registerObserver(this, Bind_1(&DoomlikeLevelAdvanced::onEnterEnemySpawnZone));
+	BoxCollisionComponent& enemy_trigger_comp = ECS::GetComponent(enemySpawnZone->addComponentByClass<BoxCollisionComponent>());
+	enemy_trigger_comp.collisionBox = Box::one;
+	enemy_trigger_comp.collisionChannel = "trigger_zone";
+	enemy_trigger_comp.isTrigger = true;
+	enemy_trigger_comp.onTriggerEnter.subscribe(this, &DoomlikeLevelAdvanced::onEnterEnemySpawnZone);
 
 
-	//  player spawn point
+	// Player spawn point
 	spawnPoint = createEntity();
 	spawnPoint->setPosition(Vector3{ 9.0f, 0.0f, 0.0f });
 	spawnPoint->setRotation(Quaternion::fromEuler(Maths::toRadians(180.0f), 0.0f, 0.0f));
@@ -102,30 +102,31 @@ void DoomlikeLevelAdvanced::updateScene(float dt)
 {
 }
 
-void DoomlikeLevelAdvanced::onEnterElevatorUpZone(RigidbodyComponent& other)
+void DoomlikeLevelAdvanced::onEnterElevatorUpZone(const RigidbodyComponent& body)
 {
-	if (!other.getOwner()->hasGameplayTag("Player")) return;
+	if (!body.getOwner()->hasGameplayTag("Player")) return;
 
-	elevatorUpZone->getComponentByClass<BoxAABBColComp>()->onTriggerEnter.unregisterObserver(this);
-	elevator->getComponentByClass<MovingPlatformComponent>()->resumeMovement();
+	ECS::GetComponent(elevatorUpZone->getComponentOfClass<BoxCollisionComponent>()).onTriggerEnter.unsubscribe(this);
+	ECS::GetComponent(elevator->getComponentOfClass<MovingPlatformComponent>()).resumeMovement();
 }
 
-void DoomlikeLevelAdvanced::onEnterEnemySpawnZone(RigidbodyComponent& other)
+void DoomlikeLevelAdvanced::onEnterEnemySpawnZone(const RigidbodyComponent& body)
 {
-	if (!other.getOwner()->hasGameplayTag("Player")) return;
+	if (!body.getOwner()->hasGameplayTag("Player")) return;
 
-	//  change lights
-	ceilLamp1->getComponentByClass<LampComponent>()->changeStatus(true);
-	ceilLamp2->getComponentByClass<LampComponent>()->changeStatus(true);
-	ceilLamp3->getComponentByClass<LampComponent>()->changeStatus(true);
-	ceilLamp4->getComponentByClass<LampComponent>()->changeStatus(true);
-	ceilLamp5->getComponentByClass<LampComponent>()->changeStatus(true);
-	ceilLamp6->getComponentByClass<LampComponent>()->changeStatus(true);
-	ceilLamp7->getComponentByClass<LampComponent>()->changeStatus(true);
-	ceilLamp8->getComponentByClass<LampComponent>()->changeStatus(true);
-	floorLamp->getComponentByClass<LampComponent>()->changeStatus(false);
+	// Change lights
+	ECS::GetComponent(ceilLamp1->getComponentOfClass<LampComponent>()).changeStatus(true);
+	ECS::GetComponent(ceilLamp2->getComponentOfClass<LampComponent>()).changeStatus(true);
+	ECS::GetComponent(ceilLamp3->getComponentOfClass<LampComponent>()).changeStatus(true);
+	ECS::GetComponent(ceilLamp4->getComponentOfClass<LampComponent>()).changeStatus(true);
+	ECS::GetComponent(ceilLamp5->getComponentOfClass<LampComponent>()).changeStatus(true);
+	ECS::GetComponent(ceilLamp6->getComponentOfClass<LampComponent>()).changeStatus(true);
+	ECS::GetComponent(ceilLamp7->getComponentOfClass<LampComponent>()).changeStatus(true);
+	ECS::GetComponent(ceilLamp8->getComponentOfClass<LampComponent>()).changeStatus(true);
+	ECS::GetComponent(floorLamp->getComponentOfClass<LampComponent>()).changeStatus(false);
 
-	//  spawn enemies
+	// Spawn enemies
+	/*
 	Entity* enemy_1 = createEntity();
 	Entity* enemy_2 = createEntity();
 	Entity* enemy_3 = createEntity();
@@ -138,6 +139,7 @@ void DoomlikeLevelAdvanced::onEnterEnemySpawnZone(RigidbodyComponent& other)
 	enemy_2->addComponentByClass<EnemyComponent>();
 	enemy_3->addComponentByClass<EnemyComponent>();
 	enemy_4->addComponentByClass<EnemyComponent>();
+	*/
 
-	enemySpawnZone->getComponentByClass<BoxAABBColComp>()->onTriggerEnter.unregisterObserver(this);
+	ECS::GetComponent(enemySpawnZone->getComponentOfClass<BoxCollisionComponent>()).onTriggerEnter.unsubscribe(this);
 }

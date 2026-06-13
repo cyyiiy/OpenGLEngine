@@ -163,6 +163,9 @@
     <ClCompile Include="PrefabFactories\lampFactory.cpp" />
     <ClCompile Include="PrefabFactories\stairFactory.cpp" />
     <ClCompile Include="PrefabFactories\wallFactory.cpp" />
+    <ClCompile Include="Scenes\doomlikeLevelAdvanced.cpp" />
+    <ClCompile Include="Scenes\doomlikeLevelDebug.cpp" />
+    <ClCompile Include="Scenes\doomlikeLevelStart.cpp" />
     <ClCompile Include="Scenes\testFpsScene.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -184,6 +187,9 @@
     <ClInclude Include="PrefabFactories\lampFactory.h" />
     <ClInclude Include="PrefabFactories\stairFactory.h" />
     <ClInclude Include="PrefabFactories\wallFactory.h" />
+    <ClInclude Include="Scenes\doomlikeLevelAdvanced.h" />
+    <ClInclude Include="Scenes\doomlikeLevelDebug.h" />
+    <ClInclude Include="Scenes\doomlikeLevelStart.h" />
     <ClInclude Include="Scenes\testFpsScene.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

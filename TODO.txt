@@ -18,7 +18,7 @@
 	- Mettre à jour le Doomlike pour le nouvel ECS :
 		> Prefabs - fait
 		> Player Controller - fait
-		> Objets interagissables - en cours
+		> Objets interagissables - fait
 		> Ennemis
 	- Tester les rigidbody (on ground & velocity one frame & step mechanic) pour être sur que rien n'est cassé - en cours
 	  (Note: penser à retirer les print debugs du nouvel ECS)

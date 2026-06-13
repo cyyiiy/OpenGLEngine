@@ -155,7 +155,7 @@ void DoomlikeGame::loadGame()
 	player_entity->addComponentByClass<GunComponent>();
 	ECS::GetComponent(player).setupPlayer(player_camera_entity, 1.5f, 5.0f, 7.0f, 0.3f);
 
-	loadLevel(0);
+	loadLevel(1);
 }
 
 
@@ -174,17 +174,17 @@ void DoomlikeGame::updateGame(float dt)
 
 	if (Input::IsKeyPressed(GLFW_KEY_KP_1))
 	{
-		//loadLevel(1);
+		loadLevel(1);
 	}
 
 	if (Input::IsKeyPressed(GLFW_KEY_KP_2))
 	{
-		//loadLevel(2);
+		loadLevel(2);
 	}
 
 	if (Input::IsKeyPressed(GLFW_KEY_KP_3))
 	{
-		//loadLevel(3);
+		loadLevel(3);
 	}
 }
 
@@ -195,7 +195,7 @@ void DoomlikeGame::restartLevel()
 
 void DoomlikeGame::changeLevel(int levelIndex)
 {
-	if (levelIndex < 0 || levelIndex > 1)
+	if (levelIndex < 0 || levelIndex > 3)
 	{
 		Locator::getLog().LogMessage_Category("Doomlike: Tried to change the level with an index to a level that doesn't exist.", LogCategory::Warning);
 		return;
@@ -216,7 +216,6 @@ void DoomlikeGame::loadLevel(int index)
 		loadScene(&testScene);
 		player_comp.respawn(testScene.getSpawnPoint());
 		break;
-	/*
 	case 1:
 		loadScene(&levelDebugScene);
 		player_comp.respawn(levelDebugScene.getSpawnPoint());
@@ -229,7 +228,6 @@ void DoomlikeGame::loadLevel(int index)
 		loadScene(&levelAdvancedScene);
 		player_comp.respawn(levelAdvancedScene.getSpawnPoint());
 		break;
-	*/
 	}
 }
 

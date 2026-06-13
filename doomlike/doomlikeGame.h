@@ -1,9 +1,9 @@
 #pragma once
 #include <Core/game.h>
 #include <Scenes/testFpsScene.h>
-//#include <Scenes/doomlikeLevelDebug.h>
-//#include <Scenes/doomlikeLevelStart.h>
-//#include <Scenes/doomlikeLevelAdvanced.h>
+#include <Scenes/doomlikeLevelDebug.h>
+#include <Scenes/doomlikeLevelStart.h>
+#include <Scenes/doomlikeLevelAdvanced.h>
 
 class PlayerComponent;
 
@@ -25,15 +25,15 @@ protected:
 private:
 	void loadLevel(int index);
 
-	//  scenes
+	// Scenes
 	TestFpsScene testScene;
-	//DoomlikeLevelDebug levelDebugScene;
-	//DoomlikeLevelStart levelStartScene;
-	//DoomlikeLevelAdvanced levelAdvancedScene;
+	DoomlikeLevelDebug levelDebugScene;
+	DoomlikeLevelStart levelStartScene;
+	DoomlikeLevelAdvanced levelAdvancedScene;
 	int currentLevel = 0;
 	bool mustRestartLevel{ false };
 
-	//  player
+	// Player
 	ComponentHandle<PlayerComponent> player;
 };
 
