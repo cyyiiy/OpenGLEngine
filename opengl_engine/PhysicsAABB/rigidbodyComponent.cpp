@@ -63,10 +63,22 @@ void RigidbodyComponent::updatePhysicsPreCollision(float dt)
 		onGround = false;
 	}
 
-// Pre-compute the rigidbody movements
-movement = (velocity + velocityOneFrame) * dt;
-gravityMovement = gravityVelocity * dt;
-velocityOneFrame = Vector3::zero;
+	// Directly apply the velocity one frame Y value to the entity to avoid starting inside a kinematic collision
+	// Note: This is mostly a fix for a bug I don't understand really well
+	if (velocityOneFrame.y != 0.0f)
+	{
+		Entity* owner = getOwner();
+		if (owner)
+		{
+			owner->addPosition(Vector3{ 0.0f, velocityOneFrame.y, 0.0f } * dt);
+			velocityOneFrame.y = 0.0f;
+		}
+	}
+
+	// Pre-compute the rigidbody movements
+	movement = (velocity + velocityOneFrame) * dt;
+	gravityMovement = gravityVelocity * dt;
+	velocityOneFrame = Vector3::zero;
 }
 
 void RigidbodyComponent::updatePhysicsPostCollision(float dt)

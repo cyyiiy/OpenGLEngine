@@ -409,10 +409,11 @@ void PhysicsManager::testRigidbodyCollisions(RigidbodyComponent& rigidbodyCompon
 	// 7. Send the computed movements to the rigidbody
 	rigidbodyComponent.applyComputedMovements(computed_movement, computed_gravity_movement);
 
-	// 8. Call events on detected triggers
+	// 8. Call events on detected triggers and set the debug intersected value
 	for (auto& trigger_col : triggers_detected)
 	{
 		BoxCollisionComponent& trigger_col_comp = ECS::GetComponent(trigger_col);
+		trigger_col_comp.debugIntersectedLastFrame = true;
 
 		// If the triggered collision is managed by a non-kinematic rigidbody, call the rigidbody trigger event
 		if (ECS::IsComponentHandleValid(trigger_col_comp.getOwningRigidbody()))
