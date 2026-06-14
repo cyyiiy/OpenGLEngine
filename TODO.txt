@@ -20,7 +20,7 @@
 		> Player Controller - fait
 		> Objets interagissables - fait
 		> Ennemis - en cours
-	- Tester les rigidbody (on ground & velocity one frame & step mechanic) pour être sur que rien n'est cassé - en cours
+	- Tester les rigidbody (on ground & velocity one frame & step mechanic) pour être sur que rien n'est cassé - fait
 	  (Note: penser à retirer les print debugs du nouvel ECS)
 
 ~ Petites updates d'améliorations :
