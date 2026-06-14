@@ -37,3 +37,10 @@ private:
 	bool dead{ false };
 };
 
+
+// Specify sublist size for 'EnemyComponent'
+template<>
+struct ComponentSublistSize<EnemyComponent>
+{
+	static constexpr size_t value = 4;
+};
