@@ -7,7 +7,7 @@
 #include <Rendering/Lights/directionalLightComponent.h>
 #include <PhysicsAABB/boxCollisionComponent.h>
 #include <PhysicsAABB/rigidbodyComponent.h>
-//#include <GameComponents/enemyComponent.h>
+#include <GameComponents/enemyComponent.h>
 
 #include <PrefabFactories/wallFactory.h>
 #include <PrefabFactories/floorCeilingFactory.h>
@@ -68,7 +68,7 @@ void DoomlikeLevelStart::loadScene()
 
 
 	// Enemies
-	/*Entity* enemy_1 = createEntity();
+	Entity* enemy_1 = createEntity();
 	Entity* enemy_2 = createEntity();
 	enemy_1->setPosition(Vector3{ 3.5f, 1.2f,  11.5f });
 	enemy_2->setPosition(Vector3{ -3.5f, 3.2f, 20.0f });
@@ -76,9 +76,7 @@ void DoomlikeLevelStart::loadScene()
 	enemy_2->addComponentByClass<EnemyComponent>();
 
 	enemyCount.addEnemies({ enemy_1, enemy_2 });
-	enemyCount.onAllEnemiesDead.registerObserver(this, Bind_0(&DoomlikeLevelStart::onEnemiesDead));*/
-
-	onEnemiesDead();
+	enemyCount.onAllEnemiesDead.subscribe(this, &DoomlikeLevelStart::onEnemiesDead);
 
 
 	// Trigger zone
@@ -100,7 +98,7 @@ void DoomlikeLevelStart::loadScene()
 
 void DoomlikeLevelStart::unloadScene()
 {
-	//enemyCount.clearEnemyCount(true);
+	enemyCount.clearEnemyCount(true);
 }
 
 void DoomlikeLevelStart::updateScene(float dt)

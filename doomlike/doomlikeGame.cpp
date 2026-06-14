@@ -139,11 +139,6 @@ void DoomlikeGame::loadGameAssets()
 	load_time = glfwGetTime();
 
 
-	// Object channels  // TODO: Remove this
-	//CollisionChannels::RegisterTestChannel("PlayerEntity", { "solid", "enemy", "trigger_zone" }); // For player and player bullets
-	//CollisionChannels::RegisterTestChannel("Enemy", { "solid", "player", "bullet" });
-
-
 	log.LogMessage_Category("Doomlike: Finished loading doomlike assets in " + std::to_string(glfwGetTime() - full_load_time) + " seconds.", LogCategory::Info);
 }
 
@@ -155,7 +150,7 @@ void DoomlikeGame::loadGame()
 	player_entity->addComponentByClass<GunComponent>();
 	ECS::GetComponent(player).setupPlayer(player_camera_entity, 1.5f, 5.0f, 7.0f, 0.3f);
 
-	loadLevel(1);
+	loadLevel(2);
 }
 
 

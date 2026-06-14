@@ -2,7 +2,7 @@
 #include <Core/scene.h>
 #include <Events/observer.h>
 #include <GameLogic/playerSpawnPoint.h>
-//#include <GameLogic/enemyCount.h>
+#include <GameLogic/enemyCount.h>
 
 class RigidbodyComponent;
 
@@ -20,7 +20,7 @@ protected:
 
 private:
 	// Level utilities
-	//EnemyCount enemyCount;
+	EnemyCount enemyCount;
 
 	Entity* endLevelWall;
 	Entity* endLevelZone;
@@ -28,4 +28,3 @@ private:
 	void onEnemiesDead();
 	void onEnterEndLevelZone(const RigidbodyComponent& body);
 };
-

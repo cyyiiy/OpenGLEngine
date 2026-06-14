@@ -36,4 +36,3 @@ private:
 	// Player
 	ComponentHandle<PlayerComponent> player;
 };
-

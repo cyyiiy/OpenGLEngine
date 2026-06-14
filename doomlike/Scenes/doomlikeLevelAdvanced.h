@@ -38,4 +38,3 @@ private:
 	void onEnterElevatorUpZone(const RigidbodyComponent& body);
 	void onEnterEnemySpawnZone(const RigidbodyComponent& body);
 };
-

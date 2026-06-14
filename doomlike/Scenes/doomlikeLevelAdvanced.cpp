@@ -8,7 +8,7 @@
 #include <PhysicsAABB/rigidbodyComponent.h>
 #include <GameComponents/lampComponent.h>
 #include <GameComponents/movingPlatformComponent.h>
-//#include <GameComponents/enemyComponent.h>
+#include <GameComponents/enemyComponent.h>
 
 #include <PrefabFactories/wallFactory.h>
 #include <PrefabFactories/floorCeilingFactory.h>
@@ -126,7 +126,6 @@ void DoomlikeLevelAdvanced::onEnterEnemySpawnZone(const RigidbodyComponent& body
 	ECS::GetComponent(floorLamp->getComponentOfClass<LampComponent>()).changeStatus(false);
 
 	// Spawn enemies
-	/*
 	Entity* enemy_1 = createEntity();
 	Entity* enemy_2 = createEntity();
 	Entity* enemy_3 = createEntity();
@@ -139,7 +138,6 @@ void DoomlikeLevelAdvanced::onEnterEnemySpawnZone(const RigidbodyComponent& body
 	enemy_2->addComponentByClass<EnemyComponent>();
 	enemy_3->addComponentByClass<EnemyComponent>();
 	enemy_4->addComponentByClass<EnemyComponent>();
-	*/
 
 	ECS::GetComponent(enemySpawnZone->getComponentOfClass<BoxCollisionComponent>()).onTriggerEnter.unsubscribe(this);
 }
