@@ -1,44 +1,50 @@
 #include "playerComponent.h"
 #include <ECS/entity.h>
 #include <ServiceLocator/locator.h>
-#include <Physics/ObjectChannels/collisionChannels.h>
-#include <Inputs/Input.h>
 #include <Assets/assetManager.h>
-
 #include <GameplayStatics/gameplayStatics.h>
+#include <Inputs/Input.h>
 #include <doomlikeGame.h>
 
-#include <GameComponents/OverrideComponents/cameraLagComponent.h>
-#include <Physics/AABB/boxAABBColComp.h>
-#include <Physics/rigidbodyComponent.h>
+#include <Rendering/cameraComponent.h>
+#include <GameComponents/lagMovementComponent.h>
+#include <PhysicsAABB/boxCollisionComponent.h>
+#include <PhysicsAABB/rigidbodyComponent.h>
 #include <Audio/audioSourceComponent.h>
 #include <GameComponents/gunComponent.h>
 
 
-void PlayerComponent::setupPlayer(float camHeight_, float moveSpeed_, float jumpForce_, float stepHeight_)
+void PlayerComponent::setupPlayer(Entity* camEntity, float camHeight_, float moveSpeed_, float jumpForce_, float stepHeight_)
 {
+	lagMovement = camEntity->addComponentByClass<LagMovementComponent>();
+	camera = camEntity->addComponentByClass<CameraComponent>();
+
 	camHeight = camHeight_;
 	moveSpeed = moveSpeed_;
 	jumpForce = jumpForce_;
 
-	camera->setOffset(Vector3{ 0.0f, camHeight, 0.0f });
-	camera->setupLag(camLagSpeed, camLagMaxDist);
-	camera->setAsActiveCamera();
+	CameraComponent& camera_comp = ECS::GetComponent(camera);
+	LagMovementComponent& lag_movement_comp = ECS::GetComponent(lagMovement);
+	BoxCollisionComponent& collision_comp = ECS::GetComponent(collision);
+	RigidbodyComponent& rigidbody_comp = ECS::GetComponent(rigidbody);
+	AudioSourceComponent& feet_sound_source_comp = ECS::GetComponent(feetSoundSource);
 
-	collision->setBox(Box{ Vector3{0.0f, (camHeight / 2.0f) + 0.1f, 0.0f}, Vector3{0.3f, (camHeight / 2.0f) + 0.1f, 0.3f} });
-	collision->setCollisionChannel("player");
-	collision->useOwnerScaleForBoxSize = false;
+	camera_comp.setOffset(Vector3{ 0.0f, camHeight, 0.0f });
+	camera_comp.setAsActiveCamera();
 
-	rigidbody->setStepHeight(stepHeight_);
-	rigidbody->setPhysicsActivated(true);
-	rigidbody->setUseGravity(true);
-	rigidbody->setTestChannels(CollisionChannels::GetRegisteredTestChannel("PlayerEntity"));
+	lag_movement_comp.setupLagMovement(getOwner(), CAM_LAG_SPEED, CAM_LAG_MAX_DIST);
 
-	feetSoundSource->setSpatialization(ChannelSpatialization::Channel3D);
-	feetSoundSource->setOffset(Vector3{ 0.0f, -1.1f, 0.0f });
-	feetSoundSource->setVolume(0.2f);
+	collision_comp.collisionBox = Box{ Vector3{0.0f, (camHeight / 2.0f) + 0.1f, 0.0f}, Vector3{0.3f, (camHeight / 2.0f) + 0.1f, 0.3f} };
+	collision_comp.collisionChannel = "player";
+	collision_comp.useEntityScaleForBoxSize = false;
 
-	rigidbody->onCollisionRepulsed.registerObserver(this, Bind_1(&PlayerComponent::onCollision));
+	rigidbody_comp.stepHeight = stepHeight_;
+	rigidbody_comp.collisionChannels = { "solid", "enemy", "trigger_zone" };
+	rigidbody_comp.onCollisionRepulse.subscribe(this, &PlayerComponent::onCollision);
+
+	feet_sound_source_comp.setSpatialization(ChannelSpatialization::Channel3D);
+	feet_sound_source_comp.setOffset(Vector3{ 0.0f, -1.1f, 0.0f });
+	feet_sound_source_comp.setVolume(0.2f);
 
 	entity->addGameplayTag("Player");
 
@@ -47,59 +53,60 @@ void PlayerComponent::setupPlayer(float camHeight_, float moveSpeed_, float jump
 
 void PlayerComponent::respawn(const Transform& respawnTransform)
 {
-	rigidbody->setVelocity(Vector3::zero);
-	rigidbody->setGravityVelocity(Vector3::zero);
+	CameraComponent& camera_comp = ECS::GetComponent(camera);
+	RigidbodyComponent& rigidbody_comp = ECS::GetComponent(rigidbody);
+	LagMovementComponent& lag_movement_comp = ECS::GetComponent(lagMovement);
+
+	rigidbody_comp.velocity = Vector3::zero;
+	rigidbody_comp.gravityVelocity = Vector3::zero;
 
 	entity->pasteTransform(respawnTransform);
 
-	camera->setPitch(0.0f);
-	camera->teleport();
+	camera_comp.setPitch(0.0f);
+	lag_movement_comp.teleport();
 
-	std::shared_ptr<GunComponent> gun = entity->getComponentByClass<GunComponent>();
-	if (gun) gun->reset();
+	if (entity->hasComponentOfClass<GunComponent>())
+	{
+		ECS::GetComponent(entity->getComponentOfClass<GunComponent>()).reset();
+	}
 }
 
 Vector3 PlayerComponent::getCamPosition() const
 {
-	return camera->getCamPosition();
+	return ECS::GetComponent(camera).getCamPosition();
 }
 
-void PlayerComponent::onCollision(const CollisionResponse& collisionResponse)
+void PlayerComponent::onCollision(const BoxCollisionComponent& boxCollided, const Vector3& collisionNormal)
 {
-	if (collisionResponse.impactNormal == Vector3::negUnitY)
+	if (collisionNormal == Vector3::negUnitY)
 	{
-		rigidbody->setGravityVelocity(Vector3::zero); //  cancel the jump velocity if hit a roof
+		// Cancel the jump velocity if the player hit a roof
+		ECS::GetComponent(rigidbody).gravityVelocity = Vector3::zero;
 	}
 }
 
 
 void PlayerComponent::init()
 {
+	// Create the player components
 	entity = getOwner();
-
-	camera = entity->addComponentByClass<CameraLagComponent>();
 	
-	collision = entity->addComponentByClass<BoxAABBColComp>();
+	collision = entity->addComponentByClass<BoxCollisionComponent>();
 	rigidbody = entity->addComponentByClass<RigidbodyComponent>();
-	rigidbody->associateCollision(collision);
+	ECS::GetComponent(rigidbody).associateCollision(collision);
 
 	feetSoundSource = entity->addComponentByClass<AudioSourceComponent>();
 
-	setUpdateActivated(false); //  it will be activated once setupPlayer has been called
-}
-
-void PlayerComponent::exit()
-{
-	//  release shared pointers
-	camera = nullptr;
-	collision = nullptr;
-	rigidbody = nullptr;
-	feetSoundSource = nullptr;
+	setUpdateActivated(false); // Update will be activated once 'setupPlayer' has been called
 }
 
 void PlayerComponent::update(float deltaTime)
 {
-	//  move player
+	CameraComponent& camera_comp = ECS::GetComponent(camera);
+	RigidbodyComponent& rigidbody_comp = ECS::GetComponent(rigidbody);
+	AudioSourceComponent& feet_sound_source_comp = ECS::GetComponent(feetSoundSource);
+
+	// Move player
 	Vector3 velocity_xz = Vector3::zero;
 
 	if (Input::IsKeyDown(GLFW_KEY_W))
@@ -114,47 +121,47 @@ void PlayerComponent::update(float deltaTime)
 	if (Input::IsKeyDown(GLFW_KEY_D))
 		velocity_xz -= entity->getRight() * moveSpeed;
 
-	//  clamp the velocity to max movement speed
+	// Clamp the velocity to max movement speed
 	velocity_xz.clampMagnitude(moveSpeed);
 
-	//  apply velocity to rigidbody
-	rigidbody->setVelocity(velocity_xz);
+	// Apply velocity to rigidbody
+	rigidbody_comp.velocity = velocity_xz;
 
 
-	//  player and camera rotation
-	Vector2 mouse_delta = Input::GetMouseDelta() * camSensitivity;
+	// Player and camera rotation
+	Vector2 mouse_delta = Input::GetMouseDelta() * CAM_SENSITIVITY;
 	entity->incrementRotation(Quaternion{ Vector3::unitY, -mouse_delta.x * 0.01f });
-	camera->setPitch(Maths::clamp(camera->getPitch() + mouse_delta.y, -89.0f, 89.0f));
+	camera_comp.setPitch(Maths::clamp(camera_comp.getPitch() + mouse_delta.y, -89.0f, 89.0f));
 
 
-	//  jump
-	if (Input::IsKeyPressed(GLFW_KEY_SPACE) && rigidbody->isOnGround())
+	// Jump
+	if (Input::IsKeyPressed(GLFW_KEY_SPACE) && rigidbody_comp.isOnGround())
 	{
-		rigidbody->addGravityVelocity(Vector3::unitY * jumpForce);
+		rigidbody_comp.gravityVelocity += (Vector3::unitY * jumpForce);
 	}
 
 
-	//  shoot raycast
+	// Shoot raycast (debug)
 	if (Input::IsKeyPressed(GLFW_MOUSE_BUTTON_RIGHT))
 	{
-		Vector3 raycast_start = camera->getCamPosition();
-		Vector3 raycast_end = raycast_start + camera->getCamForward() * 5.0f;
+		Vector3 raycast_start = camera_comp.getCamPosition();
+		Vector3 raycast_end = raycast_start + camera_comp.getCamForward() * 5.0f;
 
 		Physics& physics = Locator::getPhysics();
-		//physics.LineRaycast(raycast_start, raycast_end, CollisionChannels::GetRegisteredTestChannel("PlayerEntity"));
-		physics.AABBSweepRaycast(raycast_start, raycast_end, Box{ Vector3::zero, Vector3{0.1f, 0.1f, 0.1f} }, CollisionChannels::GetRegisteredTestChannel("PlayerEntity"));
+		physics.LineRaycast(raycast_start, raycast_end, { "solid", "enemy", "trigger_zone" });
+		//physics.AABBSweepRaycast(raycast_start, raycast_end, Box{ Vector3::zero, Vector3{ 0.1f, 0.1f, 0.1f } }, { "solid", "enemy", "trigger_zone" });
 	}
 
 
-	//  feet sound
+	// Feet sound
 	feetSoundTimer -= deltaTime;
-	if (rigidbody->isOnGround())
+	if (rigidbody_comp.isOnGround())
 	{
 		if (!(velocity_xz == Vector3::zero) || !onGroundLastFrame)
 		{
 			if (feetSoundTimer <= 0.0f)
 			{
-				feetSoundSource->playSound(AssetManager::GetSound(feetSoundAlternance ? "feet1" : "feet2"));
+				feet_sound_source_comp.playSound(AssetManager::GetSound(feetSoundAlternance ? "feet1" : "feet2"));
 
 				feetSoundAlternance = !feetSoundAlternance;
 				feetSoundTimer = 0.5f;
@@ -162,10 +169,10 @@ void PlayerComponent::update(float deltaTime)
 		}
 	}
 
-	onGroundLastFrame = rigidbody->isOnGround();
+	onGroundLastFrame = rigidbody_comp.isOnGround();
 
 
-	//  death by void
+	// Death by void
 	if (entity->getPosition().y < -50.0f)
 	{
 		Locator::getLog().LogMessageToScreen("Doomlike: Player die by falling.", Color::white, 5.0f);

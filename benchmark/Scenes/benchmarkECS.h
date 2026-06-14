@@ -1,5 +1,8 @@
 #pragma once
 #include <Core/scene.h>
+#include <ECS/ecsTypes.h>
+
+class TextComponent;
 
 
 class BenchmarkECS: public Scene
@@ -13,6 +16,6 @@ private:
 	Entity* dummyEntity{ nullptr };
 	int sharedCounter;
 
-	std::shared_ptr<class TextRendererComponent> counterText;
+	ComponentHandle<TextComponent> counterText;
 };
 

@@ -1,16 +1,15 @@
 #include "gunComponent.h"
 #include <ECS/entity.h>
 #include <ServiceLocator/locator.h>
-#include <Physics/ObjectChannels/collisionChannels.h>
+#include <Assets/assetManager.h>
 #include <GameplayStatics/gameplayStatics.h>
 #include <Inputs/Input.h>
-#include <Assets/assetManager.h>
 
 #include <GameComponents/playerComponent.h>
-#include <GameComponents/OverrideComponents/cameraLagComponent.h>
+#include <Rendering/cameraComponent.h>
 #include <Rendering/modelRendererComponent.h>
-#include <Rendering/Text/textRendererComponent.h>
-#include <Rendering/Hud/spriteRendererComponent.h>
+#include <Rendering/Text/textComponent.h>
+#include <Rendering/Hud/spriteComponent.h>
 #include <GameComponents/bulletComponent.h>
 
 
@@ -20,12 +19,12 @@ void GunComponent::reset()
 
 	for (auto& active_bullet : activeBullets)
 	{
-		active_bullet->deleteBullet();
+		ECS::GetComponent(active_bullet).deleteBullet();
 	}
 	activeBullets.clear();
 
 	reloadTimer = 0.0f;
-	ammoCount = ammoMax;
+	ammoCount = MAX_AMMO;
 	writeAmmoText();
 }
 
@@ -33,78 +32,79 @@ void GunComponent::init()
 {
 	entity = getOwner();
 
-	player = entity->getComponentByClass<PlayerComponent>();
-	if (!player)
+	player = entity->getComponentOfClass<PlayerComponent>();
+	if (!ECS::IsComponentHandleValid(player))
 	{
-		Locator::getLog().LogMessage_Category("Doomlike: A gun component was added on an entity that doesn't have a Player Component!", LogCategory::Warning);
+		Locator::getLog().LogMessage_Category("Doomlike: A gun component was added on an entity that doesn't have a Player Component!", LogCategory::Error);
 		setUpdateActivated(false);
 		return;
 	}
-	entity->onTransformUpdated.registerObserver(this, Bind_0(&GunComponent::onPlayerTransformUpdated));
+	entity->onTransformUpdated.subscribe(this, &GunComponent::onPlayerTransformUpdated);
 	gunValid = true;
 
 	gunModel = entity->addComponentByClass<ModelRendererComponent>();
-	gunModel->setModel(&AssetManager::GetModel("gun"));
-	gunModel->setIgnoreOwnerTransform(true);
-	gunModel->offset.setScale(0.1f);
+	ModelRendererComponent& gun_model_comp = ECS::GetComponent(gunModel);
+	gun_model_comp.model = &AssetManager::GetModel("gun");
+	gun_model_comp.ignoreOwnerTransform = true;
+	gun_model_comp.offset.setScale(0.1f);
 
-	ammoText = entity->addComponentByClass<TextRendererComponent>();
-	ammoText->setTextDatas("", AssetManager::GetFont("arial_64"), Vector2::zero, Vector2::zero, Vector2{ 50.0f, 50.0f }, Vector2{ 0.6f }, 0.0f, Color::white);
+	ammoText = entity->addComponentByClass<TextComponent>();
+	TextComponent& ammo_text_comp = ECS::GetComponent(ammoText);
+	ammo_text_comp.setTextDatas("", AssetManager::GetFont("arial_64"));
+	ammo_text_comp.position = HudPosition{ Vector2::zero, Vector2::zero, Vector2{ 50.0f, 50.0f } }; // Bottom left with an offset
+	ammo_text_comp.scale = Vector2{ 0.6f };
 	writeAmmoText();
 
-	crosshairSprite = entity->addComponentByClass<SpriteRendererComponent>();
-	crosshairSprite->setSpriteDatas(AssetManager::GetTexture("hud_crosshair"), Vector2::halfUnit, Vector2::halfUnit, Vector2::zero, Vector2{ 0.5f }, 0.0f, Color::white);
+	crosshairSprite = entity->addComponentByClass<SpriteComponent>();
+	SpriteComponent& crosshair_sprite_comp = ECS::GetComponent(crosshairSprite);
+	crosshair_sprite_comp.texture = &AssetManager::GetTexture("hud_crosshair");
+	crosshair_sprite_comp.position = HudPosition{ Vector2::halfUnit, Vector2::halfUnit, Vector2::zero }; // Center with no offset
+	crosshair_sprite_comp.scale = Vector2{ 0.5f };
 }
 
 void GunComponent::exit()
 {
-	entity->onTransformUpdated.unregisterObserver(this);
-
 	for (auto& active_bullet : activeBullets)
 	{
-		if(active_bullet) active_bullet->deleteBullet();
+		if (ECS::IsComponentHandleValid(active_bullet)) ECS::GetComponent(active_bullet).deleteBullet();
 	}
 	activeBullets.clear();
-
-	//  release shared pointers
-	player = nullptr;
-	gunModel = nullptr;
-	ammoText = nullptr;
-	crosshairSprite = nullptr;
 }
 
 void GunComponent::update(float deltaTime)
 {
 	if (!gunValid) return;
 
-	// shoot
+	// Shoot
 	if (Input::IsKeyPressed(GLFW_MOUSE_BUTTON_LEFT) && ammoCount > 0 && reloadTimer == 0.0f)
 	{
-		//  shoot a raycast towards the camera direction to shoot the bullet towards the center of the screen even if it starts from the bottom right
+		ModelRendererComponent& gun_model_comp = ECS::GetComponent(gunModel);
+
+		// Shoot a raycast towards the camera direction to shoot the bullet towards the center of the screen even if it starts from the bottom right
 		Physics& physics = Locator::getPhysics();
 		RaycastHitInfos raycast_out;
-		CameraLagComponent& player_camera = *player->camera;
+		CameraComponent& player_camera = ECS::GetComponent(ECS::GetComponent(player).camera);
 		const Vector3 raycast_target = player_camera.getCamPosition() + player_camera.getCamForward() * 1000.0f;
-		bool raycast_hit = physics.LineRaycast(player_camera.getCamPosition(), raycast_target, CollisionChannels::GetRegisteredTestChannel("PlayerEntity"), raycast_out, 1.0f);
+		bool raycast_hit = physics.LineRaycast(player_camera.getCamPosition(), raycast_target, { "solid", "enemy" }, raycast_out, 1.0f);
 
 		Quaternion bullet_rotation;
 		Vector3 bullet_direction;
 		if (!raycast_hit)
 		{
-			bullet_rotation = Quaternion::createLookAt(gunModel->offset.getPosition(), raycast_target, Vector3::unitY);
+			bullet_rotation = Quaternion::createLookAt(gun_model_comp.offset.getPosition(), raycast_target, Vector3::unitY);
 			bullet_direction = player_camera.getCamForward();
 		}
 		else
 		{
-			bullet_rotation = Quaternion::createLookAt(gunModel->offset.getPosition(), raycast_out.hitLocation, Vector3::unitY);
-			bullet_direction = Vector3::normalize(raycast_out.hitLocation - gunModel->offset.getPosition());
+			bullet_rotation = Quaternion::createLookAt(gun_model_comp.offset.getPosition(), raycast_out.hitLocation, Vector3::unitY);
+			bullet_direction = Vector3::normalize(raycast_out.hitLocation - gun_model_comp.offset.getPosition());
 		}
 
 		Entity* bullet_entity = GameplayStatics::GetGame()->createEntity();
 		activeBullets.push_back(bullet_entity->addComponentByClass<BulletComponent>());
-		activeBullets.back()->setupBullet(gunModel->offset.getPosition(), bullet_rotation, bullet_direction, shootVelocity, bulletLifetime);
+		ECS::GetComponent(activeBullets.back()).setupBullet(gun_model_comp.offset.getPosition(), bullet_rotation, bullet_direction, SHOOT_VELOCITY, BULLET_LIFETIME);
 
-		//  play shoot sound
+		// Play shoot sound
 		Locator::getAudio().InstantPlaySound2D(AssetManager::GetSound("shoot"), 0.15f);
 
 		ammoCount--;
@@ -112,10 +112,10 @@ void GunComponent::update(float deltaTime)
 	}
 
 
-	//  reload
-	if (Input::IsKeyPressed(GLFW_KEY_R) && ammoCount < ammoMax && reloadTimer == 0.0f)
+	// Reload
+	if (Input::IsKeyPressed(GLFW_KEY_R) && ammoCount < MAX_AMMO && reloadTimer == 0.0f)
 	{
-		reloadTimer = reloadDuration;
+		reloadTimer = RELOAD_DURATION;
 	}
 
 	if (reloadTimer > 0.0f)
@@ -124,23 +124,25 @@ void GunComponent::update(float deltaTime)
 		if (reloadTimer <= 0.0f)
 		{
 			reloadTimer = 0.0f;
-			ammoCount = ammoMax;
+			ammoCount = MAX_AMMO;
 			writeAmmoText();
 		}
 	}
 
 
-	//  delete expired bullets
+	// Delete expired bullets
 	for (int i = 0; i < activeBullets.size(); i++)
 	{
-		if (!activeBullets[i]->isLifetimeOver()) continue;
+		BulletComponent& bullet = ECS::GetComponent(activeBullets[i]);
 
-		activeBullets[i]->deleteBullet();
+		if (!bullet.isLifetimeOver()) continue;
+
+		bullet.deleteBullet();
 
 		std::iter_swap(activeBullets.begin() + i, activeBullets.end() - 1);
 		activeBullets.pop_back();
 
-		break; //  assume that we can't create 2 bullets on the same frame so 2 bullets cannot be destroyed by time out on the same frame
+		break; // Assume that we can't create 2 bullets on the same frame so 2 bullets cannot be destroyed by time out on the same frame
 	}
 }
 
@@ -148,8 +150,10 @@ void GunComponent::onPlayerTransformUpdated()
 {
 	if (!gunValid) return;
 
-	Transform& gun_offset = gunModel->offset;
-	CameraLagComponent& player_camera = *player->camera;
+	ModelRendererComponent& gun_model_comp = ECS::GetComponent(gunModel);
+	CameraComponent& player_camera = ECS::GetComponent(ECS::GetComponent(player).camera);
+
+	Transform& gun_offset = gun_model_comp.offset;
 	gun_offset.setPosition(player_camera.getCamPosition());
 	gun_offset.setRotation(Quaternion::concatenate(player_camera.getRotOffset(), entity->getRotation()));
 	gun_offset.incrementRotation(Quaternion{ gun_offset.getUp(), Maths::toRadians(180.0f) }); //  gun is rotated backward by default
@@ -161,5 +165,6 @@ void GunComponent::writeAmmoText()
 {
 	if (!gunValid) return;
 
-	ammoText->setText("Ammo: " + std::to_string(ammoCount) + "/" + std::to_string(ammoMax));
+	TextComponent& ammo_text_comp = ECS::GetComponent(ammoText);
+	ammo_text_comp.setText("Ammo: " + std::to_string(ammoCount) + "/" + std::to_string(MAX_AMMO));
 }

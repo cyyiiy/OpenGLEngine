@@ -4,22 +4,24 @@
 	- Avoir une nouvelle scène de test Rendering 3D qui teste les performances de plein de materials différents, avec un seul model renderer component pour chaque material - fait
 	- Avoir une nouvelle scène de test Rendering 3D qui teste les performances en mouvement, avec des model renderer components et des point lights qui bougent en continu - fait
 
-~ Implémenter la V2 de l'ECS : - en cours sur une autre branche
-	- Intégrer le code du nouvel ECS dans le moteur
+~ Implémenter la V2 de l'ECS : - en cours
+	- Intégrer le code du nouvel ECS dans le moteur - fait
 	- Changer les systèmes du moteur pour utiliser le nouvel ECS :
-	  (Note: penser à regarder le ClasseParent::fonction() et l'utiliser si c'est pertinent)
-		> Game & Scene system
-		> Rendering
-		> UI
-		> Audio
-		> Physique
-	- Expérimenter dans Sandbox avec des behavior components et confirmer l'implémentation de l'ECS
-	- Mettre à jour le projet Benchmark et comparer les performances du nouvel ECS avec l'ancien
+		> Game & Scene system - fait
+		> Rendering - fait
+		> UI - fait
+		> Audio - fait
+		> Physique - fait
+	- Mettre à jour le projet Benchmark et comparer les performances du nouvel ECS avec l'ancien - fait
+		> Modifier l'ECS pour que quand une entité est supprimée (pas pending, réellement supprimée), ses composants le soient instantanément - fait
+		> Refactor le système d'event / observer - fait
 	- Mettre à jour le Doomlike pour le nouvel ECS :
-		> Prefabs
-		> Player Controller
-		> Objets interagissables
-		> Ennemis
+		> Prefabs - fait
+		> Player Controller - fait
+		> Objets interagissables - fait
+		> Ennemis - fait
+	- Tester les rigidbody (on ground & velocity one frame & step mechanic) pour être sur que rien n'est cassé - fait
+	  (Note: penser à retirer les print debugs du nouvel ECS) - fait
 
 ~ Petites updates d'améliorations :
 	- Modifier le service locator pour alléger la classe Engine. Les services sont stockés avec des unique_ptr, comme ça plus besoin de supprimer manuellement le pointeur (pas de stockage dans engine.h), et la classe engine ne touche aux services uniquement via le locator (plus d'accès direct pour supprimer complètement la dépendance de engine aux "vrais" services)
@@ -32,6 +34,7 @@
 	- Rajouter un repère visuel sur la position réelle des lights en mode draw debug
 [Besoin de créer un bilboard renderer ?]
 	- Regarder si c'est possible de récupérer le nom d'une classe pour les print warning de template ("unable to find component of given class")
+	- Refactor le système de "model" (regarder le problème connu en bas)
 
 
 == MOYEN TERME == (possible pour fin 2026 ?)
@@ -94,5 +97,8 @@
 
 
 == REFLEXIONS / PROBLEMES CONNUS ==
+
+~ Actuellement, il n'est pas possible de changer le matérial d'un model sur un renderer component sans affecter tous les renderer components qui utilisent ce model, parce que le model n'existe qu'une seule fois
+-> Solution pourrait être d'enlever le système de modèle et que le renderer component contienne un pointeur vers un mesh et des pointeurs vers des matériaux ? (similaire à Unreal)
 
 ~ Réfléchir au fonctionnement du load asset des scenes, est-ce qu'il faudrait faire gaffe à l'utilisation de ram et unload genre les textures qui ne sont plus nécessaires ?

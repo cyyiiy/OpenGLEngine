@@ -1,23 +1,22 @@
 #pragma once
 #include "positionBasedLight.h"
+#include <ECS/component.h>
+
 
 /** Point Light Component
-* Component for a point light.
-* The offset of the point light is computed with the rotation and scale of the Entity.
+* A data-only component for a point light.
 */
-class PointLightComponent : public PositionBasedLight
+class PointLightComponent : public Component, public PositionBasedLight
 {
 public:
-	/** Apply the point light to the lit shader. */
-	void useLight(Shader& litShader, int lightIndex) override;
-
-	/** Set the point light use the diffuse color for the specular color (default specular color is white). */
-	void setUseDiffColorToSpecColor(bool value);
-
-protected:
-	/** Called after the component has been created, but before it is registered. */
-	void init() override;
-
+	/** Wether or not to use the diffuse color for the specular color (default specular color is white). */
 	bool useColorToSpecular{ false };
 };
 
+
+// Specify sublist size for 'PointLightComponent'
+template<>
+struct ComponentSublistSize<PointLightComponent>
+{
+	static constexpr size_t value = 32;
+};

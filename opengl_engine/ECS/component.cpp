@@ -1,34 +1,27 @@
-#include "component.h"
+﻿#include "component.h"
 #include "entity.h"
 
-Component::Component()
+void Component::setPendingDelete(bool value)
 {
+    pendingDelete = value;
 }
 
-Component::~Component()
+bool Component::getPendingDelete() const
 {
+    return pendingDelete;
 }
 
-Component::Component(const Component& other) : owner(other.owner), updateActivated(other.updateActivated)
+void Component::setOwner(Entity* ownerEntity)
 {
+    owner = ownerEntity;
 }
 
 Entity* Component::getOwner() const
 {
-	return owner;
+    return owner;
 }
 
-void Component::setUpdateActivated(bool updateActive)
+void Component::setRawHandle(RawComponentHandle handle)
 {
-	updateActivated = updateActive;
-}
-
-bool Component::getUdpateActivated() const
-{
-	return updateActivated;
-}
-
-void Component::setOwner(Entity* owner_)
-{
-	owner = owner_;
+    rawHandle = handle;
 }

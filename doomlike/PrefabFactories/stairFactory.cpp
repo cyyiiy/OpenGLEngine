@@ -2,7 +2,7 @@
 #include <Assets/assetManager.h>
 #include <ECS/entityContainer.h>
 #include <Rendering/modelRendererComponent.h>
-#include <Physics/AABB/boxAABBColComp.h>
+#include <PhysicsAABB/boxCollisionComponent.h>
 #include <vector>
 
 
@@ -18,7 +18,7 @@ Entity* StairFactory::CreateStair(EntityContainer* entityContainer, StairFacingD
 	switch (facingDirection)
 	{
 	case StairFacingDirection::StairFacingPositiveX:
-		//  no need to rotate the stair entity
+		// No need to rotate the stair entity
 
 		for (int i = 0; i < 7; i++)
 		{
@@ -58,17 +58,17 @@ Entity* StairFactory::CreateStair(EntityContainer* entityContainer, StairFacingD
 		break;
 	}
 
-	std::shared_ptr<ModelRendererComponent> stair_model_comp = stair_entity->addComponentByClass<ModelRendererComponent>();
-	stair_model_comp->setModel(&AssetManager::GetModel("stairs"));
-	stair_model_comp->offset.setScale(0.0044f);
-	stair_model_comp->offset.setPosition(Vector3{ -1.03f, -1.11f, 0.93f });
+	ModelRendererComponent& stair_model_comp = ECS::GetComponent(stair_entity->addComponentByClass<ModelRendererComponent>());
+	stair_model_comp.model = &AssetManager::GetModel("stairs");
+	stair_model_comp.offset.setScale(0.0044f);
+	stair_model_comp.offset.setPosition(Vector3{ -1.03f, -1.11f, 0.93f });
 	
 
 	for (int i = 0; i < 7; i++)
 	{
-		std::shared_ptr<BoxAABBColComp> stair_step_col_comp = stair_entity->addComponentByClass<BoxAABBColComp>();
-		stair_step_col_comp->setBox(collisions_boxes[i]);
-		stair_step_col_comp->setCollisionChannel("solid");
+		BoxCollisionComponent& stair_step_col_comp = ECS::GetComponent(stair_entity->addComponentByClass<BoxCollisionComponent>());
+		stair_step_col_comp.collisionBox = collisions_boxes[i];
+		stair_step_col_comp.collisionChannel = "solid";
 	}
 
 	return stair_entity;

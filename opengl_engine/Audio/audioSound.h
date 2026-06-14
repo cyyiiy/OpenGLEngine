@@ -2,7 +2,7 @@
 #include "audioUtils.h"
 #include <stdint.h>
 
-namespace FMOD //  avoid including "fmod.hpp"
+namespace FMOD // Avoid including "fmod.hpp"
 {
 	class Sound;
 }
@@ -23,7 +23,7 @@ public:
 
 	bool hasSetting(SoundSettings setting) const;
 
-	//  distances for sound fading
+	// Distances for sound fading
 	void setMinMaxDistance(float min, float max) const;
 
 private:

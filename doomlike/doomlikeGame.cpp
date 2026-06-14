@@ -3,7 +3,6 @@
 #include <Assets/assetManager.h>
 #include <ServiceLocator/locator.h>
 #include <ECS/componentManager.h>
-#include <Physics/ObjectChannels/collisionChannels.h>
 #include <Inputs/Input.h>
 #include <GameplayStatics/gameplayStatics.h>
 
@@ -12,13 +11,8 @@
 #include <PrefabFactories/stairFactory.h>
 #include <PrefabFactories/lampFactory.h>
 
-#include <GameComponents/OverrideComponents/cameraLagComponent.h>
 #include <GameComponents/playerComponent.h>
 #include <GameComponents/gunComponent.h>
-#include <GameComponents/bulletComponent.h>
-#include <GameComponents/movingPlatformComponent.h>
-#include <GameComponents/targetComponent.h>
-#include <GameComponents/enemyComponent.h>
 
 
 void DoomlikeGame::loadGameAssets()
@@ -30,18 +24,10 @@ void DoomlikeGame::loadGameAssets()
 	double load_time = glfwGetTime();
 	double full_load_time = load_time;
 
-	ComponentManager::RegisterComponentDataByClass<CameraLagComponent>(ComponentClassData{ true, 1 });
-	ComponentManager::RegisterComponentDataByClass<PlayerComponent>(ComponentClassData{ true, 1 });
-	ComponentManager::RegisterComponentDataByClass<GunComponent>(ComponentClassData{ true, 1 });
-	ComponentManager::RegisterComponentDataByClass<MovingPlatformComponent>(ComponentClassData{ true, 10 });
-	ComponentManager::RegisterComponentDataByClass<TargetComponent>(ComponentClassData{ false, 20 });
-	ComponentManager::RegisterComponentDataByClass<BulletComponent>(ComponentClassData{ true, 20 });
-	ComponentManager::RegisterComponentDataByClass<EnemyComponent>(ComponentClassData{ true, 10 });
-
 	DefaultAssets::LoadDefaultAssets();
 
 
-	//  shaders, textures and materials
+	// Load shaders, textures and materials
 	AssetManager::CreateShaderProgram("lit_object", "Lit/object_lit.vert", "Lit/object_lit.frag", ShaderType::Lit);
 
 	log.LogMessage_Category("Doomlike: Load default assets time: " + std::to_string(glfwGetTime() - load_time), LogCategory::Info);
@@ -104,7 +90,7 @@ void DoomlikeGame::loadGameAssets()
 	load_time = glfwGetTime();
 
 
-	//  meshes and models
+	// Load meshes and models
 	AssetManager::LoadMeshCollection("taxi", "taxi/taxi.fbx");
 	AssetManager::LoadMeshCollection("enemy", "doomlike/enemy/enemy.obj");
 	AssetManager::LoadMeshCollection("bullet", "doomlike/bullet/bullet.fbx");
@@ -129,7 +115,7 @@ void DoomlikeGame::loadGameAssets()
 	load_time = glfwGetTime();
 
 
-	//  decor setups
+	// Setup prefab factories
 	WallFactory::SetupWallAssets();
 	FloorCeilingFactory::SetupFloorCeilingAssets();
 	StairFactory::SetupStairAssets();
@@ -139,7 +125,7 @@ void DoomlikeGame::loadGameAssets()
 	load_time = glfwGetTime();
 
 
-	//  sounds
+	// Load sounds
 	AssetManager::CreateSound("feet1", "doomlike/sounds/foot_1.mp3", ACTIVATE_3D);
 	AssetManager::CreateSound("feet2", "doomlike/sounds/foot_2.mp3", ACTIVATE_3D);
 	AssetManager::CreateSound("shoot", "doomlike/sounds/shoot.mp3", 0);
@@ -153,20 +139,16 @@ void DoomlikeGame::loadGameAssets()
 	load_time = glfwGetTime();
 
 
-	//  object channels
-	CollisionChannels::RegisterTestChannel("PlayerEntity", { "solid", "enemy", "trigger_zone" }); //  for player and player bullets
-	CollisionChannels::RegisterTestChannel("Enemy", { "solid", "player", "bullet" });
-
-
 	log.LogMessage_Category("Doomlike: Finished loading doomlike assets in " + std::to_string(glfwGetTime() - full_load_time) + " seconds.", LogCategory::Info);
 }
 
 void DoomlikeGame::loadGame()
 {
 	Entity* player_entity = createEntity();
+	Entity* player_camera_entity = createEntity();
 	player = player_entity->addComponentByClass<PlayerComponent>();
 	player_entity->addComponentByClass<GunComponent>();
-	player->setupPlayer(1.5f, 5.0f, 7.0f, 0.3f);
+	ECS::GetComponent(player).setupPlayer(player_camera_entity, 1.5f, 5.0f, 7.0f, 0.3f);
 
 	loadLevel(2);
 }
@@ -220,24 +202,26 @@ void DoomlikeGame::changeLevel(int levelIndex)
 
 void DoomlikeGame::loadLevel(int index)
 {
+	PlayerComponent& player_comp = ECS::GetComponent(player);
+
 	currentLevel = index;
 	switch (index)
 	{
 	case 0:
 		loadScene(&testScene);
-		player->respawn(testScene.getSpawnPoint());
+		player_comp.respawn(testScene.getSpawnPoint());
 		break;
 	case 1:
 		loadScene(&levelDebugScene);
-		player->respawn(levelDebugScene.getSpawnPoint());
+		player_comp.respawn(levelDebugScene.getSpawnPoint());
 		break;
 	case 2:
 		loadScene(&levelStartScene);
-		player->respawn(levelStartScene.getSpawnPoint());
+		player_comp.respawn(levelStartScene.getSpawnPoint());
 		break;
 	case 3:
 		loadScene(&levelAdvancedScene);
-		player->respawn(levelAdvancedScene.getSpawnPoint());
+		player_comp.respawn(levelAdvancedScene.getSpawnPoint());
 		break;
 	}
 }

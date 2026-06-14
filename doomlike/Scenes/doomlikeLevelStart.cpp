@@ -5,8 +5,8 @@
 #include <doomlikeGame.h>
 
 #include <Rendering/Lights/directionalLightComponent.h>
-#include <Physics/AABB/boxAABBColComp.h>
-#include <Physics/rigidbodyComponent.h>
+#include <PhysicsAABB/boxCollisionComponent.h>
+#include <PhysicsAABB/rigidbodyComponent.h>
 #include <GameComponents/enemyComponent.h>
 
 #include <PrefabFactories/wallFactory.h>
@@ -23,7 +23,7 @@ void DoomlikeLevelStart::loadScene()
 	renderer.SetClearColor(Color{ 50, 75, 75, 255 });
 
 
-	//  prefabs
+	// Prefabs
 	FloorCeilingFactory::CreateFloor(this, Vector3{ 0.0f, 0.0f,  2.5f }, Vector2{  5.0f, 10.0f }, true);
 	FloorCeilingFactory::CreateFloor(this, Vector3{ 0.0f, 0.0f, 15.0f }, Vector2{ 15.0f, 15.0f }, true);
 	FloorCeilingFactory::CreateCeiling(this, Vector3{ 0.0f, 3.0f,  2.5f }, Vector2{  5.0f, 10.0f });
@@ -58,16 +58,16 @@ void DoomlikeLevelStart::loadScene()
 	LampFactory::CreateLamp(this, Vector3{  6.5f, 2.0f, 21.5f }, 2.3f, false);
 	LampFactory::CreateLamp(this, Vector3{ -3.0f, 5.0f, 16.5f }, 1.7f, true);
 
-	//  directional light
+	// Directional light
 	Entity* light = createEntity();
-	std::shared_ptr<DirectionalLightComponent> dir_light_comp = light->addComponentByClass<DirectionalLightComponent>();
-	dir_light_comp->setColor(Color{ 255, 238, 209, 255 });
-	dir_light_comp->setDirection(Vector3::unitY);
-	dir_light_comp->setAmbientStrength(0.35f);
-	dir_light_comp->setDiffuseStrength(0.0f);
+	DirectionalLightComponent& dir_light_comp = ECS::GetComponent(light->addComponentByClass<DirectionalLightComponent>());
+	dir_light_comp.lightColor = Color{ 255, 238, 209, 255 };
+	dir_light_comp.direction = Vector3::unitY;
+	dir_light_comp.ambientStrength = 0.35f;
+	dir_light_comp.diffuseStrength = 0.0f;
 
 
-	//  enemies
+	// Enemies
 	Entity* enemy_1 = createEntity();
 	Entity* enemy_2 = createEntity();
 	enemy_1->setPosition(Vector3{ 3.5f, 1.2f,  11.5f });
@@ -76,21 +76,21 @@ void DoomlikeLevelStart::loadScene()
 	enemy_2->addComponentByClass<EnemyComponent>();
 
 	enemyCount.addEnemies({ enemy_1, enemy_2 });
-	enemyCount.onAllEnemiesDead.registerObserver(this, Bind_0(&DoomlikeLevelStart::onEnemiesDead));
+	enemyCount.onAllEnemiesDead.subscribe(this, &DoomlikeLevelStart::onEnemiesDead);
 
 
-	//  trigger zone
+	// Trigger zone
 	endLevelZone = createEntity();
 	endLevelZone->setPosition(Vector3{ -15.0f, 3.5f, 19.75f });
 	endLevelZone->setScale(Vector3{ 4.0f, 2.5f, 4.8f });
-	std::shared_ptr<BoxAABBColComp> trigger_comp = endLevelZone->addComponentByClass<BoxAABBColComp>();
-	trigger_comp->setBox(Box::one);
-	trigger_comp->setCollisionChannel("trigger_zone");
-	trigger_comp->setCollisionType(CollisionType::Trigger);
-	trigger_comp->onTriggerEnter.registerObserver(this, Bind_1(&DoomlikeLevelStart::onEnterEndLevelZone));
+	BoxCollisionComponent& trigger_comp = ECS::GetComponent(endLevelZone->addComponentByClass<BoxCollisionComponent>());
+	trigger_comp.collisionBox = Box::one;
+	trigger_comp.collisionChannel = "trigger_zone";
+	trigger_comp.isTrigger = true;
+	trigger_comp.onTriggerEnter.subscribe(this, &DoomlikeLevelStart::onEnterEndLevelZone);
 
 
-	//  player spawn point
+	// Player spawn point
 	spawnPoint = createEntity();
 	spawnPoint->setPosition(Vector3::zero);
 	spawnPoint->setRotation(Quaternion::fromEuler(Maths::toRadians(-90.0f), 0.0f, 0.0f));
@@ -111,12 +111,12 @@ void DoomlikeLevelStart::onEnemiesDead()
 	endLevelWall->setPosition(Vector3{ -17.5f, 3.5f, 19.75f });
 }
 
-void DoomlikeLevelStart::onEnterEndLevelZone(RigidbodyComponent& other)
+void DoomlikeLevelStart::onEnterEndLevelZone(const RigidbodyComponent& body)
 {
-	if (!other.getOwner()->hasGameplayTag("Player")) return;
+	if (!body.getOwner()->hasGameplayTag("Player")) return;
 
 	Locator::getLog().LogMessageToScreen("Doomlike Intro Level: Player exit intro level.", Color::white, 5.0f);
 	static_cast<DoomlikeGame*>(GameplayStatics::GetGame())->changeLevel(3);
 
-	endLevelZone->getComponentByClass<BoxAABBColComp>()->onTriggerEnter.unregisterObserver(this);
+	ECS::GetComponent(endLevelZone->getComponentOfClass<BoxCollisionComponent>()).onTriggerEnter.unsubscribe(this);
 }

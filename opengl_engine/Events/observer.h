@@ -1,19 +1,66 @@
 #pragma once
-#include <functional>
+#include <vector>
 
-#define Bind_0(FuncSignature)      std::bind(FuncSignature, this)
-#define Bind_1(FuncSignature)      std::bind(FuncSignature, this, std::placeholders::_1)
-#define Bind_2(FuncSignature)      std::bind(FuncSignature, this, std::placeholders::_1, std::placeholders::_2)
-#define Bind_3(FuncSignature)      std::bind(FuncSignature, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)
-#define Bind_4(FuncSignature)      std::bind(FuncSignature, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4)
-#define Bind_5(FuncSignature)      std::bind(FuncSignature, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5)
-#define Bind_6(FuncSignature)      std::bind(FuncSignature, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5, std::placeholders::_6)
-#define Bind_7(FuncSignature)      std::bind(FuncSignature, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5, std::placeholders::_6, std::placeholders::_7)
-#define Bind_8(FuncSignature)      std::bind(FuncSignature, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5, std::placeholders::_6, std::placeholders::_7, std::placeholders::_8)
-#define Bind_9(FuncSignature)      std::bind(FuncSignature, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5, std::placeholders::_6, std::placeholders::_7, std::placeholders::_8, std::placeholders::_9)
+class EventBase;
 
 
-
+/**
+ * Object that can subscribe a callback function to an event.
+ *
+ * Note: observers have automatic subscriptions management when copied and destroyed.
+ */
 class Observer
 {
+public:
+    Observer() = default;
+    virtual ~Observer();
+
+    Observer(const Observer& other);
+    Observer& operator=(const Observer& other);
+
+    Observer(Observer&& other) noexcept;
+    Observer& operator=(Observer&& other) noexcept;
+
+private:
+    template<typename... Args> friend class Event;
+
+    /** Track an event this observer is subscribed to.
+     * Automatically called when subscribing this observer to an event.
+     *
+     * @param event The event to track.
+     */
+    void trackEvent(EventBase* event);
+
+    /** Untrack an event this observer is no longer subscribed to.
+     * Automatically called when unsubscribing this observer from an event.
+     *
+     * @param event The event to untrack.
+     */
+    void untrackEvent(EventBase* event);
+
+    /** Replace a stale event pointer with an updated one.
+    * Automatically called by Event's move constructor.
+    * 
+    * @param oldEvent The stale event pointer.
+    * @param newEvent The updated event pointer.
+    */
+    void replaceEvent(EventBase* oldEvent, EventBase* newEvent);
+
+    /** Unsubscribed this event from all event it has tracked. */
+    void unregisterFromAll();
+
+    /** Copy every event subscribed by another observer.
+     *
+     * @param src The observer to copy subscriptions from.
+     */
+    void copySubscriptionsFrom(const Observer& src);
+
+    /** Copy every event subscribed by another observer, then remove the subscriptions of the other observer.
+     *
+     * @param src The observer to steal subscriptions from.
+     */
+    void stealSubscriptionsFrom(Observer& src);
+
+
+    std::vector<EventBase*> events;
 };

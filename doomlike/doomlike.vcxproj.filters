@@ -24,12 +24,6 @@
     <ClCompile Include="doomlikeGame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Scenes\doomlikeLevelDebug.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Scenes\doomlikeLevelStart.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="PrefabFactories\wallFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -45,25 +39,31 @@
     <ClCompile Include="PrefabFactories\lampFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Scenes\doomlikeLevelAdvanced.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GameComponents\playerComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GameComponents\OverrideComponents\cameraLagComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GameComponents\movingPlatformComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GameComponents\targetComponent.cpp">
+    <ClCompile Include="GameComponents\lagMovementComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GameComponents\gunComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GameComponents\bulletComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameComponents\targetComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameComponents\movingPlatformComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Scenes\doomlikeLevelDebug.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Scenes\doomlikeLevelStart.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Scenes\doomlikeLevelAdvanced.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GameComponents\enemyComponent.cpp">
@@ -78,12 +78,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="doomlikeGame.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Scenes\doomlikeLevelDebug.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Scenes\doomlikeLevelStart.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PrefabFactories\wallFactory.h">
@@ -101,28 +95,34 @@
     <ClInclude Include="PrefabFactories\lampFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Scenes\doomlikeLevelAdvanced.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GameComponents\playerComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GameLogic\playerSpawnPoint.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GameComponents\OverrideComponents\cameraLagComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GameComponents\movingPlatformComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GameComponents\targetComponent.h">
+    <ClInclude Include="GameComponents\lagMovementComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GameComponents\gunComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GameComponents\bulletComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameComponents\targetComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameComponents\movingPlatformComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenes\doomlikeLevelDebug.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenes\doomlikeLevelStart.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenes\doomlikeLevelAdvanced.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GameComponents\enemyComponent.h">

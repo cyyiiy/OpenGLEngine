@@ -1,11 +1,10 @@
 #include "bulletComponent.h"
 #include <ECS/entity.h>
-#include <Physics/ObjectChannels/collisionChannels.h>
 #include <Assets/assetManager.h>
 
 #include <Rendering/modelRendererComponent.h>
-#include <Physics/AABB/boxAABBColComp.h>
-#include <Physics/rigidbodyComponent.h>
+#include <PhysicsAABB/boxCollisionComponent.h>
+#include <PhysicsAABB/rigidbodyComponent.h>
 
 
 void BulletComponent::setupBullet(const Vector3& spawnPos, const Quaternion& spawnRot, const Vector3& bulletDirection, const float bulletVelocity, const float bulletLifetime)
@@ -14,22 +13,24 @@ void BulletComponent::setupBullet(const Vector3& spawnPos, const Quaternion& spa
 	getOwner()->setRotation(spawnRot);
 	lifetime = bulletLifetime;
 
-	bulletModel->setModel(&AssetManager::GetModel("bullet"));
-	bulletModel->offset.setRotation(Quaternion{ Vector3::unitY, Maths::toRadians(90.0f) });
-	bulletModel->offset.setScale(0.0002f);
+	ModelRendererComponent& bullet_model_comp = ECS::GetComponent(bulletModel);
+	BoxCollisionComponent& collision_comp = ECS::GetComponent(collision);
+	RigidbodyComponent& rigidbody_comp = ECS::GetComponent(rigidbody);
 
-	collision->setBox(Box{ Vector3::zero, Vector3{0.05f, 0.05f, 0.05f} });
-	collision->setCollisionChannel("bullet");
-	collision->setCollisionType(CollisionType::Solid);
-	collision->useOwnerScaleForBoxSize = false;
+	bullet_model_comp.model = &AssetManager::GetModel("bullet");
+	bullet_model_comp.offset.setRotation(Quaternion{ Vector3::unitY, Maths::toRadians(90.0f) });
+	bullet_model_comp.offset.setScale(0.0002f);
 
-	rigidbody->setTestChannels(CollisionChannels::GetRegisteredTestChannel("PlayerEntity"));
-	rigidbody->setPhysicsActivated(true);
-	rigidbody->setUseGravity(false);
-	rigidbody->setVelocity(bulletDirection * bulletVelocity);
+	collision_comp.collisionBox = Box{ Vector3::zero, Vector3{ 0.05f, 0.05f, 0.05f } };
+	collision_comp.collisionChannel = "bullet";
+	collision_comp.useEntityScaleForBoxSize = false;
 
-	rigidbody->onCollisionRepulsed.registerObserver(this, Bind_1(&BulletComponent::onBulletCollisionHit));
-	collision->onCollisionIntersect.registerObserver(this, Bind_1(&BulletComponent::onBulletEntityHit));
+	rigidbody_comp.collisionChannels = { "solid", "enemy", "trigger_zone" };
+	rigidbody_comp.useGravity = false;
+	rigidbody_comp.velocity = bulletDirection * bulletVelocity;
+
+	rigidbody_comp.onCollisionRepulse.subscribe(this, &BulletComponent::onBulletCollisionHit);
+	collision_comp.onCollisionIntersect.subscribe(this, &BulletComponent::onBulletRigidbodyHit);
 
 	getOwner()->addGameplayTag("Bullet");
 
@@ -38,8 +39,8 @@ void BulletComponent::setupBullet(const Vector3& spawnPos, const Quaternion& spa
 
 void BulletComponent::deleteBullet()
 {
-	rigidbody->onCollisionRepulsed.unregisterObserver(this);
-	collision->onCollisionIntersect.unregisterObserver(this);
+	ECS::GetComponent(rigidbody).onCollisionRepulse.unsubscribe(this);
+	ECS::GetComponent(collision).onCollisionIntersect.unsubscribe(this);
 
 	getOwner()->destroyEntity();
 }
@@ -49,45 +50,32 @@ bool BulletComponent::isLifetimeOver() const
 	return lifetime <= 0.0f;
 }
 
-void BulletComponent::onBulletCollisionHit(const CollisionResponse& hitResponse)
+void BulletComponent::onBulletCollisionHit(const BoxCollisionComponent& boxCollided, const Vector3& collisionNormal)
 {
-	rigidbody->onCollisionRepulsed.unregisterObserver(this);
+	RigidbodyComponent& rigidbody_comp = ECS::GetComponent(rigidbody);
+	rigidbody_comp.onCollisionRepulse.unsubscribe(this);
 
-	rigidbody->setVelocity(Vector3::zero);
-	rigidbody->setUseGravity(true);
+	rigidbody_comp.velocity = Vector3::zero;
+	rigidbody_comp.useGravity = true;
 }
 
-void BulletComponent::onBulletEntityHit(RigidbodyComponent& hitBody)
+void BulletComponent::onBulletRigidbodyHit(const RigidbodyComponent& bodyCollided, const Vector3& collisionNormal)
 {
-	if (hitBody.getOwner()->hasGameplayTag("Enemy"))
+	if (bodyCollided.getOwner()->hasGameplayTag("Enemy"))
 	{
-		lifetime = 0.0f; //  allow the gun component to properly delete the bullet
+		lifetime = 0.0f; // Allow the gun component to properly delete the bullet
 	}
 }
 
 void BulletComponent::init()
 {
-	//  reset the value in case this component was used before (the component manager is a memory pool)
-	lifetime = 0.0f;
-
-
+	// Create the bullet components
 	bulletModel = getOwner()->addComponentByClass<ModelRendererComponent>();
-	collision = getOwner()->addComponentByClass<BoxAABBColComp>();
+	collision = getOwner()->addComponentByClass<BoxCollisionComponent>();
 	rigidbody = getOwner()->addComponentByClass<RigidbodyComponent>();
-	rigidbody->associateCollision(collision);
+	ECS::GetComponent(rigidbody).associateCollision(collision);
 
-	setUpdateActivated(false); //  it will be activated one setupBullet has been called
-}
-
-void BulletComponent::exit()
-{
-	rigidbody->onCollisionRepulsed.unregisterObserver(this);
-	collision->onCollisionIntersect.unregisterObserver(this);
-
-	//  release shared pointers
-	bulletModel = nullptr;
-	collision = nullptr;
-	rigidbody = nullptr;
+	setUpdateActivated(false); // Update will be activated once 'setupBullet' has been called
 }
 
 void BulletComponent::update(float deltaTime)

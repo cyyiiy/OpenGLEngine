@@ -4,7 +4,7 @@
 #include <GameComponents/lampComponent.h>
 #include <Rendering/modelRendererComponent.h>
 #include <Rendering/Lights/pointLightComponent.h>
-#include <Physics/AABB/boxAABBColComp.h>
+#include <PhysicsAABB/boxCollisionComponent.h>
 
 
 Entity* LampFactory::CreateLamp(EntityContainer* entityContainer, const Vector3& position, float intensityMultiplier, bool isCeiling, bool startOff)
@@ -18,7 +18,7 @@ Entity* LampFactory::CreateLamp(EntityContainer* entityContainer, const Vector3&
 
 	if (isCeiling)
 	{
-		//  we must deal with models that are absolutely awful
+		// We must deal with models that are absolutely awful
 		lamp_entity->setPosition(position + Vector3{ 0.0f, -2.0f, 0.0f });
 		lamp_entity->setScale(0.001f);
 
@@ -43,25 +43,27 @@ Entity* LampFactory::CreateLamp(EntityContainer* entityContainer, const Vector3&
 	}
 
 
-	std::shared_ptr<ModelRendererComponent> model_renderer_comp = lamp_entity->addComponentByClass<ModelRendererComponent>();
-	model_renderer_comp->setModel(&AssetManager::GetModel(model_name));
+	ComponentHandle<ModelRendererComponent> lamp_model_handle = lamp_entity->addComponentByClass<ModelRendererComponent>();
+	ModelRendererComponent& lamp_model_comp = ECS::GetComponent(lamp_model_handle);
+	lamp_model_comp.model = &AssetManager::GetModel(model_name);
 
-	std::shared_ptr<PointLightComponent> light_comp = lamp_entity->addComponentByClass<PointLightComponent>();
-	light_comp->setColor(Color{ 227, 141, 2, 225 });
-	light_comp->setOffset(light_comp_offset);
-	light_comp->setAmbientStrength(0.01f);
-	light_comp->setDiffuseStrength(light_comp_diffuse * intensityMultiplier);
-	light_comp->setUseDiffColorToSpecColor(true);
+	ComponentHandle<PointLightComponent> lamp_light_handle = lamp_entity->addComponentByClass<PointLightComponent>();
+	PointLightComponent& lamp_light_comp = ECS::GetComponent(lamp_light_handle);
+	lamp_light_comp.lightColor = Color{ 227, 141, 2, 225 };
+	lamp_light_comp.offset = light_comp_offset;
+	lamp_light_comp.ambientStrength = 0.01f;
+	lamp_light_comp.diffuseStrength = light_comp_diffuse * intensityMultiplier;
+	lamp_light_comp.useColorToSpecular = true;
 
-	std::shared_ptr<BoxAABBColComp> col_comp = lamp_entity->addComponentByClass<BoxAABBColComp>();
-	col_comp->setBox(col_comp_box);
-	col_comp->setCollisionChannel("solid");
-	col_comp->useOwnerScaleForBoxCenter = false;
-	col_comp->useOwnerScaleForBoxSize = false;
+	BoxCollisionComponent& lamp_col_comp = ECS::GetComponent(lamp_entity->addComponentByClass<BoxCollisionComponent>());
+	lamp_col_comp.collisionBox = col_comp_box;
+	lamp_col_comp.collisionChannel = "solid";
+	lamp_col_comp.useEntityScaleForBoxCenter = false;
+	lamp_col_comp.useEntityScaleForBoxSize = false;
 
-	std::shared_ptr<LampComponent> lamp_comp = lamp_entity->addComponentByClass<LampComponent>();
-	lamp_comp->setup(light_comp, model_renderer_comp, isCeiling);
-	lamp_comp->changeStatus(!startOff);
+	LampComponent& lamp_comp = ECS::GetComponent(lamp_entity->addComponentByClass<LampComponent>());
+	lamp_comp.setup(lamp_light_handle, lamp_model_handle, isCeiling);
+	lamp_comp.changeStatus(!startOff);
 
 	return lamp_entity;
 }
@@ -115,7 +117,7 @@ void LampFactory::SetupLampAssets()
 	AssetManager::CreateMaterialCollection("chandelier", {
 		&AssetManager::GetMaterial("chandelier_base"),
 		&AssetManager::GetMaterial("chandelier_leather"),
-		&AssetManager::GetMaterial("flame"), //  allows a better visibility than the candle material
+		&AssetManager::GetMaterial("flame"), // Allows a better visibility than the candle material
 		&AssetManager::GetMaterial("flame") 
 	});
 

@@ -11,7 +11,7 @@ class PlayerComponent;
 class DoomlikeGame : public Game
 {
 public:
-	std::weak_ptr<PlayerComponent> getPlayer() { return player; }
+	ComponentHandle<PlayerComponent> getPlayer() { return player; }
 
 	void restartLevel();
 	void changeLevel(int levelIndex);
@@ -25,7 +25,7 @@ protected:
 private:
 	void loadLevel(int index);
 
-	//  scenes
+	// Scenes
 	TestFpsScene testScene;
 	DoomlikeLevelDebug levelDebugScene;
 	DoomlikeLevelStart levelStartScene;
@@ -33,7 +33,6 @@ private:
 	int currentLevel = 0;
 	bool mustRestartLevel{ false };
 
-	//  player
-	std::shared_ptr<PlayerComponent> player;
+	// Player
+	ComponentHandle<PlayerComponent> player;
 };
-

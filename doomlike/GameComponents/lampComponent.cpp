@@ -8,10 +8,10 @@
 #include <time.h>
 
 
-void LampComponent::setup(std::weak_ptr<PointLightComponent> lightComp, std::weak_ptr<ModelRendererComponent> modelRendererComp, bool setupChandelier)
+void LampComponent::setup(ComponentHandle<PointLightComponent> lightComp, ComponentHandle<ModelRendererComponent> modelRendererComp, bool setupChandelier)
 {
-	light = lightComp.lock();
-	modelRenderer = modelRendererComp.lock();
+	light = lightComp;
+	modelRenderer = modelRendererComp;
 
 	isChandelier = setupChandelier;
 	baseLightIntensity = isChandelier ? 0.4f : 0.22f;
@@ -19,25 +19,28 @@ void LampComponent::setup(std::weak_ptr<PointLightComponent> lightComp, std::wea
 	srand(static_cast<unsigned int>(time(NULL)));
 	timer = float(rand() % 100) / 100.0f;
 
-	light->setDiffuseStrength(baseLightIntensity + (Maths::sin(timer) / 11.0f));
+	ECS::GetComponent(light).diffuseStrength = baseLightIntensity + (Maths::sin(timer) / 11.0f);
 
-	compValid = light && modelRenderer; //  prevent wrongly initialized lamp component to crash the game
+	compValid = ECS::IsComponentHandleValid(light) && ECS::IsComponentHandleValid(modelRenderer); // Prevent wrongly initialized lamp component to crash the game
 }
 
 void LampComponent::changeStatus(bool lightOn)
 {
 	if (!compValid) return;
 
-	light->setActive(lightOn);
+	PointLightComponent& light_comp = ECS::GetComponent(light);
+	ModelRendererComponent& model_comp = ECS::GetComponent(modelRenderer);
+
+	light_comp.active = lightOn;
 	
 	if (isChandelier)
 	{
-		modelRenderer->getModel().changeMaterial(2, AssetManager::GetMaterial(lightOn ? "flame" : "chandelier_candle"));
-		modelRenderer->getModel().changeMaterial(3, AssetManager::GetMaterial(lightOn ? "flame" : "flame_off"));
+		model_comp.model->changeMaterial(2, AssetManager::GetMaterial(lightOn ? "flame" : "chandelier_candle"));
+		model_comp.model->changeMaterial(3, AssetManager::GetMaterial(lightOn ? "flame" : "flame_off"));
 	}
 	else
 	{
-		modelRenderer->getModel().changeMaterial(1, AssetManager::GetMaterial(lightOn ? "flame" : "flame_off"));
+		model_comp.model->changeMaterial(1, AssetManager::GetMaterial(lightOn ? "flame" : "flame_off"));
 	}
 }
 
@@ -56,22 +59,6 @@ void LampComponent::update(float deltaTime)
 		if (timer > 0.0f) reverse = true;
 	}
 
-	light->setDiffuseStrength(baseLightIntensity + (Maths::sin(timer) / 11.0f));
-}
-
-void LampComponent::init()
-{
-	//  reset the values in case this component was used before (the component manager is a memory pool)
-	isChandelier = false;
-	compValid = false;
-	timer = 0.0f;
-	reverse = false;
-	baseLightIntensity = 0.0f;
-}
-
-void LampComponent::exit()
-{
-	//  release shared pointers
-	light = nullptr;
-	modelRenderer = nullptr;
+	PointLightComponent& light_comp = ECS::GetComponent(light);
+	light_comp.diffuseStrength = baseLightIntensity + (Maths::sin(timer) / 11.0f);
 }

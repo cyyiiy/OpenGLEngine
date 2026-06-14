@@ -1,37 +1,46 @@
 #pragma once
-#include <ECS/component.h>
+#include <ECS/behaviorComponent.h>
 #include <Events/observer.h>
-#include <Core/transform.h>
+#include <Maths/Vector3.h>
+
+class Transform;
+class CameraComponent;
+class LagMovementComponent;
+class BoxCollisionComponent;
+class RigidbodyComponent;
+class AudioSourceComponent;
 
 
 /**
-* This component is responsible of the rigidbody, the movement and the camera.
+* Component to add to an entity to make it a doomlike player.
 * It automatically create the needed components on its entity.
 */
-class PlayerComponent : public Component, public Observer
+class PlayerComponent : public BehaviorComponent, public Observer
 {
+	const float CAM_SENSITIVITY = 0.12f;
+	const float CAM_LAG_SPEED = 8.8f;
+	const float CAM_LAG_MAX_DIST = 0.7f;
+
 public:
-	void setupPlayer(float camHeight_, float moveSpeed_, float jumpForce_, float stepHeight_);
+	void setupPlayer(Entity* camEntity, float camHeight_, float moveSpeed_, float jumpForce_, float stepHeight_);
 
 	void respawn(const Transform& respawnTransform);
 	Vector3 getCamPosition() const;
 
-	void onCollision(const struct CollisionResponse& collisionResponse);
+	void onCollision(const BoxCollisionComponent& boxCollided, const Vector3& collisionNormal);
 
-
-protected:
 	void init() override;
-	void exit() override;
 	void update(float deltaTime) override;
 
 private:
 	friend class GunComponent;
 
 	Entity* entity{ nullptr };
-	std::shared_ptr<class CameraLagComponent> camera;
-	std::shared_ptr<class BoxAABBColComp> collision;
-	std::shared_ptr<class RigidbodyComponent> rigidbody;
-	std::shared_ptr<class AudioSourceComponent> feetSoundSource;
+	ComponentHandle<CameraComponent> camera;
+	ComponentHandle<LagMovementComponent> lagMovement;
+	ComponentHandle<BoxCollisionComponent> collision;
+	ComponentHandle<RigidbodyComponent> rigidbody;
+	ComponentHandle<AudioSourceComponent> feetSoundSource;
 
 	float camHeight{ 0.0f };
 	float moveSpeed{ 0.0f };
@@ -40,9 +49,12 @@ private:
 	float feetSoundTimer{ 0.0f };
 	bool feetSoundAlternance{ false };
 	bool onGroundLastFrame{ true };
-
-	const float camSensitivity{ 0.08f };
-	const float camLagSpeed{ 8.8f };
-	const float camLagMaxDist{ 0.7f };
 };
 
+
+// Specify sublist size for 'PlayerComponent'
+template<>
+struct ComponentSublistSize<PlayerComponent>
+{
+	static constexpr size_t value = 1;
+};

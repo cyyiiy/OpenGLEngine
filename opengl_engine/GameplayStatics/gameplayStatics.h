@@ -35,6 +35,31 @@ public:
 	*/
 	static float GetEngineTime();
 
+	/**
+	* Draw a debug point for a desired duration.
+	* @param	pointPosition	The position in world-space of the point to draw.
+	* @param	color			The color of the point to draw.
+	* @param	duration		The duration of the debug draw (in seconds).
+	*/
+	static void DrawDebugPoint(const struct Vector3& pointPosition, const struct Color& color, float duration);
+
+	/**
+	* Draw a debug line between two points for a desired duration.
+	* @param	pointA		The position in world-space of the first extremity of the line.
+	* @param	pointB		The position in world-space of the second extremity of the line.
+	* @param	color		The color of the line to draw.
+	* @param	duration	The duration of the debug draw (in seconds).
+	*/
+	static void DrawDebugLine(const struct Vector3& pointA, const struct Vector3& pointB, const struct Color& color, float duration);
+
+	/*
+	* Draw a debug cube for a desired duration.
+	* @param	boxInfos	The box values of the cube to draw.
+	* @param	color		The color of the cube to draw.
+	* @param	duration	The duration of the debug draw (in seconds).
+	*/
+	static void DrawDebugCube(const class Box& boxInfos, const struct Color& color, float duration);
+
 
 	/* Event called when the screen (window) is resized. */
 	static Event<const Vector2Int> OnScrenResize;
@@ -58,5 +83,7 @@ private:
 
 	static void SetDeltaTime(float time);
 	static void SetEngineTime(float time);
+
+	static void UpdateDebugs(float deltaTime);
 };
 

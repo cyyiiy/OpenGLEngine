@@ -1,10 +1,10 @@
 #include "movingPlatformComponent.h"
 #include <ECS/entity.h>
-#include <Physics/ObjectChannels/collisionChannels.h>
 #include <Assets/assetManager.h>
+#include <ServiceLocator/locator.h>
 
-#include <Physics/AABB/boxAABBColComp.h>
-#include <Physics/rigidbodyComponent.h>
+#include <PhysicsAABB/boxCollisionComponent.h>
+#include <PhysicsAABB/rigidbodyComponent.h>
 #include <Audio/audioSourceComponent.h>
 
 
@@ -20,17 +20,21 @@ void MovingPlatformComponent::setupMovingPlatform(const Vector3& pointA_, const 
 
 	debug = debug_;
 
+	BoxCollisionComponent& collision_comp = ECS::GetComponent(collision);
+	RigidbodyComponent& rigidbody_comp = ECS::GetComponent(rigidbody);
+	AudioSourceComponent& audio_source_comp = ECS::GetComponent(audioSource);
+
 	getOwner()->setPosition(pointA);
-	rigidbody->setVelocity((pointB - pointA) * (1.0f / timeAtoB));
+	rigidbody_comp.velocity = (pointB - pointA) * (1.0f / timeAtoB);
 
-	collision->setBox(Box::one);
-	collision->setCollisionChannel("solid");
+	collision_comp.collisionBox = Box::one;
+	collision_comp.collisionChannel = "solid";
 
-	rigidbody->setPhysicsActivated(false);
-	rigidbody->setUseGravity(false);
+	rigidbody_comp.isKinematic = true;
+	rigidbody_comp.useGravity = false;
 
-	audioSource->setSpatialization(ChannelSpatialization::Channel3D);
-	audioSource->playSound(AssetManager::GetSound("elevator"), -1);
+	audio_source_comp.setSpatialization(ChannelSpatialization::Channel3D);
+	audio_source_comp.playSound(AssetManager::GetSound("elevator"), -1);
 
 	setUpdateActivated(true);
 
@@ -45,8 +49,8 @@ void MovingPlatformComponent::setupMovingPlatform(const Vector3& pointA_, const 
 void MovingPlatformComponent::pauseMovement()
 {
 	paused = true;
-	rigidbody->setVelocity(Vector3::zero);
-	audioSource->setPause(true);
+	ECS::GetComponent(rigidbody).velocity = Vector3::zero;
+	ECS::GetComponent(audioSource).setPause(true);
 }
 
 void MovingPlatformComponent::resumeMovement()
@@ -54,52 +58,36 @@ void MovingPlatformComponent::resumeMovement()
 	paused = false;
 	if (waiting) return;
 
-	rigidbody->setVelocity((reverse ? (pointA - pointB) : (pointB - pointA)) * (1.0f / timeAtoB));
-	audioSource->setPause(false);
+	ECS::GetComponent(rigidbody).velocity = (reverse ? (pointA - pointB) : (pointB - pointA)) * (1.0f / timeAtoB);
+	ECS::GetComponent(audioSource).setPause(false);
 }
 
 void MovingPlatformComponent::init()
 {
-	//  reset the values in case this component was used before (the component manager is a memory pool)
-	pointA = Vector3::zero;
-	pointB = Vector3::zero;
-	timeAtoB = 0.0f;
-	waitTime = 0.0f;
-	timer = 0.0f;
-	waitTimer = 0.0f;
-	reverse = false;
-	waiting = false;
-	paused = false;
-
-
-	collision = getOwner()->addComponentByClass<BoxAABBColComp>();
+	// Create the moving platform components
+	collision = getOwner()->addComponentByClass<BoxCollisionComponent>();
 	rigidbody = getOwner()->addComponentByClass<RigidbodyComponent>();
-	rigidbody->associateCollision(collision);
+	ECS::GetComponent(rigidbody).associateCollision(collision);
 	audioSource = getOwner()->addComponentByClass<AudioSourceComponent>();
 
-	setUpdateActivated(false); //  it will be activated once setupMovingPlatform has been called
+	setUpdateActivated(false); // Update will be activatedonce 'setupMovingPlatform' has been called
 }
 
-void MovingPlatformComponent::exit()
-{
-	//  release shared pointers
-	collision = nullptr;
-	rigidbody = nullptr;
-	audioSource = nullptr;
-}
-
-void MovingPlatformComponent::update(float deltaTime)
+void MovingPlatformComponent::update(float dt)
 {
 	if (debug)
 	{
-		updateDebug(deltaTime);
+		updateDebug(dt);
 	}
 
 	if (paused) return;
 
+	RigidbodyComponent& rigidbody_comp = ECS::GetComponent(rigidbody);
+	AudioSourceComponent& audio_source_comp = ECS::GetComponent(audioSource);
+
 	if (waiting)
 	{
-		waitTimer -= deltaTime;
+		waitTimer -= dt;
 		if (waitTimer <= 0.0f)
 		{
 			waitTimer = 0.0f;
@@ -112,48 +100,48 @@ void MovingPlatformComponent::update(float deltaTime)
 
 	if (reverse)
 	{
-		timer -= deltaTime;
-		if (timer <= 0.0f) //  reached point A
+		timer -= dt;
+		if (timer <= 0.0f) // Reached point A
 		{
 			getOwner()->setPosition(pointA);
 			timer = 0.0f;
 			reverse = false;
-			rigidbody->setVelocity((pointB - pointA) * (1.0f / timeAtoB));
+			rigidbody_comp.velocity = (pointB - pointA) * (1.0f / timeAtoB);
 
 			if (waitTime > 0.0f)
 			{
 				waitTimer = waitTime;
 				waiting = true;
-				rigidbody->setVelocity(Vector3::zero);
+				rigidbody_comp.velocity = Vector3::zero;
 
-				audioSource->setPause(true);
+				audio_source_comp.setPause(true);
 			}
 		}
 	}
 	else
 	{
-		timer += deltaTime;
-		if (timer >= timeAtoB) //  reached point B
+		timer += dt;
+		if (timer >= timeAtoB) // Reached point B
 		{
 			getOwner()->setPosition(pointB);
 			timer = timeAtoB;
 			reverse = true;
-			rigidbody->setVelocity((pointA - pointB) * (1.0f / timeAtoB));
+			rigidbody_comp.velocity = (pointA - pointB) * (1.0f / timeAtoB);
 			if (waitTime > 0.0f)
 			{
 				waitTimer = waitTime;
 				waiting = true;
-				rigidbody->setVelocity(Vector3::zero);
+				rigidbody_comp.velocity = Vector3::zero;
 
-				audioSource->setPause(true);
+				audio_source_comp.setPause(true);
 			}
 		}
 	}
 }
 
-void MovingPlatformComponent::updateDebug(float deltaTime)
+void MovingPlatformComponent::updateDebug(float dt)
 {
-	Locator::getLog().LogMessageToScreen("-- Moving Platform Debug New Frame --  {Delta Time: " + std::to_string(deltaTime) + "}", Color::white, 5.0f, "moving_platform_debug_deltatime");
+	Locator::getLog().LogMessageToScreen("-- Moving Platform Debug New Frame --  {Delta Time: " + std::to_string(dt) + "}", Color::white, 5.0f, "moving_platform_debug_deltatime");
 
 	if (paused)
 	{
@@ -185,5 +173,5 @@ void MovingPlatformComponent::updateDebug(float deltaTime)
 
 	Locator::getLog().LogMessageToScreen("Moving Platform Position: " + getOwner()->getPosition().toString(), Color::yellow, 5.0f, "moving_platform_debug_position");
 	Locator::getLog().LogMessageToScreen("Moving Platform Timer: " + std::to_string(timer), Color::yellow, 5.0f, "moving_platform_debug_timer");
-	Locator::getLog().LogMessageToScreen("Moving Platform Velocity: " + rigidbody->getVelocity().toString(), Color::yellow, 5.0f, "moving_platform_debug_velocity");
+	Locator::getLog().LogMessageToScreen("Moving Platform Velocity: " + ECS::GetComponent(rigidbody).velocity.toString(), Color::yellow, 5.0f, "moving_platform_debug_velocity");
 }

@@ -1,39 +1,26 @@
-#include "entity.h"
+﻿#include "entity.h"
 #include "entityContainer.h"
-#include <algorithm>
 
 Entity::Entity(EntityContainer& containerRef_) : Transform(), containerRef(containerRef_)
 {
 }
 
-Entity::~Entity()
+void Entity::clearAllComponents(bool instantDestroy)
 {
-	clearComponents();
+    // 'pair' is: std::pair<ComponentTypeId, std::vector<StoredComponent>>
+    for (auto& pair : components)
+    {
+        // Loop through all components of a class
+        for (StoredComponent& stored_component : pair.second)
+        {
+            stored_component.deleteFunction(stored_component.raw_handle, instantDestroy);
+        }
+    }
+    
+    components.clear();
 }
 
 void Entity::destroyEntity()
 {
-	//  at the end of the frame, the container this entity is on will delete this entity
-	containerRef.addPendingEntity(this);
-}
-
-void Entity::removeComponent(std::weak_ptr<Component> component)
-{
-	std::shared_ptr<Component> component_shared = component.lock();
-
-	auto iter = std::find(components.begin(), components.end(), component_shared);
-	if (iter != components.end())
-	{
-		ComponentManager::DeleteComponent(component_shared);
-		components.erase(iter);
-	}
-}
-
-void Entity::clearComponents()
-{
-	for (auto& component : components)
-	{
-		ComponentManager::DeleteComponent(component);
-	}
-	components.clear();
+    containerRef.addPendingEntity(this);
 }

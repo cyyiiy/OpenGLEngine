@@ -8,16 +8,14 @@
 
 void EnemyCount::addEnemy(Entity* enemyToAdd)
 {
-	std::shared_ptr<EnemyComponent> enemy_comp = enemyToAdd->getComponentByClass<EnemyComponent>();
-
-	if (!enemy_comp)
+	if (!enemyToAdd->hasComponentOfClass<EnemyComponent>())
 	{
 		Locator::getLog().LogMessage_Category("Doomlike: Tried to add an entity to an Enemy Count that doesn't have the Enemy Component!", LogCategory::Warning);
 		return;
 	}
 
 	enemies.push_back(enemyToAdd);
-	enemy_comp->onDie.registerObserver(this, Bind_1(&EnemyCount::onEnemyDie));
+	ECS::GetComponent(enemyToAdd->getComponentOfClass<EnemyComponent>()).onDie.subscribe(this, &EnemyCount::onEnemyDie);
 }
 
 void EnemyCount::addEnemies(std::vector<Entity*> enemiesToAdd)
@@ -29,7 +27,7 @@ void EnemyCount::addEnemies(std::vector<Entity*> enemiesToAdd)
 void EnemyCount::clearEnemyCount(bool clearEvent)
 {
 	enemies.clear();
-	if (clearEvent) onAllEnemiesDead.clearAllObservers();
+	if (clearEvent) onAllEnemiesDead.removeAllSubscriptions();
 }
 
 void EnemyCount::onEnemyDie(Entity* enemyDead)

@@ -11,6 +11,8 @@ class Transform
 {
 public:
 	Transform();
+	Transform(const Transform& other);
+
 
 	void setPosition(Vector3 newPos);
 	void setPosition(float newPosX, float newPosY, float newPosZ);

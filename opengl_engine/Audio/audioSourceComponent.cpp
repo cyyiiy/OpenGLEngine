@@ -4,7 +4,7 @@
 #include <Maths/Matrix4.h>
 
 
-//  Play and Stop
+// Play and Stop
 void AudioSourceComponent::playSound(const AudioSound& sound, const int loop)
 {
 	audioManagerRef->PlaySoundOnAudioSource(channelIndex, sound, loop);
@@ -16,7 +16,7 @@ void AudioSourceComponent::stopSound() const
 }
 
 
-//  Pause
+// Pause
 void AudioSourceComponent::setPause(const bool pause)
 {
 	audioManagerRef->PauseAudioSource(channelIndex, pause);
@@ -39,7 +39,7 @@ ChannelSpatialization AudioSourceComponent::getSpatialization() const
 }
 
 
-//  Volume
+// Volume
 void AudioSourceComponent::setVolume(const float volume)
 {
 	audioManagerRef->SetAudioSourceGroupVolume(channelIndex, volume);
@@ -51,7 +51,7 @@ float AudioSourceComponent::getVolume() const
 }
 
 
-//  Offset
+// Offset
 void AudioSourceComponent::setOffset(const Vector3 offset)
 {
 	if (sourceSpatialization != ChannelSpatialization::Channel3D) return;
@@ -68,37 +68,23 @@ Vector3 AudioSourceComponent::getOffset() const
 }
 
 
-void AudioSourceComponent::registerComponent()
-{
-	//  note: init is called before registerComponent so audioManagerRef is initialized when this is called
-	channelIndex = audioManagerRef->CreateAudioSourceGroup(ChannelSpatialization::Channel3D);
-}
-
-void AudioSourceComponent::unregisterComponent()
-{
-	stopSound(); //  security (note: it need to be done before the audio manager release the audio group, so it can't be done in the exit function)
-	audioManagerRef->ReleaseAudioSourceGroup(channelIndex);
-}
-
 void AudioSourceComponent::init()
 {
-	//  reset the values in case this component was used before (the component manager is a memory pool)
-	//  note: no need to reset channel index since register component will be called just after init
-	sourceSpatialization = ChannelSpatialization::Channel3D;
-	posOffset = Vector3::zero;
+	audioManagerRef = &Locator::getAudio();
+	channelIndex = audioManagerRef->CreateAudioSourceGroup(ChannelSpatialization::Channel3D);
 
-
-	audioManagerRef= &Locator::getAudio();
-
-	getOwner()->onTransformUpdated.registerObserver(this, Bind_0(&AudioSourceComponent::onEntityMoved));
+	getOwner()->onTransformUpdated.subscribe(this, &AudioSourceComponent::onEntityMoved);
+	setUpdateActivated(false);
 }
 
 void AudioSourceComponent::exit()
 {
-	getOwner()->onTransformUpdated.unregisterObserver(this);
+	stopSound();
+
+	audioManagerRef->ReleaseAudioSourceGroup(channelIndex);
 }
 
-//  Auto-update pos
+// Auto-update pos
 void AudioSourceComponent::onEntityMoved()
 {
 	if (sourceSpatialization != ChannelSpatialization::Channel3D) return;

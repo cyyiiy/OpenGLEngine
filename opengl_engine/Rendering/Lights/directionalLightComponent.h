@@ -1,26 +1,23 @@
 #pragma once
-#include "lightComponent.h"
+#include "lightBase.h"
+#include <ECS/component.h>
 #include <Maths/Vector3.h>
 
+
 /** Directional Light Component
-* Component for a directional light.
-* This component doesn't use the transform of the Entity.
+* A data-only component for a directional light.
 */
-class DirectionalLightComponent : public LightComponent
+class DirectionalLightComponent : public Component, public LightBase
 {
 public:
-	/** Apply the directional light to the lit shader. */
-	void useLight(Shader& litShader, int lightIndex) override;
-
-
-	void setDirection(Vector3 newDirection);
-
-	Vector3 getDirection() const;
-
-protected:
-	/** Called after the component has been created, but before it is registered. */
-	void init() override;
-
+	/** The direction of the directional light. */
 	Vector3 direction{ Vector3::unitX };
 };
 
+
+// Specify sublist size for 'DirectionalLightComponent'
+template<>
+struct ComponentSublistSize<DirectionalLightComponent>
+{
+	static constexpr size_t value = 1;
+};

@@ -7,10 +7,9 @@
 #include <Rendering/rendererOpenGL.h>
 #include <ECS/entityContainer.h>
 #include <Rendering/cameraComponent.h>
-#include <Rendering/Text/textRendererComponent.h>
+#include <Rendering/Text/textComponent.h>
 
 #include <Audio/audioManager.h>
-#include <Audio/audioSound.h>
 
 #include <Log/logManager.h>
 
@@ -58,12 +57,12 @@ private:
 
 	//  cameras
 	Entity* debugCamEntity{ nullptr };
-	std::shared_ptr<CameraComponent> debugCamera{ nullptr };
+	ComponentHandle<CameraComponent> debugCamera;
 	float debugCameraSpeed{ 4.0f };
 	float debugCameraMouseSensitivity{ 0.1f };
 
 	//  debug text
-	std::shared_ptr<TextRendererComponent> fpsText{ nullptr };
+	ComponentHandle<TextComponent> fpsText;
 	int frameCounter = 0;
 	float frameTimeCounter = 0.0f;
 

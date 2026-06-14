@@ -7,17 +7,17 @@ namespace FMOD
 	class Sound;
 }
 
-//  unsigned char cause we don't need more than 8 bits
+// Unsigned char cause we don't need more than 8 bits
 typedef unsigned char SoundSettings;
-#define ACTIVATE_3D		1 << 0	//  Make this sound a 3D sound, capable of being played at a certain position in the world
-#define ACTIVATE_STREAM	1 << 1	//  Make the sound streaming from its file at runtime (use on big sound files)
-#define ACTIVATE_LOOP	1 << 2	//  Enable loop playing on this sound
+#define ACTIVATE_3D		1 << 0	// Make this sound a 3D sound, capable of being played at a certain position in the world
+#define ACTIVATE_STREAM	1 << 1	// Make the sound streaming from its file at runtime (use on big sound files)
+#define ACTIVATE_LOOP	1 << 2	// Enable loop playing on this sound
 
 
 enum class ChannelSpatialization : uint8_t
 {
-	Channel2D = 0,	//  For a channel that can play 2D sound
-	Channel3D = 1	//  For a channel that can play 3D sound (movable in space)
+	Channel2D = 0,	// For a channel that can play 2D sound
+	Channel3D = 1	// For a channel that can play 3D sound (movable in space)
 };
 
 struct AudioSoundPtr
@@ -31,8 +31,8 @@ struct AudioCollisionOcclusion
 	AudioCollisionOcclusion() : directOcclusion(1.0f), reverbOcclusion(0.5f) {}
 	AudioCollisionOcclusion(float directOcclusion_, float reverbOcclusion_) : directOcclusion(directOcclusion_), reverbOcclusion(reverbOcclusion_) {}
 
-	float directOcclusion{ 1.0f }; //  Occlusion factor of the polygon for the direct path where 0 represents no occlusion and 1 represents full occlusion.
-	float reverbOcclusion{ 0.5f }; //  Occlusion factor of the polygon for the reverb path where 0 represents no occlusion and 1 represents full occlusion.
+	float directOcclusion{ 1.0f }; // Occlusion factor of the polygon for the direct path where 0 represents no occlusion and 1 represents full occlusion.
+	float reverbOcclusion{ 0.5f }; // Occlusion factor of the polygon for the reverb path where 0 represents no occlusion and 1 represents full occlusion.
 
 
 	bool operator==(const AudioCollisionOcclusion& other) const
@@ -49,4 +49,4 @@ struct std::hash<AudioCollisionOcclusion>
 		return std::hash<float>{}(aco.directOcclusion) ^ (std::hash<float>{}(aco.reverbOcclusion) << 1);
 	}
 };
-//  the hash function for this type is not needed (it would be if it was the key of a map or if it was used in a set for exemple), but I let it here so it can serve as an example.
+// Note: The hash function for this type is not needed (it would be if it was the key of a map or if it was used in a set for exemple), but I let it here so it can be used as an example.

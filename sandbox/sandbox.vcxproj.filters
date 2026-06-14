@@ -18,18 +18,18 @@
     <ClCompile Include="main.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="DefaultScenes\expositionScene.cpp">
+    <ClCompile Include="expositionGame.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="expositionGame.cpp">
+    <ClCompile Include="DefaultScenes\expositionScene.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DefaultScenes\expositionScene.h">
+    <ClInclude Include="expositionGame.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="expositionGame.h">
+    <ClInclude Include="DefaultScenes\expositionScene.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>

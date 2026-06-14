@@ -1,21 +1,30 @@
 #pragma once
-#include <ECS/component.h>
+#include <ECS/BehaviorComponent.h>
 #include <Events/observer.h>
-#include <Physics/raycast.h>
+#include <PhysicsAABB/raycastUtils.h>
+
+class BoxCollisionComponent;
+
 
 /**
 * Components that print a message if its owner is hit by a line raycast.
-* This component does not create the collision on its owner.
+* This component need its owner to already have a collision component.
 */
-class TargetComponent : public Component, public Observer
+class TargetComponent : public BehaviorComponent, public Observer
 {
 public:
 	void onIntersectedByRaycast(RaycastType type, const Vector3& intersectionPoint);
 
-private:
 	void init() override;
-	void exit() override;
 
-	std::shared_ptr<class CollisionComponent> collision;
+private:
+	ComponentHandle<BoxCollisionComponent> collision;
 };
 
+
+// Specify sublist size for 'TargetComponent'
+template<>
+struct ComponentSublistSize<TargetComponent>
+{
+	static constexpr size_t value = 4;
+};

@@ -1,7 +1,7 @@
 #include "benchmarkEnd.h"
 #include <ServiceLocator/locator.h>
 #include <Assets/assetManager.h>
-#include <Rendering/Text/textRendererComponent.h>
+#include <Rendering/Text/textComponent.h>
 
 
 void BenchmarkEnd::loadScene()
@@ -10,8 +10,8 @@ void BenchmarkEnd::loadScene()
 	renderer.SetClearColor(Color::black);
 
 	Entity* text = createEntity();
-	std::shared_ptr<TextRendererComponent> text_comp = text->addComponentByClass<TextRendererComponent>();
-	text_comp->setText("Benchmark is finished.\nRead log to see results and press escape to close.");
+	TextComponent& text_comp = ECS::GetComponent(text->addComponentByClass<TextComponent>());
+	text_comp.setTextDatas("Benchmark is finished.\nRead log to see results and press escape to close.", AssetManager::GetFont("arial_64"));
 }
 
 void BenchmarkEnd::unloadScene()

@@ -5,8 +5,8 @@
 #include <Rendering/cameraComponent.h>
 #include <Rendering/modelRendererComponent.h>
 #include <Rendering/Lights/directionalLightComponent.h>
-#include <Physics/AABB/boxAABBColComp.h>
-#include <Physics/rigidbodyComponent.h>
+#include <PhysicsAABB/boxCollisionComponent.h>
+#include <PhysicsAABB/rigidbodyComponent.h>
 
 
 void BenchmarkPhysics::loadScene()
@@ -16,26 +16,27 @@ void BenchmarkPhysics::loadScene()
 
 	// Initialize camera
 	Entity* camera = createEntity();
-	camera->addComponentByClass<CameraComponent>()->setAsActiveCamera();
-	camera->getComponentByClass<CameraComponent>()->setYaw(-90.0f);
+	CameraComponent& camera_comp = ECS::GetComponent(camera->addComponentByClass<CameraComponent>());
+	camera_comp.setAsActiveCamera();
+	camera_comp.setYaw(-90.0f);
 	camera->setPosition(Vector3{ -1.0f * 60.0f, 40.0f, 60.0f });
 	camera->setRotation(Quaternion::createLookAt(camera->getPosition(), Vector3{ 0.0f, 1.0f, 0.0f }, Vector3::unitY));
 
 	// Create directional light
 	Entity* dir_light = createEntity();
-	std::shared_ptr<DirectionalLightComponent> dir_light_comp = dir_light->addComponentByClass<DirectionalLightComponent>();
-	dir_light_comp->setColor(Color::white);
-	dir_light_comp->setDirection(Vector3::normalize(Vector3{ 0.5f, -1.0f, 0.75f }));
-	dir_light_comp->setAmbientStrength(0.1f);
-	dir_light_comp->setDiffuseStrength(0.7f);
+	DirectionalLightComponent& dir_light_comp = ECS::GetComponent(dir_light->addComponentByClass<DirectionalLightComponent>());
+	dir_light_comp.lightColor = Color::white;
+	dir_light_comp.direction = Vector3::normalize(Vector3{ 0.5f, -1.0f, 0.75f });
+	dir_light_comp.ambientStrength = 0.1f;
+	dir_light_comp.diffuseStrength = 0.7f;
 
 	// Create floor
 	Entity* floor = createEntity();
 	floor->setScale(80.0f);
-	floor->addComponentByClass<ModelRendererComponent>()->setModel(&AssetManager::GetModel("floor"));
-	std::shared_ptr<BoxAABBColComp> floor_col_comp = floor->addComponentByClass<BoxAABBColComp>();
-	floor_col_comp->setBox(Box{ Vector3{ 0.0f, -0.05f, 0.0f }, Vector3{ 0.5f, 0.05f, 0.5f } });
-	floor_col_comp->setCollisionChannel("solid");
+	ECS::GetComponent(floor->addComponentByClass<ModelRendererComponent>()).model = &AssetManager::GetModel("floor");
+	BoxCollisionComponent& floor_col_comp = ECS::GetComponent(floor->addComponentByClass<BoxCollisionComponent>());
+	floor_col_comp.collisionBox = Box{ Vector3{ 0.0f, -0.05f, 0.0f }, Vector3{ 0.5f, 0.05f, 0.5f } };
+	floor_col_comp.collisionChannel = "solid";
 
 	// Create 100 falling bricks
 	for (int x = 0; x < 10; x++)
@@ -45,19 +46,18 @@ void BenchmarkPhysics::loadScene()
 			Entity* brick = createEntity();
 			brick->setPosition(Vector3{ (x - 4.5f) * 8.0f, 2.0f + (10 - z) * 1.2f, (z - 4.5f) * 8.0f });
 			brick->setScale(0.2f);
-			brick->addComponentByClass<ModelRendererComponent>()->setModel(&AssetManager::GetModel("orangebrick"));
+			ECS::GetComponent(brick->addComponentByClass<ModelRendererComponent>()).model = &AssetManager::GetModel("orangebrick");
 
-			std::shared_ptr<BoxAABBColComp> brick_col_comp = brick->addComponentByClass<BoxAABBColComp>();
-			brick_col_comp->setBox(Box{ Vector3::zero, Vector3{ 2.3f, 0.55f, 1.1f } });
-			brick_col_comp->useOwnerScaleForBoxCenter = false;
-			brick_col_comp->useOwnerScaleForBoxSize = false;
-			brick_col_comp->setCollisionChannel("solid");
+			ComponentHandle<BoxCollisionComponent> brick_col_handle = brick->addComponentByClass<BoxCollisionComponent>();
+			BoxCollisionComponent& brick_col_comp = ECS::GetComponent(brick_col_handle);
+			brick_col_comp.collisionBox = Box{ Vector3::zero, Vector3{ 2.3f, 0.55f, 1.1f } };
+			brick_col_comp.useEntityScaleForBoxCenter = false;
+			brick_col_comp.useEntityScaleForBoxSize = false;
+			brick_col_comp.collisionChannel = "solid";
 
-			std::shared_ptr<RigidbodyComponent> brick_rigidbody = brick->addComponentByClass<RigidbodyComponent>();
-			brick_rigidbody->associateCollision(brick_col_comp);
-			brick_rigidbody->setPhysicsActivated(true);
-			brick_rigidbody->setUseGravity(true);
-			brick_rigidbody->setTestChannels({ "solid" });
+			RigidbodyComponent& brick_rigidbody = ECS::GetComponent(brick->addComponentByClass<RigidbodyComponent>());
+			brick_rigidbody.associateCollision(brick_col_handle);
+			brick_rigidbody.collisionChannels = { "solid" };
 		}
 	}
 }

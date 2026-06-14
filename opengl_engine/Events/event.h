@@ -1,73 +1,214 @@
 #pragma once
 #include "observer.h"
-#include <unordered_map>
-#include <vector>
+#include <cstddef>
 #include <functional>
 
 
-template<typename ...Parameters>
-class Event
+/**
+ * Non-templated interface for 'Event' so observers can track every event they're subscribed to.
+ */
+class EventBase
 {
 public:
-	using Function = std::function<void(Parameters...)>;
+    virtual ~EventBase() = default;
 
-	void registerObserver(Observer* observer, Function broadcastFunction)
-	{
-		observers[observer] = broadcastFunction;
-	}
+    /** Unsubscribe an observer from an event. */
+    virtual void unregisterObserver(Observer* observer) = 0;
 
-	void unregisterObserver(Observer* observer)
-	{
-		if (inBroadcast)
-		{
-			pendingObservers.push_back(observer);
-		}
-		else
-		{
-			auto iter = observers.find(observer);
-			if (iter == observers.end()) return;
-
-			observers.erase(iter);
-		}
-	}
-
-	void clearAllObservers()
-	{
-		if (inBroadcast)
-		{
-			for (auto observer : observers)
-			{
-				pendingObservers.push_back(observer.first);
-			}
-		}
-		else
-		{
-			observers.clear();
-		}
-	}
+    /** Clone the subscription to an event from an observer to another one. */
+    virtual void cloneBindingsFrom(const Observer* src, Observer* dst) = 0;
+};
 
 
-	void broadcast(Parameters ...parameters)
-	{
-		inBroadcast = true;
-		for (auto observer : observers)
-		{
-			observer.second(parameters...);
-		}
-		inBroadcast = false;
+/**
+ * Event to which observers can subscribe a callback function.
+ *
+ * @tparam Args Event parameters.
+ */
+template <typename... Args>
+class Event : public EventBase
+{
+    /** Data struct that allows event to properly store a subscription. */
+    struct EventBinding
+    {
+        /** The owner of the subscription. */
+        Observer* bindingOwner = nullptr;
 
-		if (pendingObservers.empty()) return;
-		for (auto pending_observer : pendingObservers)
-		{
-			unregisterObserver(pending_observer);
-		}
-		pendingObservers.clear();
-	}
+        /** The byte offset from the memory address of the Observer to the memory address of the real type of the object.
+         * Used to call the callback function on the subscribed object without having to store its real type. */
+        std::ptrdiff_t byte_offset = 0;
+
+        /** The callback function that should be called when the event is broadcasted. */
+        std::function<void(void*, Args...)> callbackFunction;
+    };
+
+public:
+    Event() = default;
+
+    ~Event() override
+    {
+        removeAllSubscriptions();
+    }
+
+    Event(const Event& other) : bindings(other.bindings)
+    {
+        // Copy constructor -> make the observers also track the new copied event
+        for (auto& binding : bindings)
+        {
+            binding.bindingOwner->trackEvent(this);
+        }
+    }
+
+    Event& operator=(const Event& other)
+    {
+        // Copy assignment operator
+        if (this == &other) return *this;
+
+        for (auto& binding : bindings)
+        {
+            // Detach from current observers
+            binding.bindingOwner->untrackEvent(this);
+        }
+
+        bindings = other.bindings;
+
+        for (auto& binding : bindings)
+        {
+            // Attach to new observers
+            binding.bindingOwner->trackEvent(this);
+        }
+
+        return *this;
+    }
+
+    Event(Event&& other) noexcept : bindings(std::move(other.bindings))
+    {
+        // Move constructor -> make the observers update their pointers to the moved event
+        for (auto& binding : bindings)
+        {
+            binding.bindingOwner->replaceEvent(&other, this);
+        }
+    }
+
+    Event& operator=(Event&& other) noexcept
+    {
+        // Move assignment operator
+        if (this == &other) return *this;
+
+        for (auto& binding : bindings)
+        {
+            // Detach from current observers
+            binding.bindingOwner->untrackEvent(this);
+        }
+
+        bindings = std::move(other.bindings);
+
+        for (auto& binding : bindings)
+        {
+            // Update the observers pointers to this (the moved event)
+            binding.bindingOwner->replaceEvent(&other, this);
+        }
+        
+        return *this;
+    }
+
+    /** Subscribe an observer to an event.
+     *
+     * @tparam T The real type of the observer object subscribing to the event.
+     * @param observer The observer object subscribing to the event.
+     * @param callback The callback function that will be called when the event will is broadcasted.
+     */
+    template <typename T>
+    void subscribe(T* observer, void (T::* callback)(Args...))
+    {
+        static_assert(std::is_base_of_v<Observer, T>, "T must be derived from Observer");
+
+        EventBinding binding;
+        binding.bindingOwner = observer;
+
+        // Compute the byte offset between the memory address of the Observer type and the memory address of the real type
+        binding.byte_offset =
+            reinterpret_cast<const char*>(static_cast<const Observer*>(observer)) -
+            reinterpret_cast<const char*>(observer);
+
+        // Store the callback function so it can be called with a void pointer by the broadcast function
+        // This allow the broadcast function to not have to know the real type of the observer
+        binding.callbackFunction = [callback](void* concrete, Args... args)
+            {
+                (static_cast<T*>(concrete)->*callback)(args...);
+            };
+
+        bindings.push_back(std::move(binding));
+        observer->trackEvent(this);
+    }
+
+    /** Unsubscribe an observer from an event.
+     *
+     * @param observer The observer object unsubscribing from the event.
+     */
+    void unsubscribe(Observer* observer)
+    {
+        unregisterObserver(observer);
+    }
+
+    /** Broadcast all subscribed callback functions.
+     *
+     * @param args Events parameters.
+     */
+    void broadcast(Args... args) const
+    {
+        // Create a stable vector of bindings so if the original bindings is modified during the broadcast, we don't fall in UB
+        std::vector<const EventBinding*> bindings_safe;
+        bindings_safe.reserve(bindings.size());
+        for (const auto& binding : bindings) bindings_safe.push_back(&binding);
+
+        for (const EventBinding* binding : bindings_safe)
+        {
+            // Construct a void pointer with the byte offset to have the memory address of the real type of the observer
+            void* concrete = reinterpret_cast<char*>(binding->bindingOwner) - binding->byte_offset;
+            binding->callbackFunction(concrete, args...);
+        }
+    }
+
+    /** Unsubscribe every observer from this event. */
+    void removeAllSubscriptions()
+    {
+        for (const auto& binding : bindings)
+        {
+            binding.bindingOwner->untrackEvent(this);
+        }
+        bindings.clear();
+    }
+
+
+    void unregisterObserver(Observer* observer) override
+    {
+        auto erase_rule = std::remove_if(bindings.begin(), bindings.end(),
+            [observer](const EventBinding& binding) { return binding.bindingOwner == observer; });
+        bindings.erase(erase_rule, bindings.end());
+        observer->untrackEvent(this);
+    }
+
+    void cloneBindingsFrom(const Observer* src, Observer* dst) override
+    {
+        // Create a temp vector so we don't edit bindings while iterating on it
+        std::vector<EventBinding> bindings_to_add;
+        for (const auto& binding : bindings)
+        {
+            if (binding.bindingOwner != src) continue;
+
+            EventBinding clone = binding;
+            clone.bindingOwner = dst;
+            bindings_to_add.push_back(std::move(clone));
+        }
+        for (auto& clone : bindings_to_add)
+        {
+            bindings.push_back(std::move(clone));
+        }
+        dst->trackEvent(this);
+    }
 
 
 private:
-	std::unordered_map<Observer*, Function> observers;
-    std::vector<Observer*> pendingObservers;
-
-	bool inBroadcast{ false };
+    std::vector<EventBinding> bindings;
 };

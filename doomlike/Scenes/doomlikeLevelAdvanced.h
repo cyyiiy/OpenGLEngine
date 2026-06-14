@@ -3,6 +3,8 @@
 #include <Events/observer.h>
 #include <GameLogic/playerSpawnPoint.h>
 
+class RigidbodyComponent;
+
 
 class DoomlikeLevelAdvanced : public Scene, public Observer, public PlayerSpawnPoint
 {
@@ -16,7 +18,7 @@ protected:
 
 
 private:
-	//  dynamic lights
+	// Dynamic lights
 	Entity* ceilLamp1;
 	Entity* ceilLamp2;
 	Entity* ceilLamp3;
@@ -27,13 +29,12 @@ private:
 	Entity* ceilLamp8;
 	Entity* floorLamp;
 
-	//  level utilities
+	// Level utilities
 	Entity* elevatorUpZone;
 	Entity* enemySpawnZone;
 
 	Entity* elevator;
 
-	void onEnterElevatorUpZone(class RigidbodyComponent& other);
-	void onEnterEnemySpawnZone(class RigidbodyComponent& other);
+	void onEnterElevatorUpZone(const RigidbodyComponent& body);
+	void onEnterEnemySpawnZone(const RigidbodyComponent& body);
 };
-

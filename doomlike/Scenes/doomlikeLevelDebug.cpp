@@ -5,13 +5,11 @@
 #include <Rendering/Lights/directionalLightComponent.h>
 #include <Rendering/Lights/pointLightComponent.h>
 #include <Rendering/modelRendererComponent.h>
-#include <Physics/AABB/boxAABBColComp.h>
+#include <PhysicsAABB/boxCollisionComponent.h>
 #include <GameComponents/movingPlatformComponent.h>
 
 #include <PrefabFactories/floorCeilingFactory.h>
 #include <PrefabFactories/stairFactory.h>
-
-#include <Inputs/Input.h>
 
 
 void DoomlikeLevelDebug::loadScene()
@@ -20,13 +18,13 @@ void DoomlikeLevelDebug::loadScene()
 	renderer.SetClearColor(Color{ 50, 75, 75, 255 });
 
 
-	//  prefabs
+	// Prefabs
 	FloorCeilingFactory::CreateFloor(this, Vector3{  0.0f, 0.0f,  0.0f }, Vector2{ 10.0f, 10.0f }, false);
 	FloorCeilingFactory::CreateFloor(this, Vector3{  0.0f, 0.0f, 10.0f }, Vector2{ 10.0f, 10.0f }, false);
 	FloorCeilingFactory::CreateFloor(this, Vector3{ 10.0f, 0.0f, 10.0f }, Vector2{ 10.0f, 10.0f }, false);
 	StairFactory::CreateStair(this, StairFactory::StairFacingDirection::StairFacingNegativeX, Vector3{ 4.0f, 0.0f, 2.5f });
 
-	//  entities
+	// Entities
 	Entity* crate1 = createEntity();
 	Entity* crate2 = createEntity();
 	Entity* crate3 = createEntity();
@@ -60,45 +58,48 @@ void DoomlikeLevelDebug::loadScene()
 	movingPlatform3->setScale(Vector3{ 2.0f, 0.2f, 2.0f });
 	trigger_zone->setPosition(Vector3{ 12.0f, 1.0f, 12.0f });
 
-	//  components
-	crate1->addComponentByClass<ModelRendererComponent>()->setModel(&AssetManager::GetModel("crate"));
-	crate2->addComponentByClass<ModelRendererComponent>()->setModel(&AssetManager::GetModel("crate"));
-	crate3->addComponentByClass<ModelRendererComponent>()->setModel(&AssetManager::GetModel("crate"));
-	crate4->addComponentByClass<ModelRendererComponent>()->setModel(&AssetManager::GetModel("crate"));
-	crate5->addComponentByClass<ModelRendererComponent>()->setModel(&AssetManager::GetModel("crate"));
-	lowcrate1->addComponentByClass<ModelRendererComponent>()->setModel(&AssetManager::GetModel("crate"));
-	lowcrate2->addComponentByClass<ModelRendererComponent>()->setModel(&AssetManager::GetModel("crate"));
-	movingPlatform1->addComponentByClass<ModelRendererComponent>()->setModel(&AssetManager::GetModel("crate"));
-	movingPlatform2->addComponentByClass<ModelRendererComponent>()->setModel(&AssetManager::GetModel("crate"));
-	movingPlatform3->addComponentByClass<ModelRendererComponent>()->setModel(&AssetManager::GetModel("crate"));
+	// Model components
+	ECS::GetComponent(crate1->addComponentByClass<ModelRendererComponent>()).model = &AssetManager::GetModel("crate");
+	ECS::GetComponent(crate2->addComponentByClass<ModelRendererComponent>()).model = &AssetManager::GetModel("crate");
+	ECS::GetComponent(crate3->addComponentByClass<ModelRendererComponent>()).model = &AssetManager::GetModel("crate");
+	ECS::GetComponent(crate4->addComponentByClass<ModelRendererComponent>()).model = &AssetManager::GetModel("crate");
+	ECS::GetComponent(crate5->addComponentByClass<ModelRendererComponent>()).model = &AssetManager::GetModel("crate");
+	ECS::GetComponent(lowcrate1->addComponentByClass<ModelRendererComponent>()).model = &AssetManager::GetModel("crate");
+	ECS::GetComponent(lowcrate2->addComponentByClass<ModelRendererComponent>()).model = &AssetManager::GetModel("crate");
+	ECS::GetComponent(movingPlatform1->addComponentByClass<ModelRendererComponent>()).model = &AssetManager::GetModel("crate");
+	ECS::GetComponent(movingPlatform2->addComponentByClass<ModelRendererComponent>()).model = &AssetManager::GetModel("crate");
+	ECS::GetComponent(movingPlatform3->addComponentByClass<ModelRendererComponent>()).model = &AssetManager::GetModel("crate");
 
-	crate1->addComponentByClass<BoxAABBColComp>()->setCollisionChannel("solid");
-	crate2->addComponentByClass<BoxAABBColComp>()->setCollisionChannel("solid");
-	crate3->addComponentByClass<BoxAABBColComp>()->setCollisionChannel("solid");
-	crate4->addComponentByClass<BoxAABBColComp>()->setCollisionChannel("solid");
-	crate5->addComponentByClass<BoxAABBColComp>()->setCollisionChannel("solid");
-	lowcrate1->addComponentByClass<BoxAABBColComp>()->setCollisionChannel("solid");
-	lowcrate2->addComponentByClass<BoxAABBColComp>()->setCollisionChannel("solid");
-	std::shared_ptr<BoxAABBColComp> trigger_zone_col = trigger_zone->addComponentByClass<BoxAABBColComp>();
-	trigger_zone_col->setCollisionChannel("trigger_zone");
-	trigger_zone_col->setCollisionType(CollisionType::Trigger);
+	// Collision components
+	ECS::GetComponent(crate1->addComponentByClass<BoxCollisionComponent>()).collisionChannel = "solid";
+	ECS::GetComponent(crate2->addComponentByClass<BoxCollisionComponent>()).collisionChannel = "solid";
+	ECS::GetComponent(crate3->addComponentByClass<BoxCollisionComponent>()).collisionChannel = "solid";
+	ECS::GetComponent(crate4->addComponentByClass<BoxCollisionComponent>()).collisionChannel = "solid";
+	ECS::GetComponent(crate5->addComponentByClass<BoxCollisionComponent>()).collisionChannel = "solid";
+	ECS::GetComponent(lowcrate1->addComponentByClass<BoxCollisionComponent>()).collisionChannel = "solid";
+	ECS::GetComponent(lowcrate2->addComponentByClass<BoxCollisionComponent>()).collisionChannel = "solid";
+	BoxCollisionComponent& trigger_zone_col = ECS::GetComponent(trigger_zone->addComponentByClass<BoxCollisionComponent>());
+	trigger_zone_col.collisionChannel = "trigger_zone";
+	trigger_zone_col.isTrigger = true;
 
-	movingPlatform1->addComponentByClass<MovingPlatformComponent>()->setupMovingPlatform(Vector3{ 6.0f, 1.9f, 2.5f }, Vector3{ 9.0f, 3.0f, 11.5f }, 3.0f, 2.0f);
-	movingPlatform2->addComponentByClass<MovingPlatformComponent>()->setupMovingPlatform(Vector3{ -7.0f, 0.0f, -7.0f }, Vector3{ -7.0f, 0.0f, 7.0f }, 3.0f);
-	movingPlatform3->addComponentByClass<MovingPlatformComponent>()->setupMovingPlatform(Vector3{ 10.0f, -3.0f, 3.0f }, Vector3{ 10.0f, 5.0f, 3.0f }, 3.0f);
+	// Moving platform components
+	ECS::GetComponent(movingPlatform1->addComponentByClass<MovingPlatformComponent>()).setupMovingPlatform(Vector3{ 6.0f, 1.9f, 2.5f }, Vector3{ 9.0f, 3.0f, 11.5f }, 3.0f, 2.0f);
+	ECS::GetComponent(movingPlatform2->addComponentByClass<MovingPlatformComponent>()).setupMovingPlatform(Vector3{ -7.0f, 0.0f, -7.0f }, Vector3{ -7.0f, 0.0f, 7.0f }, 3.0f);
+	ECS::GetComponent(movingPlatform3->addComponentByClass<MovingPlatformComponent>()).setupMovingPlatform(Vector3{ 10.0f, -3.0f, 3.0f }, Vector3{ 10.0f, 5.0f, 3.0f }, 3.0f);
 
-	std::shared_ptr<DirectionalLightComponent> dir_light_comp = dir_light->addComponentByClass<DirectionalLightComponent>();
-	dir_light_comp->setColor(Color::white);
-	dir_light_comp->setDirection(Vector3::normalize(Vector3{ 0.5f, -1.0f, 0.75f }));
-	dir_light_comp->setAmbientStrength(0.1f);
-	dir_light_comp->setDiffuseStrength(0.7f);
+	// Light components
+	DirectionalLightComponent& dir_light_comp = ECS::GetComponent(dir_light->addComponentByClass<DirectionalLightComponent>());
+	dir_light_comp.lightColor = Color::white;
+	dir_light_comp.direction = Vector3::normalize(Vector3{ 0.5f, -1.0f, 0.75f });
+	dir_light_comp.ambientStrength = 0.1f;
+	dir_light_comp.diffuseStrength = 0.7f;
 
-	std::shared_ptr<PointLightComponent> point_light_comp = point_light->addComponentByClass<PointLightComponent>();
-	point_light_comp->setColor(Color::red);
-	point_light_comp->setOffset(Vector3{ 8.0f, 1.0f, 9.0f });
+	PointLightComponent& point_light_comp = ECS::GetComponent(point_light->addComponentByClass<PointLightComponent>());
+	point_light_comp.lightColor = Color::red;
+	point_light_comp.offset = Vector3{ 8.0f, 1.0f, 9.0f };
 
 
-	//  player spawn point
+	// Player spawn point
 	spawnPoint = createEntity();
 	spawnPoint->setPosition(Vector3{ 8.0f, 0.0f, 9.0f });
 	spawnPoint->setRotation(Quaternion::fromEuler(Maths::toRadians(135.0f), 0.0f, 0.0f));
