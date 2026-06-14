@@ -1,35 +1,39 @@
 #pragma once
-#include <ECS/component.h>
+#include <ECS/behaviorComponent.h>
 #include <Events/observer.h>
 #include <Events/event.h>
+#include <Maths/Vector3.h>
+
+class ModelRendererComponent;
+class BoxCollisionComponent;
+class RigidbodyComponent;
+class PlayerComponent;
 
 
 /**
-* This component creates an enemy from an entity.
-* It automatically creates every needed components.
+* Component to add to an entity to make it a doomlike enemy.
+* It automatically creates the needed components on its entity.
 */
-class EnemyComponent : public Component, public Observer
+class EnemyComponent : public BehaviorComponent, public Observer
 {
+	const float DETECTION_RANGE = 9.0f;
+	const float MOVE_SPEED = 2.0f;
+
 public:
 	Event<Entity*> onDie;
 
-protected:
 	void init() override;
-	void exit() override;
-	void update(float deltaTime) override;
+	void update(float dt) override;
+
+	void onBodyIntersection(const RigidbodyComponent& body, const Vector3& hitNormal);
 
 private:
 	Entity* entity{ nullptr };
-	std::shared_ptr<class ModelRendererComponent> enemyModel;
-	std::shared_ptr<class BoxAABBColComp> collision;
-	std::shared_ptr<class RigidbodyComponent> rigidbody;
+	ComponentHandle<ModelRendererComponent> enemyModel;
+	ComponentHandle<BoxCollisionComponent> collision;
+	ComponentHandle<RigidbodyComponent> rigidbody;
 
-	std::shared_ptr<class PlayerComponent> playerRef;
+	ComponentHandle<PlayerComponent> playerRef;
 	bool dead{ false };
-
-	void onBodyIntersect(class RigidbodyComponent& other);
-
-	const float range{ 9.0f };
-	const float speed{ 2.0f };
 };
 
