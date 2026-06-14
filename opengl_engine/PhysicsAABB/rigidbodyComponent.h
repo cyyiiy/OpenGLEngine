@@ -48,12 +48,6 @@ public:
 	*/
 	Event<const BoxCollisionComponent&, const Vector3&> onCollisionRepulse;
 
-	/**
-	* Event triggered if two non-kinematic rigidbodies enter each others.
-	* Param A is the rigidbody triggered.
-	*/
-	Event<const RigidbodyComponent&> onRigidbodyTriggerEnter;
-
 
 private:
 	/** The collision this rigidbody uses. If null, the rigidbody will be disabled. */

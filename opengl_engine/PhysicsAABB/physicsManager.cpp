@@ -375,6 +375,13 @@ void PhysicsManager::testRigidbodyCollisions(RigidbodyComponent& rigidbodyCompon
 
 			collision_component.debugIntersectedLastFrame = true;
 			collision_component.onCollisionIntersect.broadcast(rigidbodyComponent, col_response.impactNormal);
+
+			// 3 bis. Call the event on the rigidbody's owned collision if encountered an other rigidbody
+			if (ECS::IsComponentHandleValid(collision_component.getOwningRigidbody()))
+			{
+				BoxCollisionComponent& rigidbody_collision = ECS::GetComponent(rigidbodyComponent.getAssociatedCollision());
+				rigidbody_collision.onCollisionIntersect.broadcast(ECS::GetComponent(collision_component.getOwningRigidbody()), col_response.impactNormal);
+			}
 		}
 	}
 
@@ -401,6 +408,13 @@ void PhysicsManager::testRigidbodyCollisions(RigidbodyComponent& rigidbodyCompon
 
 				collision_component.debugIntersectedLastFrame = true;
 				collision_component.onCollisionIntersect.broadcast(rigidbodyComponent, col_response.impactNormal);
+
+				// 6 bis. Call the event on the rigidbody's owned collision if encountered an other rigidbody
+				if (ECS::IsComponentHandleValid(collision_component.getOwningRigidbody()))
+				{
+					BoxCollisionComponent& rigidbody_collision = ECS::GetComponent(rigidbodyComponent.getAssociatedCollision());
+					rigidbody_collision.onCollisionIntersect.broadcast(ECS::GetComponent(collision_component.getOwningRigidbody()), col_response.impactNormal);
+				}
 			}
 		}
 	}
@@ -414,18 +428,6 @@ void PhysicsManager::testRigidbodyCollisions(RigidbodyComponent& rigidbodyCompon
 	{
 		BoxCollisionComponent& trigger_col_comp = ECS::GetComponent(trigger_col);
 		trigger_col_comp.debugIntersectedLastFrame = true;
-
-		// If the triggered collision is managed by a non-kinematic rigidbody, call the rigidbody trigger event
-		if (ECS::IsComponentHandleValid(trigger_col_comp.getOwningRigidbody()))
-		{
-			RigidbodyComponent& trigger_rigidbody_comp = ECS::GetComponent(trigger_col_comp.getOwningRigidbody());
-			if (!trigger_rigidbody_comp.isKinematic)
-			{
-				trigger_rigidbody_comp.onRigidbodyTriggerEnter.broadcast(rigidbodyComponent);
-				continue;
-			}
-		}
-
 		trigger_col_comp.onTriggerEnter.broadcast(rigidbodyComponent);
 	}
 }
