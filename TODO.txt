@@ -21,7 +21,7 @@
 		> Objets interagissables - fait
 		> Ennemis - fait
 	- Tester les rigidbody (on ground & velocity one frame & step mechanic) pour être sur que rien n'est cassé - fait
-	  (Note: penser à retirer les print debugs du nouvel ECS)
+	  (Note: penser à retirer les print debugs du nouvel ECS) - fait
 
 ~ Petites updates d'améliorations :
 	- Modifier le service locator pour alléger la classe Engine. Les services sont stockés avec des unique_ptr, comme ça plus besoin de supprimer manuellement le pointeur (pas de stockage dans engine.h), et la classe engine ne touche aux services uniquement via le locator (plus d'accès direct pour supprimer complètement la dépendance de engine aux "vrais" services)

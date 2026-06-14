@@ -196,8 +196,6 @@ public:
     */
     void destroyEntity();
     
-    void debugEntity();
-    
     
 private:
     std::unordered_map<ComponentTypeId, std::vector<StoredComponent>> components;

@@ -1,6 +1,5 @@
 ﻿#include "entity.h"
 #include "entityContainer.h"
-#include <iostream>
 
 Entity::Entity(EntityContainer& containerRef_) : Transform(), containerRef(containerRef_)
 {
@@ -24,19 +23,4 @@ void Entity::clearAllComponents(bool instantDestroy)
 void Entity::destroyEntity()
 {
     containerRef.addPendingEntity(this);
-}
-
-void Entity::debugEntity()
-{
-    std::cout << "========= DEBUG Entity ========\n";
-    for (auto& pair : components)
-    {
-        std::cout << " --- ComponentTypeId: " << pair.first << "\n";
-        for (StoredComponent& stored_component : pair.second)
-        {
-            const RawComponentHandle& handle = stored_component.raw_handle;
-            std::cout << "ComponentHandle: Sublist " << handle.sublistId << " | Slot " << handle.slotId << " | Generation " << handle.generation << "\n";
-        }
-    }
-    std::cout << "===============================\n";
 }

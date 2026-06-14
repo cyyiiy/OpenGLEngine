@@ -2,8 +2,6 @@
 #include <vector>
 #include <memory>
 #include <stdexcept>
-#include <string>
-#include <sstream>
 #include "componentSubList.h"
 #include "ecsTypes.h"
 
@@ -18,8 +16,6 @@ public:
     
     virtual void DeletePendingComponents() = 0;
     virtual void ClearAllComponents(bool closeEngine) = 0;
-    
-    virtual std::string DebugComponentManager() const = 0;
 };
 
 /**
@@ -306,30 +302,6 @@ public:
         }
         
         pendingComponents.clear();
-    }
-    
-    
-    std::string DebugComponentManager() const override
-    {
-        std::stringstream result;
-        result << "Manager for component \"" << typeid(T).name() << "\"\n";
-        
-        result << "Number of sublists: " << sublists.size() << "\n";
-        result << "Number of components per sublist: " << SublistSize << "\n";
-        
-        for (size_t i = 0; i < sublists.size(); i++)
-        {
-            result << "Free slots of sublist " << i << ": " << sublists[i]->freeSlots << "\n";
-            for (size_t j = 0; j < SublistSize; j++)
-            {
-                if (sublists[i]->usedSlots[j] || sublists[i]->generations[j] != 0)
-                {
-                    result << "Sublist " << i << " | Slot " << j << " | Used: " << (sublists[i]->usedSlots[j] ? "true" : "false") << " | Generation: " << sublists[i]->generations[j] << " | PackedIndex: " << sublists[i]->slotToPacked[j] << "\n";
-                }
-            }
-        }
-        
-        return result.str();
     }
 };
 

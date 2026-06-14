@@ -260,10 +260,4 @@ void ExpositionScene::updateScene(float dt)
 	// Automatic rotation of the sprite
 	SpriteComponent& sprite_comp = ECS::GetComponent(sprite);
 	sprite_comp.rotAngle = Maths::fmod(sprite_comp.rotAngle + dt * 180.0f, 360.0f);
-
-	// TODO: Remove this at some point!
-	if (Input::IsKeyPressed(GLFW_KEY_KP_0))
-	{
-		ECS::DebugECS();
-	}
 }

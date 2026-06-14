@@ -179,7 +179,4 @@ public:
             manager->ClearAllComponents(closeEngine);
         }
     }
-    
-    
-    static void DebugECS();
 };
