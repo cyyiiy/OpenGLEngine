@@ -1,40 +1,33 @@
 == COURT TERME ==
 
-~ Amélioration du benchmark : - fait
-	- Avoir une nouvelle scène de test Rendering 3D qui teste les performances de plein de materials différents, avec un seul model renderer component pour chaque material - fait
-	- Avoir une nouvelle scène de test Rendering 3D qui teste les performances en mouvement, avec des model renderer components et des point lights qui bougent en continu - fait
+~ Rework du service locator
+	- Stocker les services dans des unique_ptr (créés dans les fonctions "register service" comme pour les shape draw)
+	- Enlever les fonctions où seul engine.cpp a accès, tout passe par les interfaces de services
+	(supprime la dépendance de engine aux "vrais" services, et pose moins de problème en cas de désactivation)
 
-~ Implémenter la V2 de l'ECS : - en cours
-	- Intégrer le code du nouvel ECS dans le moteur - fait
-	- Changer les systèmes du moteur pour utiliser le nouvel ECS :
-		> Game & Scene system - fait
-		> Rendering - fait
-		> UI - fait
-		> Audio - fait
-		> Physique - fait
-	- Mettre à jour le projet Benchmark et comparer les performances du nouvel ECS avec l'ancien - fait
-		> Modifier l'ECS pour que quand une entité est supprimée (pas pending, réellement supprimée), ses composants le soient instantanément - fait
-		> Refactor le système d'event / observer - fait
-	- Mettre à jour le Doomlike pour le nouvel ECS :
-		> Prefabs - fait
-		> Player Controller - fait
-		> Objets interagissables - fait
-		> Ennemis - fait
-	- Tester les rigidbody (on ground & velocity one frame & step mechanic) pour être sur que rien n'est cassé - fait
-	  (Note: penser à retirer les print debugs du nouvel ECS) - fait
+~ Rework des outils de debug
+	- Créer un debug manager responsable de mettre le jeu en pause, de la freecam et du texte fps
+	(Laisser la logique de la pause et du one frame sur engine puisque c'est intimement lié à la game loop)
+	- Réduire la taille du texte fps et ajouter la durée en millisecondes
+	- Ajouter un petit texte d'info pour la debug view, la pause et la freecam
+	- Finir de nettoyer la classe engine pour qu'elle ait le moins de dépendances possible
 
-~ Petites updates d'améliorations :
-	- Modifier le service locator pour alléger la classe Engine. Les services sont stockés avec des unique_ptr, comme ça plus besoin de supprimer manuellement le pointeur (pas de stockage dans engine.h), et la classe engine ne touche aux services uniquement via le locator (plus d'accès direct pour supprimer complètement la dépendance de engine aux "vrais" services)
-	- Rajouter un component "lifetime" qui supprime son entité au bout d'un temps donné (component data-only avec système extérieur)
-	- Refactor le "load game asset" du doomlike pour utiliser plus de fonctions et moins de copier coller
-[Commencer à réfléchir au futur éditeur d'assets, comment il va pouvoir être utilisé pour le chargement aussi (chargement en cascade ?)]
-	- Essayer de créer un "debug manager" (avec le service locator ?) pour alléger la classe Engine (honteux de devoir stocker un text renderer component dans engine.h)
-	- Améliorer les textes debug
-[Réduire la taille du texte fps, ajouter la durée de la frame en ms, ajouter textes quand pause & freecam]
-	- Rajouter un repère visuel sur la position réelle des lights en mode draw debug
-[Besoin de créer un bilboard renderer ?]
-	- Regarder si c'est possible de récupérer le nom d'une classe pour les print warning de template ("unable to find component of given class")
-	- Refactor le système de "model" (regarder le problème connu en bas)
+~ Vue debug des lumières
+	- Créer un billboard renderer component (3D sprite always oriented towards camera)
+	- Rajouter un billboard sur chaque light component visible uniquement en debug view
+
+~ Petites améliorations ECS
+	- Faire que les fonctions qui retournent un handle en retournent un invalide au lieu d'une exception
+	- Améliorer les textes d'erreur de l'ECS pour qu'elles écrivent le nom de la classe quand nécessaire
+	- Ajouter un composant "lifetime" qui supprime son entité au bout d'un temps (avec un système extérieur)
+	- Modifier les balles du doomlike pour utiliser ce composant
+
+~ Refactor le model rendering
+	- Vérifier que le bug des model noté tout en bas est bien réel (99% sur)
+	- Changer le système pour qu'un model soit un ou plusieurs mesh avec des indexs pour les matériaux
+	(Potentiellement avoir des matériaux par défaut sur le model - regarder comment fonctionne Unreal)
+	- Changer le model renderer component pour pouvoir setup les matériaux directement dessus
+	- Modifier les différents projets pour utiliser ce nouveau système le problème connu en bas)
 
 
 == MOYEN TERME == (possible pour fin 2026 ?)
@@ -42,8 +35,9 @@
 ~ Faire un éditeur d'assets (utiliser ImGUI pour l'interface)
 
 ~ Créer et implémenter l'ECS V3 :
-	- rework du transform pour un système proche d'Unreal, avec des composants qui peuvent s'attacher à d'autres composants
+	- une entité ne peut plus avoir qu'un seul composant de chaque type (et a obligatoirement un transform ?)
 	- rework des entités pour que ça ne soit plus que des "id" et qu'elles n'aient plus aucune logique propre
+	- rework du transform pour que ça soit un composant qui permette à une entité d'avoir des enfants
 
 ~ Etendre l'éditeur d'assets pour faire un éditeur de préfab
 
