@@ -39,7 +39,7 @@ void EnemyComponent::init()
 	playerRef = static_cast<DoomlikeGame*>(GameplayStatics::GetGame())->getPlayer();
 	if (!ECS::IsComponentHandleValid(playerRef))
 	{
-		Locator::getLog().LogMessage_Category("Doomlike: An enemy couldn't retrieve the reference of the player!", LogCategory::Error);
+		Locator::getLog().LogMessage_Category("FPS Demo: An enemy couldn't retrieve the reference of the player!", LogCategory::Error);
 		setUpdateActivated(false);
 	}
 
@@ -72,7 +72,7 @@ void EnemyComponent::onBodyIntersection(const RigidbodyComponent& body, const Ve
 
 	if (body.getOwner()->hasGameplayTag("Bullet"))
 	{
-		Locator::getLog().LogMessageToScreen("Doomlike: Enemy die from a bullet.", Color::white, 5.0f);
+		Locator::getLog().LogMessageToScreen("FPS Demo: Enemy die from a bullet.", Color::white, 5.0f);
 		dead = true;
 
 		onDie.broadcast(entity);
@@ -84,7 +84,7 @@ void EnemyComponent::onBodyIntersection(const RigidbodyComponent& body, const Ve
 	}
 	else if (body.getOwner()->hasGameplayTag("Player"))
 	{
-		Locator::getLog().LogMessageToScreen("Doomlike: Player die from the enemy.", Color::white, 5.0f);
+		Locator::getLog().LogMessageToScreen("FPS Demo: Player die from the enemy.", Color::white, 5.0f);
 		dead = true; // It allows to avoid this being called twice
 
 		// Play player death sound

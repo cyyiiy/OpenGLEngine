@@ -35,7 +35,7 @@ void GunComponent::init()
 	player = entity->getComponentOfClass<PlayerComponent>();
 	if (!ECS::IsComponentHandleValid(player))
 	{
-		Locator::getLog().LogMessage_Category("Doomlike: A gun component was added on an entity that doesn't have a Player Component!", LogCategory::Error);
+		Locator::getLog().LogMessage_Category("FPS Demo: A gun component was added on an entity that doesn't have a Player Component!", LogCategory::Error);
 		setUpdateActivated(false);
 		return;
 	}

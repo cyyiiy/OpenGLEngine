@@ -15,12 +15,19 @@
 #include <GameComponents/gunComponent.h>
 
 
+#ifdef NDEBUG
+	const bool DEBUG = false;
+#else
+	const bool DEBUG = true;
+#endif // NDEBUG
+
+
 void DoomlikeGame::loadGameAssets()
 {
 	Log& log = Locator::getLog();
 	log.SetConsoleLogDisplayRule(LogCategory::Info);
 
-	log.LogMessage_Category("Doomlike: Start loading doomlike assets...", LogCategory::Info);
+	if (DEBUG) log.LogMessage_Category("Doomlike: Start loading doomlike assets...", LogCategory::Info);
 	double load_time = glfwGetTime();
 	double full_load_time = load_time;
 
@@ -30,7 +37,7 @@ void DoomlikeGame::loadGameAssets()
 	// Load shaders, textures and materials
 	AssetManager::CreateShaderProgram("lit_object", "Lit/object_lit.vert", "Lit/object_lit.frag", ShaderType::Lit);
 
-	log.LogMessage_Category("Doomlike: Load default assets time: " + std::to_string(glfwGetTime() - load_time), LogCategory::Info);
+	if (DEBUG) log.LogMessage_Category("Doomlike: Load default assets time: " + std::to_string(glfwGetTime() - load_time), LogCategory::Info);
 	load_time = glfwGetTime();
 
 	AssetManager::LoadTexture("crate_diffuse", "container2.png", false);
@@ -53,7 +60,7 @@ void DoomlikeGame::loadGameAssets()
 
 	AssetManager::LoadTexture("hud_crosshair", "doomlike/hud/crosshair.png", false);
 
-	log.LogMessage_Category("Doomlike: Load textures time: " + std::to_string(glfwGetTime() - load_time), LogCategory::Info);
+	if (DEBUG) log.LogMessage_Category("Doomlike: Load textures time: " + std::to_string(glfwGetTime() - load_time), LogCategory::Info);
 	load_time = glfwGetTime();
 
 	Material& crate_mat = AssetManager::CreateMaterial("crate", AssetManager::GetShader("lit_object"));
@@ -86,7 +93,7 @@ void DoomlikeGame::loadGameAssets()
 	gun_mat.addTexture(&AssetManager::GetTexture("gun_emissive"), TextureType::Emissive);
 	gun_mat.addParameter("material.shininess", 32.0f);
 
-	log.LogMessage_Category("Doomlike: Load materials time: " + std::to_string(glfwGetTime() - load_time), LogCategory::Info);
+	if (DEBUG) log.LogMessage_Category("Doomlike: Load materials time: " + std::to_string(glfwGetTime() - load_time), LogCategory::Info);
 	load_time = glfwGetTime();
 
 
@@ -111,7 +118,7 @@ void DoomlikeGame::loadGameAssets()
 	AssetManager::CreateModel("gun");
 	AssetManager::GetModel("gun").addMeshes(AssetManager::GetMeshCollection("gun"), AssetManager::GetMaterial("gun"));
 
-	log.LogMessage_Category("Doomlike: Load meshes & create models time: " + std::to_string(glfwGetTime() - load_time), LogCategory::Info);
+	if (DEBUG) log.LogMessage_Category("Doomlike: Load meshes & create models time: " + std::to_string(glfwGetTime() - load_time), LogCategory::Info);
 	load_time = glfwGetTime();
 
 
@@ -121,7 +128,7 @@ void DoomlikeGame::loadGameAssets()
 	StairFactory::SetupStairAssets();
 	LampFactory::SetupLampAssets();
 
-	log.LogMessage_Category("Doomlike: Setup prefabs assets time: " + std::to_string(glfwGetTime() - load_time), LogCategory::Info);
+	if (DEBUG) log.LogMessage_Category("Doomlike: Setup prefabs assets time: " + std::to_string(glfwGetTime() - load_time), LogCategory::Info);
 	load_time = glfwGetTime();
 
 
@@ -135,11 +142,11 @@ void DoomlikeGame::loadGameAssets()
 	AudioSound& elevator_sound = AssetManager::CreateSound("elevator", "doomlike/sounds/elevator.mp3", ACTIVATE_3D | ACTIVATE_LOOP);
 	elevator_sound.setMinMaxDistance(1.0f, 10.0f);
 
-	log.LogMessage_Category("Doomlike: Load sounds time: " + std::to_string(glfwGetTime() - load_time), LogCategory::Info);
+	if (DEBUG) log.LogMessage_Category("Doomlike: Load sounds time: " + std::to_string(glfwGetTime() - load_time), LogCategory::Info);
 	load_time = glfwGetTime();
 
 
-	log.LogMessage_Category("Doomlike: Finished loading doomlike assets in " + std::to_string(glfwGetTime() - full_load_time) + " seconds.", LogCategory::Info);
+	if (DEBUG) log.LogMessage_Category("Doomlike: Finished loading doomlike assets in " + std::to_string(glfwGetTime() - full_load_time) + " seconds.", LogCategory::Info);
 }
 
 void DoomlikeGame::loadGame()
@@ -192,7 +199,7 @@ void DoomlikeGame::changeLevel(int levelIndex)
 {
 	if (levelIndex < 0 || levelIndex > 3)
 	{
-		Locator::getLog().LogMessage_Category("Doomlike: Tried to change the level with an index to a level that doesn't exist.", LogCategory::Warning);
+		Locator::getLog().LogMessage_Category("FPS Demo: Tried to change the level with an index to a level that doesn't exist.", LogCategory::Warning);
 		return;
 	}
 

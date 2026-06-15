@@ -5,7 +5,7 @@
 int main()
 {
 	Engine engine;
-	bool is_engine_init = engine.initialize();
+	bool is_engine_init = engine.initialize(1920, 1080, "FPS Demo", true);
 
 	if (!is_engine_init) return -1;
 

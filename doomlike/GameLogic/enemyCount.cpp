@@ -10,7 +10,7 @@ void EnemyCount::addEnemy(Entity* enemyToAdd)
 {
 	if (!enemyToAdd->hasComponentOfClass<EnemyComponent>())
 	{
-		Locator::getLog().LogMessage_Category("Doomlike: Tried to add an entity to an Enemy Count that doesn't have the Enemy Component!", LogCategory::Warning);
+		Locator::getLog().LogMessage_Category("FPS Demo: Tried to add an entity to an Enemy Count that doesn't have the Enemy Component!", LogCategory::Warning);
 		return;
 	}
 

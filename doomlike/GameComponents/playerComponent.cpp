@@ -175,7 +175,7 @@ void PlayerComponent::update(float deltaTime)
 	// Death by void
 	if (entity->getPosition().y < -50.0f)
 	{
-		Locator::getLog().LogMessageToScreen("Doomlike: Player die by falling.", Color::white, 5.0f);
+		Locator::getLog().LogMessageToScreen("FPS Demo: Player die by falling.", Color::white, 5.0f);
 		static_cast<DoomlikeGame*>(GameplayStatics::GetGame())->restartLevel();
 	}
 }

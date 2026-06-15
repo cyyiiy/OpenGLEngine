@@ -107,7 +107,7 @@ void DoomlikeLevelStart::updateScene(float dt)
 
 void DoomlikeLevelStart::onEnemiesDead()
 {
-	Locator::getLog().LogMessageToScreen("Doomlike Intro Level: All enemies of the level are dead!", Color::white, 5.0f);
+	Locator::getLog().LogMessageToScreen("FPS Demo Intro Level: All enemies of the level are dead!", Color::white, 5.0f);
 	endLevelWall->setPosition(Vector3{ -17.5f, 3.5f, 19.75f });
 }
 
@@ -115,7 +115,7 @@ void DoomlikeLevelStart::onEnterEndLevelZone(const RigidbodyComponent& body)
 {
 	if (!body.getOwner()->hasGameplayTag("Player")) return;
 
-	Locator::getLog().LogMessageToScreen("Doomlike Intro Level: Player exit intro level.", Color::white, 5.0f);
+	Locator::getLog().LogMessageToScreen("FPS Demo Intro Level: Player exit intro level.", Color::white, 5.0f);
 	static_cast<DoomlikeGame*>(GameplayStatics::GetGame())->changeLevel(3);
 
 	ECS::GetComponent(endLevelZone->getComponentOfClass<BoxCollisionComponent>()).onTriggerEnter.unsubscribe(this);
