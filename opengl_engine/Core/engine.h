@@ -4,17 +4,10 @@
 
 #include "game.h"
 #include "window.h"
-#include <Rendering/rendererOpenGL.h>
 #include <ECS/entityContainer.h>
+
 #include <Rendering/cameraComponent.h>
 #include <Rendering/Text/textComponent.h>
-
-#include <Audio/audioManager.h>
-
-#include <Log/logManager.h>
-
-#include <Maths/matrix4.h>
-#include <Maths/vector3.h>
 
 #include <string>
 #include <memory>
@@ -45,15 +38,6 @@ private:
 
 	//  window
 	Window window;
-
-	//  renderer
-	RendererOpenGL* renderer{ nullptr };
-
-	//  audio manager
-	AudioManager* audio{ nullptr };
-
-	//  log manager
-	LogManager* log{ nullptr };
 
 	//  cameras
 	Entity* debugCamEntity{ nullptr };

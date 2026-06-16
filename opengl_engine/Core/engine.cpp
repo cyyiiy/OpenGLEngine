@@ -2,13 +2,18 @@
 #include <Assets/assetManager.h>
 #include <Assets/defaultAssets.h>
 #include <Assets/assetsIDs.h>
-#include <Inputs/input.h>
-#include <ServiceLocator/locator.h>
-#include <PhysicsAABB/physicsManager.h>
-#include <GameplayStatics/gameplayStatics.h>
-#include <ECS/ecs.h>
-#include <iostream>
 
+#include <GameplayStatics/gameplayStatics.h>
+#include <Inputs/input.h>
+#include <ECS/ecs.h>
+
+#include <ServiceLocator/locator.h>
+#include <Rendering/rendererOpenGL.h>
+#include <PhysicsAABB/physicsManager.h>
+#include <Audio/audioManager.h>
+#include <Log/logManager.h>
+
+#include <iostream>
 #include <chrono>
 
 
@@ -89,8 +94,7 @@ bool Engine::initialize(int wndw_width, int wndw_height, std::string wndw_name, 
 
 	//  create log manager
 	std::cout << "Initializing log...";
-	log = new LogManager();
-	Locator::provideLog(log);
+	Locator::provideLog(std::make_shared<LogManager>());
 	log->initialize();
 	std::cout << " Done.\n";
 
@@ -99,8 +103,7 @@ bool Engine::initialize(int wndw_width, int wndw_height, std::string wndw_name, 
 	std::cout << "Initializing renderer...";
 	Entity* default_cam_entity = createEntity();
 	default_cam_entity->addComponentByClass<CameraComponent>();
-	renderer = new RendererOpenGL();
-	Locator::provideRenderer(renderer);
+	Locator::provideRenderer(std::make_shared<RendererOpenGL>());
 	renderer->initializeRenderer(Color::black, Vector2Int{ window.getWidth(), window.getHeigth() }, default_cam_entity->getComponentOfClass<CameraComponent>());
 	std::cout << " Done.\n";
 
@@ -120,13 +123,12 @@ bool Engine::initialize(int wndw_width, int wndw_height, std::string wndw_name, 
 
 	//  initialize physics
 	std::cout << "Initializing physics...";
-	Physics& physics = Locator::providePhysics(new PhysicsManager());
+	Locator::providePhysics(std::make_shared<PhysicsManager>());
 	std::cout << " Done.\n";
 
 	//  initialize audio manager
 	std::cout << "Initializing audio...";
-	audio = new AudioManager();
-	Locator::provideAudio(audio);
+	Locator::provideAudio(std::make_shared<AudioManager>());
 	audio->Initialize(100.0f);
 	std::cout << " Done.\n";
 
@@ -251,9 +253,7 @@ void Engine::run()
 	ECS::Clear(true);
 	AssetManager::ClearAllAssets();
 	audio->Quit();
-	Locator::initialize(); //  reset locator to null services
-	delete log;
-	delete audio;
+	Locator::initialize(); //  reset locator to null services (delete the real services)
 }
 
 
