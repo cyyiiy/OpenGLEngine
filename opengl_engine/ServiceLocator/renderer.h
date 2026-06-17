@@ -10,6 +10,7 @@ class ModelRendererComponent;
 class TextRendererComponent;
 class SpriteRendererComponent;
 struct Vector3;
+struct Vector2Int;
 class Box;
 
 
@@ -72,4 +73,45 @@ public:
 	* @param	material	The material to unregister.
 	*/
 	virtual void RemoveMaterial(Material* material) = 0;
+
+
+	/**
+	* Initialize the renderer.
+	* Automatically called by the engine when creating the renderer. Prefer to not call this function.
+	* @param	clearColor_		The color use to clear the screen each frame. Can be changed at runtime.
+	* @param	windowSize_		The size of the window to render on. Can be changed at runtime.
+	* @param	defaultCamera_	The camera used by the renderer if no other camera is valid.
+	*/
+	virtual void InitializeRenderer(Color clearColor_, Vector2Int windowSize_, ComponentHandle<CameraComponent> defaultCamera_) = 0;
+
+	/**
+	* Execute the rendering process.
+	* Automatically called by the engine each frame. Prefer to not call this function.
+	*/
+	virtual void Draw() = 0;
+
+
+	/**
+	* Set the debug camera used by the renderer.
+	* Automatically called by the engine. Prefer to not call this function.
+	*/
+	virtual void SetDebugCamera(ComponentHandle<CameraComponent> debugCamera_) = 0;
+
+	/**
+	* Set the debug camera on/off.
+	* Automatically called by the engine when turning on and off the debug camera mode. Prefer to not call this function.
+	*/
+	virtual void SetDebugCamActivated(bool debugCamActivated_) = 0;
+
+	/**
+	* Set the debug view mode on/off.
+	* Automatically called by the engine when turning on and off the debug view mode. Prefer to not call this function.
+	*/
+	virtual void SetDebugViewMode(bool debugViewMode_) = 0;
+
+	/**
+	* Set the size of the window to render on.
+	* Automatically called by the engine when resizing the game window. Prefer to not call this function.
+	*/
+	virtual void SetWindowSize(Vector2Int windowSize_) = 0;
 };

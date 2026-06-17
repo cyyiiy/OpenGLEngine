@@ -10,8 +10,6 @@ LogManager::~LogManager()
 {
 	logFileWriter.exit();
 	logMessagesOnScreen.clear();
-
-	Locator::provideLog(nullptr);
 }
 
 
@@ -52,12 +50,12 @@ void LogManager::SetConsoleLogDisplayRule(LogCategory logCategory)
 }
 
 
-void LogManager::initialize()
+void LogManager::Initialize()
 {
 	logFileWriter.init();
 }
 
-void LogManager::updateScreenLogs(float dt)
+void LogManager::UpdateScreenLogs(float dt)
 {
 	std::vector<LogMessageScreen> expired_logs;
 

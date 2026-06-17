@@ -13,4 +13,8 @@ public:
 
 	void SetScreenLogDisplayRule(LogCategory logCategory) override {}
 	void SetConsoleLogDisplayRule(LogCategory logCategory) override {}
+
+
+	void Initialize() override {}
+	void UpdateScreenLogs(float dt) override {}
 };

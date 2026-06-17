@@ -46,4 +46,14 @@ public:
 
 	void AddPolygonToCollision(const std::uint32_t index, const AudioCollisionOcclusion& audioCollisionType, const bool doubleSided, const std::vector<Vector3> vertices) override {}
 	void SetCollisionTransform(const std::uint32_t index, const Transform& transform) override {}
+
+
+	bool Initialize(const float maxWorldSize) override { return false; }
+	void Quit() override {}
+
+	void Update() override {}
+	void UpdateListener(const Vector3 listenerPos, const Vector3 listenerUp, const Vector3 listenerForward) override {}
+
+	void PauseAll() override {}
+	void ResumeAll() override {}
 };

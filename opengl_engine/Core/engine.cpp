@@ -94,8 +94,8 @@ bool Engine::initialize(int wndw_width, int wndw_height, std::string wndw_name, 
 
 	//  create log manager
 	std::cout << "Initializing log...";
-	Locator::provideLog(std::make_shared<LogManager>());
-	log->initialize();
+	Log& log = Locator::provideLog(std::make_shared<LogManager>());
+	log.Initialize();
 	std::cout << " Done.\n";
 
 
@@ -103,8 +103,8 @@ bool Engine::initialize(int wndw_width, int wndw_height, std::string wndw_name, 
 	std::cout << "Initializing renderer...";
 	Entity* default_cam_entity = createEntity();
 	default_cam_entity->addComponentByClass<CameraComponent>();
-	Locator::provideRenderer(std::make_shared<RendererOpenGL>());
-	renderer->initializeRenderer(Color::black, Vector2Int{ window.getWidth(), window.getHeigth() }, default_cam_entity->getComponentOfClass<CameraComponent>());
+	Renderer& renderer = Locator::provideRenderer(std::make_shared<RendererOpenGL>());
+	renderer.InitializeRenderer(Color::black, Vector2Int{ window.getWidth(), window.getHeigth() }, default_cam_entity->getComponentOfClass<CameraComponent>());
 	std::cout << " Done.\n";
 
 
@@ -128,8 +128,8 @@ bool Engine::initialize(int wndw_width, int wndw_height, std::string wndw_name, 
 
 	//  initialize audio manager
 	std::cout << "Initializing audio...";
-	Locator::provideAudio(std::make_shared<AudioManager>());
-	audio->Initialize(100.0f);
+	Audio& audio = Locator::provideAudio(std::make_shared<AudioManager>());
+	audio.Initialize(100.0f);
 	std::cout << " Done.\n";
 
 
@@ -157,7 +157,7 @@ bool Engine::initialize(int wndw_width, int wndw_height, std::string wndw_name, 
 	//  initialize debug camera
 	debugCamEntity = createEntity();
 	debugCamera = debugCamEntity->addComponentByClass<CameraComponent>();
-	renderer->setDebugCamera(debugCamera);
+	renderer.SetDebugCamera(debugCamera);
 
 
 	//  configure global OpenGL properties
@@ -215,20 +215,22 @@ void Engine::run()
 
 		//  rendering part
 		// ----------------
-		renderer->draw();
+		Renderer& renderer = Locator::getRenderer();
+		renderer.Draw();
 
 
 
 		//  audio part
 		// ------------
-		const CameraComponent& active_cam = renderer->GetCamera();
-		audio->UpdateListener(active_cam.getCamPosition(), active_cam.getCamUp(), active_cam.getCamForward());
-		audio->Update();
+		Audio& audio = Locator::getAudio();
+		const CameraComponent& active_cam = renderer.GetCamera();
+		audio.UpdateListener(active_cam.getCamPosition(), active_cam.getCamUp(), active_cam.getCamForward());
+		audio.Update();
 
 		
 		//  log part
 		// ----------
-		log->updateScreenLogs(deltaTime);
+		Locator::getLog().UpdateScreenLogs(deltaTime);
 
 
 		if (game) game->lateUpdate();
@@ -252,7 +254,7 @@ void Engine::run()
 	clearEntities();
 	ECS::Clear(true);
 	AssetManager::ClearAllAssets();
-	audio->Quit();
+	Locator::getAudio().Quit();
 	Locator::initialize(); //  reset locator to null services (delete the real services)
 }
 
@@ -373,14 +375,14 @@ void Engine::engineUpdate(GLFWwindow* glWindow)
 void Engine::pauseGame()
 {
 	gamePaused = true;
-	audio->PauseAll();
+	Locator::getAudio().PauseAll();
 	Locator::getLog().LogMessage_Category("Game paused", LogCategory::Info);
 }
 
 void Engine::unpauseGame()
 {
 	gamePaused = false;
-	audio->ResumeAll();
+	Locator::getAudio().ResumeAll();
 	if (freecamMode) disableFreecam();
 	Locator::getLog().LogMessage_Category("Game unpaused", LogCategory::Info);
 }
@@ -400,8 +402,9 @@ void Engine::enableFreecam()
 	freecamMode = true;
 	if (!gamePaused) pauseGame();
 	Locator::getLog().LogMessage_Category("Debug: Freecam mode enabled", LogCategory::Info);
-	ECS::GetComponent(debugCamera).copyCamera(renderer->GetCamera(), true);
-	renderer->setDebugCamActivated(true);
+	Renderer& renderer = Locator::getRenderer();
+	ECS::GetComponent(debugCamera).copyCamera(renderer.GetCamera(), true);
+	renderer.SetDebugCamActivated(true);
 	debugCameraSpeed = 4.0f;
 }
 
@@ -409,14 +412,14 @@ void Engine::disableFreecam()
 {
 	freecamMode = false;
 	Locator::getLog().LogMessage_Category("Debug: Freecam mode disabled", LogCategory::Info);
-	renderer->setDebugCamActivated(false);
+	Locator::getRenderer().SetDebugCamActivated(false);
 }
 
 void Engine::enableDebugView()
 {
 	debugViewMode = true;
 	Locator::getLog().LogMessage_Category("Debug: Debug mode view enabled", LogCategory::Info);
-	renderer->physicsDebugMode = true;
+	Locator::getRenderer().SetDebugViewMode(true);
 	ECS::GetComponent(fpsText).active = true;
 }
 
@@ -424,7 +427,7 @@ void Engine::disableDebugView()
 {
 	debugViewMode = false;
 	Locator::getLog().LogMessage_Category("Debug: Debug mode view disabled", LogCategory::Info);
-	renderer->physicsDebugMode = false;
+	Locator::getRenderer().SetDebugViewMode(false);
 	ECS::GetComponent(fpsText).active = false;
 }
 
@@ -438,7 +441,7 @@ void Engine::windowResize(GLFWwindow* glWindow, int width, int height)
 	Locator::getLog().LogMessage_Category("Window: Size updated to [Width: " + std::to_string(width) + " | Height: " + std::to_string(height) + "]", LogCategory::Info);
 
 	Vector2Int window_size(width, height);
-	renderer->setWindowSize(window_size);
+	Locator::getRenderer().SetWindowSize(window_size);
 	GameplayStatics::SetWindowSize(window_size);
 	GameplayStatics::OnScrenResize.broadcast(window_size);
 }

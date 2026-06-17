@@ -88,9 +88,8 @@ public:
 	void SetConsoleLogDisplayRule(LogCategory logCategory) override;
 
 
-	// For the engine class (which is the only class that have access to the full log manager)
-	void initialize();
-	void updateScreenLogs(float dt);
+	void Initialize() override;
+	void UpdateScreenLogs(float dt) override;
 
 
 private:

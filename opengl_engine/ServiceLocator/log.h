@@ -45,4 +45,18 @@ public:
 	* @param	logCategory		The lowest category log that can be printed in the console. Custom means that engine logs can't be printed.
 	*/
 	virtual void SetConsoleLogDisplayRule(LogCategory logCategory) = 0;
+
+
+	/**
+	* Initialize the log system.
+	* Automatically called by the engine when creating the log system. Prefer to not call this function.
+	*/
+	virtual void Initialize() = 0;
+
+	/**
+	* Update the log system.
+	* Automatically called by the engine each frame. Prefer to not call this function.
+	* @param	dt		The delta time of the frame.
+	*/
+	virtual void UpdateScreenLogs(float dt) = 0;
 };

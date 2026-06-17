@@ -1,8 +1,8 @@
 == COURT TERME ==
 
-~ Rework du service locator - en cours
+~ Rework du service locator - fait
 	- Stocker les services dans des shared_ptr (créés dans les fonctions "register service" comme pour les shape draw) - fait
-	- Enlever les fonctions où seul engine.cpp a accès, tout passe par les interfaces de services
+	- Enlever les fonctions où seul engine.cpp a accès, tout passe par les interfaces de services - fait
 	(supprime la dépendance de engine aux "vrais" services, et pose moins de problème en cas de désactivation)
 
 ~ Rework des outils de debug

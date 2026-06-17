@@ -4,12 +4,6 @@
 #include <iostream>
 
 
-AudioManager::~AudioManager()
-{
-	Locator::provideAudio(nullptr);
-}
-
-
 // --------------------------------------------------------------
 //            Core part
 // --------------------------------------------------------------

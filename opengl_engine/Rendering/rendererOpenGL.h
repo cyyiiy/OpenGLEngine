@@ -54,6 +54,14 @@ public:
 	void RemoveMaterial(Material* material) override;
 
 
+	void InitializeRenderer(Color clearColor_, Vector2Int windowSize_, ComponentHandle<CameraComponent> defaultCamera_) override;
+	void Draw() override;
+
+	void SetDebugCamera(ComponentHandle<CameraComponent> debugCamera_) override;
+	void SetDebugCamActivated(bool debugCamActivated_) override;
+	void SetDebugViewMode(bool debugViewMode_) override;
+	void SetWindowSize(Vector2Int windowSize_) override;
+
 
 private:
 	CameraComponent& selectCurrentCam();
@@ -80,26 +88,8 @@ private:
 	ComponentHandle<CameraComponent> defaultCamera;
 	ComponentHandle<CameraComponent> debugCamera;
 
-	Vector2Int windowSize;
+	Vector2Int windowSize{ Vector2Int::zero };
 
-	bool debugCamActivated;
-
-	
-
-
-
-
-//  exclusive to engine which is the only class to access the full renderer
-public:
-	void initializeRenderer(Color clearColor_, Vector2Int windowSize_, ComponentHandle<CameraComponent> defaultCamera_);
-
-	void setDebugCamera(ComponentHandle<CameraComponent> debugCamera_);
-	void setDebugCamActivated(bool debugCamActivated_);
-
-	void draw();
-
-	void setWindowSize(Vector2Int windowSize_);
-
-	bool physicsDebugMode{ false };
+	bool debugCamActivated{ false };
+	bool debugViewMode{ false };
 };
-

@@ -22,8 +22,6 @@ const int MAX_CHANNELS = 512;
 class AudioManager : public Audio
 {
 public:
-	~AudioManager();
-
 	// ----------------------------------------------------------
 	//  Global (available from audio interface)
 	// ----------------------------------------------------------
@@ -85,20 +83,16 @@ public:
 
 
 	// ----------------------------------------------------------
-	//  Core (reserved to Engine class)
+	//  Audio Management
 	// ----------------------------------------------------------
-	bool Initialize(const float maxWorldSize);
-	void Quit();
+	bool Initialize(const float maxWorldSize) override;
+	void Quit() override;
 
-	void Update();
-	void UpdateListener(const Vector3 listenerPos, const Vector3 listenerUp, const Vector3 listenerForward);
+	void Update() override;
+	void UpdateListener(const Vector3 listenerPos, const Vector3 listenerUp, const Vector3 listenerForward) override;
 
-
-	// ----------------------------------------------------------
-	//  Engine pause (reserved to Engine class)
-	// ----------------------------------------------------------
-	void PauseAll();
-	void ResumeAll();
+	void PauseAll() override;
+	void ResumeAll() override;
 
 
 private:

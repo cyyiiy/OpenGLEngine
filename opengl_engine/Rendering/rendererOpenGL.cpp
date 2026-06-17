@@ -17,7 +17,7 @@
 
 
 
-void RendererOpenGL::draw()
+void RendererOpenGL::Draw()
 {
 	// Clear with flat color
 	glClearColor(clearColor.r / 255.0f, clearColor.g / 255.0f, clearColor.b / 255.0f, clearColor.a / 255.0f);
@@ -121,7 +121,7 @@ void RendererOpenGL::draw()
 	});
 
 
-	if (physicsDebugMode)
+	if (debugViewMode)
 	{
 		// Draw collisions components
 		auto& box_col_renderers_manager = ECS::Manager<BoxCollisionComponent>();
@@ -558,7 +558,7 @@ bool RendererOpenGL::isCurrentCamValid()
 
 
 
-void RendererOpenGL::initializeRenderer(Color clearColor_, Vector2Int windowSize_, ComponentHandle<CameraComponent> defaultCamera_)
+void RendererOpenGL::InitializeRenderer(Color clearColor_, Vector2Int windowSize_, ComponentHandle<CameraComponent> defaultCamera_)
 {
 	clearColor = clearColor_;
 	windowSize = windowSize_;
@@ -566,17 +566,22 @@ void RendererOpenGL::initializeRenderer(Color clearColor_, Vector2Int windowSize
 	activeCamera = defaultCamera;
 }
 
-void RendererOpenGL::setDebugCamera(ComponentHandle<CameraComponent> debugCamera_)
+void RendererOpenGL::SetDebugCamera(ComponentHandle<CameraComponent> debugCamera_)
 {
 	debugCamera = debugCamera_;
 }
 
-void RendererOpenGL::setDebugCamActivated(bool debugCamActivated_)
+void RendererOpenGL::SetDebugCamActivated(bool debugCamActivated_)
 {
 	debugCamActivated = debugCamActivated_;
 }
 
-void RendererOpenGL::setWindowSize(Vector2Int windowSize_)
+void RendererOpenGL::SetDebugViewMode(bool debugViewMode_)
+{
+	debugViewMode = debugViewMode_;
+}
+
+void RendererOpenGL::SetWindowSize(Vector2Int windowSize_)
 {
 	windowSize = windowSize_;
 }

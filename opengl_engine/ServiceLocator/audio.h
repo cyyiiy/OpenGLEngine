@@ -213,4 +213,50 @@ public:
 	*/
 	virtual void SetCollisionTransform(const std::uint32_t index, const Transform& transform) = 0;
 
+
+
+// -----------------------------------------------------------------------------
+//                 Audio Management
+// -----------------------------------------------------------------------------
+
+	/**
+	* Initialize the audio system.
+	* Automatically called by the engine when creating the audio system. Prefer to not call this function.
+	* @param	maxWorldSize	The maximum world size for geometry. Unused for the moment.
+	* @return					True if the initialization was successful.
+	*/
+	virtual bool Initialize(const float maxWorldSize) = 0;
+
+	/**
+	* Exit the audio system to properly release the audio system before destroying it.
+	* Automatically called by the engine when deleting the audio system. Prefer to not call this function.
+	*/
+	virtual void Quit() = 0;
+
+	/**
+	* Update the audio system.
+	* Automatically called by the engine each frame. Prefer to not call this function.
+	*/
+	virtual void Update() = 0;
+
+	/**
+	* Update the position of the audio listener (generally the active camera).
+	* Automatically called by the engine each frame. Prefer to not call this function.
+	* @param	listenerPos			The position of the listener.
+	* @param	listenerUp			The up vector of the listener.
+	* @param	listenerForward		The forward vector of the listener.
+	*/
+	virtual void UpdateListener(const Vector3 listenerPos, const Vector3 listenerUp, const Vector3 listenerForward) = 0;
+
+	/**
+	* Pause all currently playing sounds.
+	* Automatically called when pausing the engine. Prefer to not call this function.
+	*/
+	virtual void PauseAll() = 0;
+
+	/**
+	* Resume all currently playing sounds.
+	* Automatically called when un-pausing the engine. Prefer to not call this function.
+	*/
+	virtual void ResumeAll() = 0;
 };
