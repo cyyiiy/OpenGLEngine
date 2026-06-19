@@ -149,6 +149,7 @@
     <ClCompile Include="Audio\audioManager.cpp" />
     <ClCompile Include="Audio\audioSound.cpp" />
     <ClCompile Include="Audio\audioSourceComponent.cpp" />
+    <ClCompile Include="Core\Debug\debugManager.cpp" />
     <ClCompile Include="Core\Gameplay\gameplayTag.cpp" />
     <ClCompile Include="ECS\behaviorComponent.cpp" />
     <ClCompile Include="ECS\component.cpp" />
@@ -206,6 +207,7 @@
     <ClInclude Include="Audio\audioSound.h" />
     <ClInclude Include="Audio\audioSourceComponent.h" />
     <ClInclude Include="Audio\audioUtils.h" />
+    <ClInclude Include="Core\Debug\debugManager.h" />
     <ClInclude Include="Core\Gameplay\gameplayTag.h" />
     <ClInclude Include="ECS\behaviorComponent.h" />
     <ClInclude Include="ECS\component.h" />

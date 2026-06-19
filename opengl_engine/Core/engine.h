@@ -5,9 +5,6 @@
 #include "window.h"
 #include <ECS/entityContainer.h>
 
-#include <Rendering/cameraComponent.h>
-#include <Rendering/Text/textComponent.h>
-
 #include <string>
 #include <memory>
 
@@ -38,31 +35,7 @@ private:
 	//  window
 	Window window;
 
-	//  cameras
-	Entity* debugCamEntity{ nullptr };
-	ComponentHandle<CameraComponent> debugCamera;
-	float debugCameraSpeed{ 4.0f };
-	float debugCameraMouseSensitivity{ 0.1f };
-
-	//  debug text
-	ComponentHandle<TextComponent> fpsText;
-	int frameCounter = 0;
-	float frameTimeCounter = 0.0f;
-
 	//  time
 	float deltaTime = 0.0f;
 	double lastFrame = 0.0f;
-
-	//  pause, freecam and debug view
-	bool gamePaused{ false };
-	bool oneFrame{ false };
-	bool freecamMode{ false };
-	bool debugViewMode{ false };
-	void pauseGame();
-	void unpauseGame();
-	void advanceOneFrame();
-	void enableFreecam();
-	void disableFreecam();
-	void enableDebugView();
-	void disableDebugView();
 };

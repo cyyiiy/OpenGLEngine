@@ -5,9 +5,8 @@
 	- Enlever les fonctions où seul engine.cpp a accès, tout passe par les interfaces de services - fait
 	(supprime la dépendance de engine aux "vrais" services, et pose moins de problème en cas de désactivation)
 
-~ Rework des outils de debug
-	- Créer un debug manager responsable de mettre le jeu en pause, de la freecam et du texte fps
-	(Laisser la logique de la pause et du one frame sur engine puisque c'est intimement lié à la game loop)
+~ Rework des outils de debug - en cours
+	- Créer un debug manager responsable de mettre le jeu en pause, de la freecam et du texte fps - fait
 	- Réduire la taille du texte fps et ajouter la durée en millisecondes
 	- Ajouter un petit texte d'info pour la debug view, la pause et la freecam
 	- Finir de nettoyer la classe engine pour qu'elle ait le moins de dépendances possible

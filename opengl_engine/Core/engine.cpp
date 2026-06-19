@@ -6,6 +6,7 @@
 #include <GameplayStatics/gameplayStatics.h>
 #include <Inputs/input.h>
 #include <ECS/ecs.h>
+#include <Core/Debug/debugManager.h>
 
 #include <ServiceLocator/locator.h>
 #include <Rendering/rendererOpenGL.h>
@@ -144,20 +145,10 @@ bool Engine::initialize(int wndw_width, int wndw_height, std::string wndw_name, 
 	DefaultAssets::LoadEngineAssets();
 	std::cout << " Done.\n";
 
-
-	//  intialize debug fps text
-	fpsText = createEntity()->addComponentByClass<TextComponent>();
-	TextComponent& fps_text_comp = ECS::GetComponent(fpsText);
-	fps_text_comp.setTextDatas("FPS: 0", AssetManager::GetFont("arial_64"));
-	fps_text_comp.position = HudPosition{ Vector2::one, Vector2::one, Vector2{ -20.0f, -20.0f } };
-	fps_text_comp.scale = Vector2{ 0.5f };
-	fps_text_comp.active = false;
-
-
-	//  initialize debug camera
-	debugCamEntity = createEntity();
-	debugCamera = debugCamEntity->addComponentByClass<CameraComponent>();
-	renderer.SetDebugCamera(debugCamera);
+	//  initialize debug manager
+	std::cout << "Initializing debug manager...";
+	DebugManager::InitializeDebugManager(*this);
+	std::cout << " Done.\n";
 
 
 	//  configure global OpenGL properties
@@ -200,16 +191,16 @@ void Engine::run()
 		// -------------
 		engineUpdate(window.getGLFWwindow());
 
-		if (!gamePaused || (gamePaused && oneFrame))
+		const bool game_paused = DebugManager::GetPauseState();
+		const bool one_frame = DebugManager::ConsumeOneFrameAdvance();
+		if (!game_paused || (game_paused && one_frame))
 		{
 			if (game) game->update(deltaTime);
 
 			ECS::Update(deltaTime);
-			GameplayStatics::UpdateDebugs(gamePaused ? 0.0f : deltaTime); //  debug draws don't expire if engine is paused
+			GameplayStatics::UpdateDebugs(game_paused ? 0.0f : deltaTime); //  debug draws don't expire if engine is paused
 
 			Locator::getPhysics().UpdatePhysics(deltaTime);
-
-			oneFrame = false;
 		}
 
 
@@ -232,6 +223,8 @@ void Engine::run()
 		// ----------
 		Locator::getLog().UpdateScreenLogs(deltaTime);
 
+
+		DebugManager::UpdateDebugManager(deltaTime);
 
 		if (game) game->lateUpdate();
 		ECS::DeletePendings();
@@ -286,149 +279,6 @@ void Engine::engineUpdate(GLFWwindow* glWindow)
 	{
 		glfwSetWindowShouldClose(glWindow, true);
 	}
-
-	//  pause and freecam are useless if there is no active game or scene
-	if (!game || !game->hasActiveScene()) return;
-
-	//  pause/unpause the game when p is pressed
-	if (Input::IsKeyPressed(GLFW_KEY_P))
-	{
-		if (!gamePaused) pauseGame();
-		else unpauseGame();
-	}
-
-	//  make the engine run only one frame when o is pressed
-	if (Input::IsKeyPressed(GLFW_KEY_O))
-	{
-		advanceOneFrame();
-	}
-
-	//  active/desactive the freecam mode when m is pressed
-	if (Input::IsKeyPressed(GLFW_KEY_SEMICOLON))
-	{
-		if (!freecamMode) enableFreecam();
-		else disableFreecam();
-	}
-
-	//  active/desactive the debug view mode when k is pressed
-	if (Input::IsKeyPressed(GLFW_KEY_K))
-	{
-		if (!debugViewMode) enableDebugView();
-		else disableDebugView();
-	}
-
-
-
-	if (freecamMode)
-	{
-		CameraComponent& debug_camera_comp = ECS::GetComponent(debugCamera);
-
-		//  move freecam
-		if (Input::IsKeyDown(GLFW_KEY_W))
-			debugCamEntity->addPosition(debug_camera_comp.getCamForward() * debugCameraSpeed * deltaTime);
-
-		if (Input::IsKeyDown(GLFW_KEY_S))
-			debugCamEntity->addPosition(-debug_camera_comp.getCamForward() * debugCameraSpeed * deltaTime);
-
-		if (Input::IsKeyDown(GLFW_KEY_A))
-			debugCamEntity->addPosition(debug_camera_comp.getCamRight() * debugCameraSpeed * deltaTime);
-
-		if (Input::IsKeyDown(GLFW_KEY_D))
-			debugCamEntity->addPosition(-debug_camera_comp.getCamRight() * debugCameraSpeed * deltaTime);
-
-		if (Input::IsKeyDown(GLFW_KEY_SPACE))
-			debugCamEntity->addPosition(Vector3::unitY * debugCameraSpeed * deltaTime);
-
-		if (Input::IsKeyDown(GLFW_KEY_C))
-			debugCamEntity->addPosition(Vector3::negUnitY * debugCameraSpeed * deltaTime);
-
-		if (Input::IsKeyPressed(GLFW_KEY_LEFT_SHIFT))
-			debugCameraSpeed = 10.0f;
-
-		if (Input::IsKeyReleased(GLFW_KEY_LEFT_SHIFT))
-			debugCameraSpeed = 4.0f;
-
-		Vector2 mouse_delta = Input::GetMouseDelta() * debugCameraMouseSensitivity;
-		debug_camera_comp.addYaw(-mouse_delta.x);
-		debug_camera_comp.setPitch(Maths::clamp(debug_camera_comp.getPitch() + mouse_delta.y, -89.0f, 89.0f));
-
-		float scroll_offset = Input::GetScrollOffset();
-		debug_camera_comp.setFov(Maths::clamp(debug_camera_comp.getFov() - scroll_offset, 1.0f, 45.0f));
-	}
-
-
-	if (debugViewMode)
-	{
-		//  update fps counter
-		frameCounter++;
-		frameTimeCounter += deltaTime;
-		if (frameTimeCounter >= 1.0f)
-		{
-			frameTimeCounter -= 1.0f;
-			ECS::GetComponent(fpsText).setText("FPS: " + std::to_string(frameCounter));
-			frameCounter = 0;
-		}
-	}
-}
-
-
-void Engine::pauseGame()
-{
-	gamePaused = true;
-	Locator::getAudio().PauseAll();
-	Locator::getLog().LogMessage_Category("Game paused", LogCategory::Info);
-}
-
-void Engine::unpauseGame()
-{
-	gamePaused = false;
-	Locator::getAudio().ResumeAll();
-	if (freecamMode) disableFreecam();
-	Locator::getLog().LogMessage_Category("Game unpaused", LogCategory::Info);
-}
-
-void Engine::advanceOneFrame()
-{
-	if (!gamePaused) pauseGame();
-	else
-	{
-		Locator::getLog().LogMessage_Category("Debug: Advance one frame", LogCategory::Info);
-		oneFrame = true;
-	}
-}
-
-void Engine::enableFreecam()
-{
-	freecamMode = true;
-	if (!gamePaused) pauseGame();
-	Locator::getLog().LogMessage_Category("Debug: Freecam mode enabled", LogCategory::Info);
-	Renderer& renderer = Locator::getRenderer();
-	ECS::GetComponent(debugCamera).copyCamera(renderer.GetCamera(), true);
-	renderer.SetDebugCamActivated(true);
-	debugCameraSpeed = 4.0f;
-}
-
-void Engine::disableFreecam()
-{
-	freecamMode = false;
-	Locator::getLog().LogMessage_Category("Debug: Freecam mode disabled", LogCategory::Info);
-	Locator::getRenderer().SetDebugCamActivated(false);
-}
-
-void Engine::enableDebugView()
-{
-	debugViewMode = true;
-	Locator::getLog().LogMessage_Category("Debug: Debug mode view enabled", LogCategory::Info);
-	Locator::getRenderer().SetDebugViewMode(true);
-	ECS::GetComponent(fpsText).active = true;
-}
-
-void Engine::disableDebugView()
-{
-	debugViewMode = false;
-	Locator::getLog().LogMessage_Category("Debug: Debug mode view disabled", LogCategory::Info);
-	Locator::getRenderer().SetDebugViewMode(false);
-	ECS::GetComponent(fpsText).active = false;
 }
 
 
