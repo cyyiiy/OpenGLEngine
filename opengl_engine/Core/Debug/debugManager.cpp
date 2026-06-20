@@ -6,6 +6,9 @@
 #include <ServiceLocator/locator.h>
 #include <Rendering/cameraComponent.h>
 #include <Rendering/Text/textComponent.h>
+#include <sstream>
+#include <iomanip>
+
 
 bool DebugManager::pause;
 bool DebugManager::oneFrame;
@@ -38,9 +41,8 @@ void DebugManager::InitializeDebugManager(EntityContainer& entityOwner)
 	// Create the fps text
 	fpsText = entityOwner.createEntity()->addComponentByClass<TextComponent>();
 	TextComponent& fps_text_comp = ECS::GetComponent(fpsText);
-	fps_text_comp.setTextDatas("FPS: 0", AssetManager::GetFont("arial_64"));
+	fps_text_comp.setTextDatas("FPS: 0 - (0 ms)", AssetManager::GetFont("arial_24"));
 	fps_text_comp.position = HudPosition{ Vector2::one, Vector2::one, Vector2{ -20.0f, -20.0f } };
-	fps_text_comp.scale = Vector2{ 0.5f };
 	fps_text_comp.active = false;
 }
 
@@ -130,8 +132,12 @@ void DebugManager::UpdateFpsCounter(float dt)
 	fpsTimeCounter += dt;
 	if (fpsTimeCounter >= 1.0f)
 	{
+		const float frame_ms = 1000.0f / fpsCounter;
+		std::stringstream ms_stream;
+		ms_stream << std::fixed << std::setprecision(2) << frame_ms;
+		ECS::GetComponent(fpsText).setText("FPS: " + std::to_string(fpsCounter) + " - (" + ms_stream.str() + " ms)");
+
 		fpsTimeCounter -= 1.0f;
-		ECS::GetComponent(fpsText).setText("FPS: " + std::to_string(fpsCounter));
 		fpsCounter = 0;
 	}
 }
