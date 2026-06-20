@@ -1,5 +1,6 @@
 #pragma once
 #include <ECS/ecsTypes.h>
+#include <string>
 
 
 namespace DebugConsts
@@ -76,12 +77,13 @@ private:
 
 	static int fpsCounter;
 	static float fpsTimeCounter;
+	static std::string currentFpsText;
 
 	static class Entity* freeCameraEntity;
 	static ComponentHandle<class CameraComponent> freeCamera;
-	static ComponentHandle<class TextComponent> fpsText;
+	static ComponentHandle<class TextComponent> debugInfoText;
 
 	static void ProcessDebugInputs();
 	static void ProcessFreecamInputs(float dt);
-	static void UpdateFpsCounter(float dt);
+	static void UpdateDebugInfoText(float dt);
 };

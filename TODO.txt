@@ -8,7 +8,7 @@
 ~ Rework des outils de debug - en cours
 	- Créer un debug manager responsable de mettre le jeu en pause, de la freecam et du texte fps - fait
 	- Réduire la taille du texte fps et ajouter la durée en millisecondes - fait
-	- Ajouter un petit texte d'info pour la debug view, la pause et la freecam
+	- Ajouter un petit texte d'info pour la debug view, la pause et la freecam - fait
 	- Finir de nettoyer la classe engine pour qu'elle ait le moins de dépendances possible
 
 ~ Vue debug des lumières

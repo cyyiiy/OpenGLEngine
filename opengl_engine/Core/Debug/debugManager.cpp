@@ -18,10 +18,11 @@ bool DebugManager::debugView;
 
 int DebugManager::fpsCounter;
 float DebugManager::fpsTimeCounter;
+std::string DebugManager::currentFpsText;
 
 class Entity* DebugManager::freeCameraEntity;
 ComponentHandle<class CameraComponent> DebugManager::freeCamera;
-ComponentHandle<class TextComponent> DebugManager::fpsText;
+ComponentHandle<class TextComponent> DebugManager::debugInfoText;
 
 
 void DebugManager::InitializeDebugManager(EntityContainer& entityOwner)
@@ -32,6 +33,9 @@ void DebugManager::InitializeDebugManager(EntityContainer& entityOwner)
 	freecam = false;
 	freecamSpeed = DebugConsts::FREECAM_SLOW_SPEED;
 	debugView = false;
+	fpsCounter = 0;
+	fpsTimeCounter = 0.0f;
+	currentFpsText = "FPS : 0 - (0.00 ms)";
 
 	// Create the free camera
 	freeCameraEntity = entityOwner.createEntity();
@@ -39,9 +43,9 @@ void DebugManager::InitializeDebugManager(EntityContainer& entityOwner)
 	Locator::getRenderer().SetDebugCamera(freeCamera);
 
 	// Create the fps text
-	fpsText = entityOwner.createEntity()->addComponentByClass<TextComponent>();
-	TextComponent& fps_text_comp = ECS::GetComponent(fpsText);
-	fps_text_comp.setTextDatas("FPS: 0 - (0 ms)", AssetManager::GetFont("arial_24"));
+	debugInfoText = entityOwner.createEntity()->addComponentByClass<TextComponent>();
+	TextComponent& fps_text_comp = ECS::GetComponent(debugInfoText);
+	fps_text_comp.setTextDatas("", AssetManager::GetFont("arial_24"));
 	fps_text_comp.position = HudPosition{ Vector2::one, Vector2::one, Vector2{ -20.0f, -20.0f } };
 	fps_text_comp.active = false;
 }
@@ -56,8 +60,8 @@ void DebugManager::UpdateDebugManager(float dt)
 	// Process free camera inputs
 	if (freecam) ProcessFreecamInputs(dt);
 
-	// Update the fps counter of debug view mode
-	if (debugView) UpdateFpsCounter(dt);
+	// Update the debug info text
+	if (pause || debugView) UpdateDebugInfoText(dt);
 }
 
 void DebugManager::ProcessDebugInputs()
@@ -126,26 +130,67 @@ void DebugManager::ProcessFreecamInputs(float dt)
 	free_camera_comp.setFov(Maths::clamp(free_camera_comp.getFov() - scroll_offset, 1.0f, 45.0f));
 }
 
-void DebugManager::UpdateFpsCounter(float dt)
+void DebugManager::UpdateDebugInfoText(float dt)
 {
-	fpsCounter++;
-	fpsTimeCounter += dt;
-	if (fpsTimeCounter >= 1.0f)
+	if (!pause && !debugView)
 	{
-		const float frame_ms = 1000.0f / fpsCounter;
-		std::stringstream ms_stream;
-		ms_stream << std::fixed << std::setprecision(2) << frame_ms;
-		ECS::GetComponent(fpsText).setText("FPS: " + std::to_string(fpsCounter) + " - (" + ms_stream.str() + " ms)");
-
-		fpsTimeCounter -= 1.0f;
-		fpsCounter = 0;
+		ECS::GetComponent(debugInfoText).active = false;
+		return;
 	}
+
+	// 1. Setup
+	TextComponent& debug_info_text_comp = ECS::GetComponent(debugInfoText);
+	debug_info_text_comp.active = true;
+
+	if (dt == 0.0f) return;
+	std::stringstream debug_text_stream;
+
+	// 2. Compute the fps (if debug view is enabled)
+	if (debugView)
+	{
+		fpsCounter++;
+		fpsTimeCounter += dt;
+		if (fpsTimeCounter >= 1.0f)
+		{
+			const float frame_ms = 1000.0f / fpsCounter;
+			std::stringstream ms_stream;
+			ms_stream << std::fixed << std::setprecision(2) << frame_ms;
+			debug_text_stream << "FPS: " << fpsCounter << " - (" << ms_stream.str() << " ms)";
+			currentFpsText = debug_text_stream.str();
+
+			fpsTimeCounter -= 1.0f;
+			fpsCounter = 0;
+		}
+		else
+		{
+			debug_text_stream << currentFpsText;
+		}
+		debug_text_stream << "\n";
+	}
+
+	// 3. Add the info texts
+	if (pause)
+	{
+		debug_text_stream << "Game paused\n";
+	}
+	if (freecam)
+	{
+		debug_text_stream << "Freecam enabled\n";
+	}
+	if (debugView)
+	{
+		debug_text_stream << "Debug view enabled\n";
+	}
+
+	// 4. Apply the text
+	debug_info_text_comp.setText(debug_text_stream.str());
 }
 
 
 void DebugManager::PauseGame()
 {
 	pause = true;
+	UpdateDebugInfoText(0);
 	Locator::getLog().LogMessage_Category("Debug: Game paused", LogCategory::Info);
 	Locator::getAudio().PauseAll();
 }
@@ -154,6 +199,7 @@ void DebugManager::UnpauseGame()
 {
 	if (freecam) DisableFreecam();
 	pause = false;
+	UpdateDebugInfoText(0);
 	Locator::getLog().LogMessage_Category("Debug: Game unpaused", LogCategory::Info);
 	Locator::getAudio().ResumeAll();
 }
@@ -187,17 +233,17 @@ void DebugManager::DisableFreecam()
 void DebugManager::EnableDebugView()
 {
 	debugView = true;
+	UpdateDebugInfoText(0);
 	Locator::getLog().LogMessage_Category("Debug: Debug mode view enabled", LogCategory::Info);
 	Locator::getRenderer().SetDebugViewMode(true);
-	ECS::GetComponent(fpsText).active = true;
 }
 
 void DebugManager::DisableDebugView()
 {
 	debugView = false;
+	UpdateDebugInfoText(0);
 	Locator::getLog().LogMessage_Category("Debug: Debug mode view disabled", LogCategory::Info);
 	Locator::getRenderer().SetDebugViewMode(false);
-	ECS::GetComponent(fpsText).active = false;
 }
 
 
