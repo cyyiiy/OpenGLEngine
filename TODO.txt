@@ -5,11 +5,11 @@
 	- Enlever les fonctions où seul engine.cpp a accès, tout passe par les interfaces de services - fait
 	(supprime la dépendance de engine aux "vrais" services, et pose moins de problème en cas de désactivation)
 
-~ Rework des outils de debug - en cours
+~ Rework des outils de debug - fait
 	- Créer un debug manager responsable de mettre le jeu en pause, de la freecam et du texte fps - fait
 	- Réduire la taille du texte fps et ajouter la durée en millisecondes - fait
 	- Ajouter un petit texte d'info pour la debug view, la pause et la freecam - fait
-	- Finir de nettoyer la classe engine pour qu'elle ait le moins de dépendances possible
+	- Finir de nettoyer la classe engine pour qu'elle ait le moins de dépendances possible - fait
 
 ~ Vue debug des lumières
 	- Créer un billboard renderer component (3D sprite always oriented towards camera)

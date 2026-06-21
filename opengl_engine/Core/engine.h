@@ -12,7 +12,7 @@
 class Engine : private EntityContainer
 {
 public:
-	Engine();
+	Engine() = default;
 	Engine(const Engine&) = delete;
 	Engine& operator=(const Engine&) = delete;
 
@@ -25,17 +25,12 @@ public:
 
 	void engineUpdate(GLFWwindow* glWindow);
 
-	//  window resize function redirected
 	void windowResize(GLFWwindow* glWindow, int width, int height);
 
 private:
-	//  game
 	std::shared_ptr<Game> game;
-
-	//  window
 	Window window;
 
-	//  time
 	float deltaTime = 0.0f;
 	double lastFrame = 0.0f;
 };

@@ -18,11 +18,6 @@
 #include <chrono>
 
 
-Engine::Engine()
-{
-}
-
-
 bool Engine::initialize(int wndw_width, int wndw_height, std::string wndw_name, bool wndw_capturemouse)
 {
 	std::cout << "Initializing...\n\n\n";
@@ -37,7 +32,7 @@ bool Engine::initialize(int wndw_width, int wndw_height, std::string wndw_name, 
 	std::cout << "==================================================" << std::endl << std::endl << std::endl;
 
 
-	//  create window and initialize glfw
+	// Create window and initialize glfw
 	std::cout << "Initializing window...";
 	window.createWindow(wndw_width, wndw_height, wndw_name, wndw_capturemouse);
 
@@ -60,31 +55,31 @@ bool Engine::initialize(int wndw_width, int wndw_height, std::string wndw_name, 
 			auto self = static_cast<Engine*>(glfwGetWindowUserPointer(window));
 			self->windowResize(window, width, height);
 		}
-	); //  link window resize callback function
+	); // Link window resize callback function
 
 	glfwSetCursorPosCallback(gl_window, [](GLFWwindow* window, double xpos, double ypos)
 		{
 			Input::ProcessMouse(window, xpos, ypos);
 		}
-	); //  link mouse pos callback function
+	); // Link mouse pos callback function
 
 	glfwSetScrollCallback(gl_window, [](GLFWwindow* window, double xoffset, double yoffset)
 		{
 			Input::ProcessScroll(window, xoffset, yoffset);
 		}
-	); //  link mouse scroll callback function
+	); // Link mouse scroll callback function
 
 	glfwSetKeyCallback(gl_window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
 		{
 			Input::ProcessKeyboard(window, key, scancode, action, mods);
 		}
-	); //  link keyboard callback function
+	); // Link keyboard callback function
 
 	glfwSetMouseButtonCallback(gl_window, [](GLFWwindow* window, int button, int action, int mods)
 		{
 			Input::ProcessMouseButton(window, button, action, mods);
 		}
-	); //  link mouse button callback function
+	); // Link mouse button callback function
 
 
 	//  initialize service locator
@@ -93,14 +88,14 @@ bool Engine::initialize(int wndw_width, int wndw_height, std::string wndw_name, 
 	std::cout << " Done.\n";
 
 
-	//  create log manager
+	// Create log manager
 	std::cout << "Initializing log...";
 	Log& log = Locator::provideLog(std::make_shared<LogManager>());
 	log.Initialize();
 	std::cout << " Done.\n";
 
 
-	//  create renderer and default camera
+	// Create renderer and default camera
 	std::cout << "Initializing renderer...";
 	Entity* default_cam_entity = createEntity();
 	default_cam_entity->addComponentByClass<CameraComponent>();
@@ -109,7 +104,7 @@ bool Engine::initialize(int wndw_width, int wndw_height, std::string wndw_name, 
 	std::cout << " Done.\n";
 
 
-	//  initialize GLAD
+	// Initialize GLAD
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
 		std::cout << std::endl << "Failed to initialize GLAD" << std::endl;
@@ -117,41 +112,37 @@ bool Engine::initialize(int wndw_width, int wndw_height, std::string wndw_name, 
 	}
 
 
-	//  initialize input system
+	// Initialize input system
 	std::cout << "Initializing inputs...";
 	Input::Initialize();
 	std::cout << " Done.\n";
 
-	//  initialize physics
+	// Create physics manager
 	std::cout << "Initializing physics...";
 	Locator::providePhysics(std::make_shared<PhysicsManager>());
 	std::cout << " Done.\n";
 
-	//  initialize audio manager
+	// Create audio manager
 	std::cout << "Initializing audio...";
 	Audio& audio = Locator::provideAudio(std::make_shared<AudioManager>());
 	audio.Initialize(100.0f);
 	std::cout << " Done.\n";
 
 
-	//  load "null" assets of AssetManager
+	// Initialize asset manager
 	std::cout << "Initializing asset manager...";
 	AssetManager::LoadNullAssets();
-
-	//  initialize assets IDs
 	AssetsIDs::InitializeAssetIDs();
-
-	//  load engine assets
 	DefaultAssets::LoadEngineAssets();
 	std::cout << " Done.\n";
 
-	//  initialize debug manager
+	// Initialize debug manager
 	std::cout << "Initializing debug manager...";
 	DebugManager::InitializeDebugManager(*this);
 	std::cout << " Done.\n";
 
 
-	//  configure global OpenGL properties
+	// Set global OpenGL properties
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -170,10 +161,10 @@ void Engine::run()
 {
 	lastFrame = glfwGetTime();
 
-	//  main loop
+	// Main loop
 	while (!glfwWindowShouldClose(window.getGLFWwindow()))
 	{
-		//  time logic part
+		// Time logic part
 		// -----------------
 		double current_frame = glfwGetTime();
 		deltaTime = static_cast<float>(current_frame - lastFrame);
@@ -182,12 +173,12 @@ void Engine::run()
 		GameplayStatics::SetDeltaTime(deltaTime);
 
 
-		//  inputs update part
+		// Inputs update part
 		// --------------------
-		Input::UpdateInputSystem(); //  update the keys that were registered during the last frame
+		Input::UpdateInputSystem(); // Update the keys that were registered during the last frame
 
 
-		//  update part
+		// Engine / game update part
 		// -------------
 		engineUpdate(window.getGLFWwindow());
 
@@ -204,14 +195,13 @@ void Engine::run()
 		}
 
 
-		//  rendering part
+		// Rendering part
 		// ----------------
 		Renderer& renderer = Locator::getRenderer();
 		renderer.Draw();
 
 
-
-		//  audio part
+		// Audio part
 		// ------------
 		Audio& audio = Locator::getAudio();
 		const CameraComponent& active_cam = renderer.GetCamera();
@@ -219,42 +209,47 @@ void Engine::run()
 		audio.Update();
 
 		
-		//  log part
+		// Log part
 		// ----------
 		Locator::getLog().UpdateScreenLogs(deltaTime);
 
 
+		// Debug part
+		// ------------
 		DebugManager::UpdateDebugManager(deltaTime);
 
+
+		// Late update part
+		// ------------
 		if (game) game->lateUpdate();
 		ECS::DeletePendings();
 
 
-		//  time logic second part
+		// Time logic end of frame part
 		// ------------------------
 		const float engine_time = static_cast<float>(glfwGetTime() - current_frame);
 		GameplayStatics::SetEngineTime(engine_time);
 
 
-		//  events and buffer swap part
+		// Events and buffer swap part
 		// -----------------------------
 		glfwSwapBuffers(window.getGLFWwindow());
 		glfwPollEvents();
 	}
 
-	//  close engine
+	// Close engine (loop exit)
 	unloadGame();
 	clearEntities();
 	ECS::Clear(true);
 	AssetManager::ClearAllAssets();
 	Locator::getAudio().Quit();
-	Locator::initialize(); //  reset locator to null services (delete the real services)
+	Locator::initialize(); // Reset locator to null services (delete the real services)
 }
 
 
 void Engine::close()
 {
-	//  properly clear GLFW before closing app
+	// Properly clear GLFW before closing app
 	glfwTerminate();
 }
 
@@ -274,7 +269,7 @@ void Engine::unloadGame()
 
 void Engine::engineUpdate(GLFWwindow* glWindow)
 {
-	//  close window when escape is pressed
+	// Close window when escape is pressed
 	if (Input::IsKeyPressed(GLFW_KEY_ESCAPE))
 	{
 		glfwSetWindowShouldClose(glWindow, true);
@@ -282,10 +277,10 @@ void Engine::engineUpdate(GLFWwindow* glWindow)
 }
 
 
-//  window resize callback functions
+// Window resize callback functions
 void Engine::windowResize(GLFWwindow* glWindow, int width, int height)
 {
-	glViewport(0, 0, width, height); //  resize OpenGL viewport when GLFW is resized
+	glViewport(0, 0, width, height); // Resize OpenGL viewport when GLFW is resized
 	window.changeSize(width, height);
 
 	Locator::getLog().LogMessage_Category("Window: Size updated to [Width: " + std::to_string(width) + " | Height: " + std::to_string(height) + "]", LogCategory::Info);
