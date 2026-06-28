@@ -1,6 +1,9 @@
 #pragma once
-
 #include <string>
+#include <vector>
+#include <unordered_map>
+
+typedef unsigned int GLenum;
 
 enum class ShaderType : uint8_t
 {
@@ -9,17 +12,19 @@ enum class ShaderType : uint8_t
 	Unlit
 };
 
+
 class Shader
 {
 public:
 	Shader();
-	Shader(const std::string& vertexName, const std::string& fragmentName, const ShaderType shaderType);
+	Shader(std::vector<std::string> shaderPaths, const ShaderType shaderType);
+
 	~Shader();
 
-	void use(); //  use (activate) the shader
+	void use(); // Use (activate) the shader
 	void deleteProgram();
 
-	//  setter uniform fonctions
+	// Setter uniform fonctions
 	void setBool(const std::string& name, const bool value) const;
 	void setInt(const std::string& name, const int value) const;
 	void setFloat(const std::string& name, const float value) const;
@@ -49,11 +54,12 @@ public:
 private:
 	bool loaded{ false };
 
-	unsigned int ID{ 0 }; //  program ID
+	unsigned int ID{ 0 }; // Program ID
 
 	ShaderType type{ ShaderType::Null };
 
 
-	//  reads and builds the shader program
-	void load(const std::string& vertexName, const std::string& fragmentName, const ShaderType shaderType);
+	std::unordered_map<GLenum, std::string> convertShaderPaths(std::vector<std::string> shaderPaths);
+	void loadShader(std::unordered_map<GLenum, std::string> shaderParts);
+	bool loadShaderPart(const GLenum shaderPartType, const std::string& shaderPartPath, unsigned int& outShaderPartId);
 };

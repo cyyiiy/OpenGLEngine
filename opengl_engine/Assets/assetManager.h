@@ -162,12 +162,11 @@ public:
 	/**
 	* Create a shader and stores it.
 	* @param	name			The name you want to give to this shader in the asset storage.
-	* @param	vertexName		The name of the vertex shader to bind in this program.
-	* @param	fragmentName	The name of the fragment shader to bind in this program.
 	* @param	shaderType		The type of this shader.
+	* @param	shaderPaths		Paths to the shader files. | Vertex and Fragment shaders are mandatory.
 	* @return					The newly created shader.
 	*/
-	static void CreateShaderProgram(const std::string& name, const std::string& vertexName, const std::string& fragmentName, const ShaderType shaderType);
+	static void CreateShaderProgram(const std::string& name, const ShaderType shaderType, std::vector<std::string> shaderPaths);
 
 	/**
 	* Retrieve a shader from the asset storage.

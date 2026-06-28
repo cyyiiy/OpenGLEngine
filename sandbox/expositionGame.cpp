@@ -19,9 +19,7 @@ void ExpositionGame::loadGameAssets()
 
 	DefaultAssets::LoadDefaultAssets();
 
-	// Load shaders, textures and materials
-	AssetManager::CreateShaderProgram("lit_object", "Lit/object_lit.vert", "Lit/object_lit.frag", ShaderType::Lit);
-
+	// Load textures and materials
 	AssetManager::LoadTexture("container_diffuse", "container2.png", false);
 	AssetManager::LoadTexture("container_specular", "container2_specular.png", false);
 

@@ -21,7 +21,6 @@ void BenchmarkGame::loadGameAssets()
 
 	// Load default assets
 	DefaultAssets::LoadDefaultAssets();
-	AssetManager::CreateShaderProgram("lit_object", "Lit/object_lit.vert", "Lit/object_lit.frag", ShaderType::Lit);
 	log.LogMessage_Category("Benchmark: Load default assets time: " + std::to_string(glfwGetTime() - load_time) + " seconds.", LogCategory::Info);
 	load_time = glfwGetTime();
 

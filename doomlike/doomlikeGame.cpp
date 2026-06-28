@@ -32,12 +32,10 @@ void DoomlikeGame::loadGameAssets()
 	double full_load_time = load_time;
 
 	DefaultAssets::LoadDefaultAssets();
-
-
-	// Load shaders, textures and materials
-	AssetManager::CreateShaderProgram("lit_object", "Lit/object_lit.vert", "Lit/object_lit.frag", ShaderType::Lit);
-
 	if (DEBUG) log.LogMessage_Category("Doomlike: Load default assets time: " + std::to_string(glfwGetTime() - load_time), LogCategory::Info);
+
+
+	// Load textures and materials
 	load_time = glfwGetTime();
 
 	AssetManager::LoadTexture("crate_diffuse", "container2.png", false);

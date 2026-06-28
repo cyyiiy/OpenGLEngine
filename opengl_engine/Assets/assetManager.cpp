@@ -236,7 +236,7 @@ void AssetManager::DeleteModel(const std::string& name)
 //            Shaders
 // --------------------------------------------------------------
 
-void AssetManager::CreateShaderProgram(const std::string& name, const std::string& vertexName, const std::string& fragmentName, const ShaderType shaderType)
+void AssetManager::CreateShaderProgram(const std::string& name, const ShaderType shaderType, std::vector<std::string> shaderPaths)
 {
 	if (shaders.find(name) != shaders.end())
 	{
@@ -244,7 +244,7 @@ void AssetManager::CreateShaderProgram(const std::string& name, const std::strin
 		return;
 	}
 
-	shaders.emplace(name, std::make_unique<Shader>(vertexName, fragmentName, shaderType));
+	shaders.emplace(name, std::make_unique<Shader>(shaderPaths, shaderType));
 }
 
 Shader& AssetManager::GetShader(const std::string& name)

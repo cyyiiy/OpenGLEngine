@@ -11,7 +11,8 @@
 	- Ajouter un petit texte d'info pour la debug view, la pause et la freecam - fait
 	- Finir de nettoyer la classe engine pour qu'elle ait le moins de dépendances possible - fait
 
-~ Vue debug des lumières
+~ Vue debug des lumières - en cours
+	- Refactor les shaders pour permettre d'avoir des geometry shader - fait
 	- Créer un billboard renderer component (3D sprite always oriented towards camera)
 	- Rajouter un billboard sur chaque light component visible uniquement en debug view
 

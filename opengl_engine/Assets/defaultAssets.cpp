@@ -3,18 +3,19 @@
 #include <ServiceLocator/locator.h>
 #include <Utils/color.h>
 
+
 void DefaultAssets::LoadDefaultAssets()
 {
 	Renderer& renderer = Locator::getRenderer();
 
-	//  default textures (black)
+	// Default textures (black)
 	AssetManager::LoadTexture("default_black", "Default/black.png", false);
 
 
-	//  default meshes (cube and plane)
+	// Default meshes (cube & plane)
 	std::vector<Vertex> cube_vertices
 	{
-		// positions                           // normals                      // tex coords
+		// Positions                           // Normals                      // Tex coords
 		Vertex{Vector3{-0.5f, -0.5f, -0.5f},   Vector3{ 0.0f,  0.0f, -1.0f},   Vector2{0.0f, 0.0f}},
 		Vertex{Vector3{ 0.5f, -0.5f, -0.5f},   Vector3{ 0.0f,  0.0f, -1.0f},   Vector2{1.0f, 0.0f}},
 		Vertex{Vector3{ 0.5f,  0.5f, -0.5f},   Vector3{ 0.0f,  0.0f, -1.0f},   Vector2{1.0f, 1.0f}},
@@ -61,7 +62,7 @@ void DefaultAssets::LoadDefaultAssets()
 
 	std::vector<Vertex> plane_vertices
 	{
-		// positions                         // normals                   // tex coords
+		// Positions                         // Normals                   // Tex coords
 		Vertex{Vector3{-0.5f, 0.0f, -0.5f},  Vector3{ 0.0f, 1.0f, 0.0f},  Vector2{-0.5f, -0.5f}},
 		Vertex{Vector3{ 0.5f, 0.0f, -0.5f},  Vector3{ 0.0f, 1.0f, 0.0f},  Vector2{ 0.5f, -0.5f}},
 		Vertex{Vector3{ 0.5f, 0.0f,  0.5f},  Vector3{ 0.0f, 1.0f, 0.0f},  Vector2{ 0.5f,  0.5f}},
@@ -72,9 +73,11 @@ void DefaultAssets::LoadDefaultAssets()
 	AssetManager::LoadSingleMesh("default_plane", plane_vertices);
 
 
-	//  default shaders and materials (black and white emissive)
-	AssetManager::CreateShaderProgram("flat_emissive", "Unlit/flat_emissive.vert", "Unlit/flat_emissive.frag", ShaderType::Unlit);
+	// Default shaders (flat emissive & object lit)
+	AssetManager::CreateShaderProgram("flat_emissive", ShaderType::Unlit, { "Shaders/Unlit/flat_emissive.vert", "Shaders/Unlit/flat_emissive.frag" });
+	AssetManager::CreateShaderProgram("lit_object", ShaderType::Lit, { "Shaders/Lit/object_lit.vert", "Shaders/Lit/object_lit.frag" });
 
+	// Default materials (black & white emissive)
 	Material& black_emissive_mat = AssetManager::CreateMaterial("default_black_emissive", AssetManager::GetShader("flat_emissive"));
 	black_emissive_mat.addParameter("emissive", Color::black);
 	renderer.AddMaterial(&black_emissive_mat);
@@ -84,25 +87,25 @@ void DefaultAssets::LoadDefaultAssets()
 	renderer.AddMaterial(&white_emissive_mat);
 
 
-	//  default audio collision
+	// Default audio collision
 	AssetManager::RegisterAudioCollisionType("default_audio_collision", AudioCollisionOcclusion{ 1.0f, 0.5f });
 }
 
 
 void DefaultAssets::LoadEngineAssets()
 {
-	//  hud quad vertex array
+	// Hud quad vertex array
 	VertexArray& va_quad_hud = AssetManager::CreateVertexArray("hud_quad");
 	va_quad_hud.LoadVAQuadHUD();
 
-	//  debug line
+	// Debug line
 	VertexArray& va_debug_line = AssetManager::CreateVertexArray("debug_line");
 	va_debug_line.LoadVALine();
 
-	//  debug cube mesh
+	// Debug cube mesh
 	std::vector<Vertex> cube_vertices
 	{
-		// positions                           // normals                      // tex coords
+		// Positions                           // Normals                      // Tex coords
 		Vertex{Vector3{-0.5f, -0.5f, -0.5f},   Vector3{ 0.0f,  0.0f, -1.0f},   Vector2{0.0f, 0.0f}},
 		Vertex{Vector3{ 0.5f, -0.5f, -0.5f},   Vector3{ 0.0f,  0.0f, -1.0f},   Vector2{1.0f, 0.0f}},
 		Vertex{Vector3{ 0.5f,  0.5f, -0.5f},   Vector3{ 0.0f,  0.0f, -1.0f},   Vector2{1.0f, 1.0f}},
@@ -148,21 +151,21 @@ void DefaultAssets::LoadEngineAssets()
 	AssetManager::LoadSingleMesh("debug_cube", cube_vertices);
 
 
-	//  draw debug material and shader
-	AssetManager::CreateShaderProgram("draw_debug", "Unlit/draw_debug.vert", "Unlit/draw_debug.frag", ShaderType::Unlit);
+	// Draw debug material and shader
+	AssetManager::CreateShaderProgram("draw_debug", ShaderType::Unlit, { "Shaders/Unlit/draw_debug.vert", "Shaders/Unlit/draw_debug.frag" });
 
 	Material& draw_debug_mat = AssetManager::CreateMaterial("debug_draws", AssetManager::GetShader("draw_debug"));
 	draw_debug_mat.addParameter("color", Color::green);
 
 
-	//  engine shaders (text and sprite render)
-	AssetManager::CreateShaderProgram("text_render", "Unlit/text_render.vert", "Unlit/text_render.frag", ShaderType::Unlit);
-	AssetManager::CreateShaderProgram("sprite_render", "Unlit/sprite_render.vert", "Unlit/sprite_render.frag", ShaderType::Unlit);
+	// Engine shaders (text and sprite render)
+	AssetManager::CreateShaderProgram("text_render", ShaderType::Unlit, { "Shaders/Unlit/text_render.vert", "Shaders/Unlit/text_render.frag" });
+	AssetManager::CreateShaderProgram("sprite_render", ShaderType::Unlit, { "Shaders/Unlit/sprite_render.vert", "Shaders/Unlit/sprite_render.frag" });
 
 
-	//  default and debug font (arial 128 ascii size 64)
+	// Default and debug font (arial | ascii 128 | size 64)
 	AssetManager::LoadFont("arial_64", "arial_font/arial.ttf", 64, CharacterLoading::ASCII_128);
 
-	//  log on screen font (arial 128 ascii size 24)
+	// Log on screen font (arial | ascii 128 | size 24)
 	AssetManager::LoadFont("arial_24", "arial_font/arial.ttf", 24, CharacterLoading::ASCII_128);
 }
