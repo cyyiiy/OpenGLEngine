@@ -3,7 +3,7 @@
 #include <Assets/assetManager.h>
 #include <Inputs/Input.h>
 #include <Maths/Geometry/box.h>
-#include <GameplayStatics/gameplayStatics.h>
+#include <Core/Debug/debugManager.h>
 
 #include <Rendering/cameraComponent.h>
 #include <Rendering/modelRendererComponent.h>
@@ -205,20 +205,20 @@ void ExpositionScene::updateScene(float dt)
 	if (Input::IsKeyPressed(GLFW_KEY_KP_4))
 	{
 		ComponentHandle<CameraComponent> inactive_camera = (activeCamera == cameraOne) ? cameraTwo : cameraOne;
-		GameplayStatics::DrawDebugPoint(ECS::GetComponent(inactive_camera).getCamPosition(), Color::red, 5.0f);
+		DebugManager::DrawDebugPoint(ECS::GetComponent(inactive_camera).getCamPosition(), Color::red, 5.0f);
 	}
 
 	if (Input::IsKeyPressed(GLFW_KEY_KP_5))
 	{
 		ComponentHandle<CameraComponent> inactive_camera = (activeCamera == cameraOne) ? cameraTwo : cameraOne;
 		CameraComponent& cam = ECS::GetComponent(inactive_camera);
-		GameplayStatics::DrawDebugLine(cam.getCamPosition(), cam.getCamPosition() + cam.getCamForward() * 2.0f, Color::magenta, 5.0f);
+		DebugManager::DrawDebugLine(cam.getCamPosition(), cam.getCamPosition() + cam.getCamForward() * 2.0f, Color::magenta, 5.0f);
 	}
 
 	if (Input::IsKeyPressed(GLFW_KEY_KP_6))
 	{
 		Box debug_box{ cyanCube->getPosition(), Vector3::one * 0.1f };
-		GameplayStatics::DrawDebugCube(debug_box, Color::blue, 5.0f);
+		DebugManager::DrawDebugCube(debug_box, Color::blue, 5.0f);
 	}
 
 	// Play 2D sound (without audio source component)

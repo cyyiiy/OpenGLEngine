@@ -1,10 +1,5 @@
 #include "gameplayStatics.h"
 #include <ServiceLocator/locator.h>
-#include <ECS/ecs.h>
-#include <Rendering/shapeRendererComponent.h>
-#include <Rendering/Shapes/shapePoint.h>
-#include <Rendering/Shapes/shapeLine.h>
-#include <Rendering/Shapes/shapeCube.h>
 
 Game* GameplayStatics::currentGame = nullptr;
 Scene* GameplayStatics::currentScene = nullptr;
@@ -51,28 +46,6 @@ float GameplayStatics::GetEngineTime()
 	return engineTime;
 }
 
-void GameplayStatics::DrawDebugPoint(const Vector3& pointPosition, const Color& color, float duration)
-{
-	ShapeRendererComponent& shape_renderer_component = ECS::GetComponent(ECS::CreateComponent<ShapeRendererComponent>());
-	shape_renderer_component.shape = std::make_shared<ShapePoint>(pointPosition, color);
-	shape_renderer_component.lifetime = duration;
-}
-
-void GameplayStatics::DrawDebugLine(const Vector3& pointA, const Vector3& pointB, const Color& color, float duration)
-{
-	ShapeRendererComponent& shape_renderer_component = ECS::GetComponent(ECS::CreateComponent<ShapeRendererComponent>());
-	shape_renderer_component.shape = std::make_shared<ShapeLine>(pointA, pointB, color);
-	shape_renderer_component.lifetime = duration;
-}
-
-void GameplayStatics::DrawDebugCube(const Box& boxInfos, const Color& color, float duration)
-{
-	ShapeRendererComponent& shape_renderer_component = ECS::GetComponent(ECS::CreateComponent<ShapeRendererComponent>());
-	shape_renderer_component.shape = std::make_shared<ShapeCube>(boxInfos, color);
-	shape_renderer_component.lifetime = duration;
-}
-
-
 void GameplayStatics::SetCurrentGame(Game* game)
 {
 	currentGame = game;
@@ -96,17 +69,4 @@ void GameplayStatics::SetDeltaTime(float time)
 void GameplayStatics::SetEngineTime(float time)
 {
 	engineTime = time;
-}
-
-void GameplayStatics::UpdateDebugs(float deltaTime)
-{
-	auto& shape_renderers_manager = ECS::Manager<ShapeRendererComponent>();
-	shape_renderers_manager.ForEach([deltaTime](ShapeRendererComponent& shape_renderer_component)
-	{
-		shape_renderer_component.lifetime -= deltaTime;
-		if (shape_renderer_component.lifetime <= 0.0f)
-		{
-			ECS::DeleteComponent(shape_renderer_component.getSelfHandle<ShapeRendererComponent>());
-		}
-	});
 }

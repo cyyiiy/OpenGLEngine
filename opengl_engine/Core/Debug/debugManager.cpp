@@ -6,6 +6,12 @@
 #include <ServiceLocator/locator.h>
 #include <Rendering/cameraComponent.h>
 #include <Rendering/Text/textComponent.h>
+
+#include <Rendering/shapeRendererComponent.h>
+#include <Rendering/Shapes/shapePoint.h>
+#include <Rendering/Shapes/shapeLine.h>
+#include <Rendering/Shapes/shapeCube.h>
+
 #include <sstream>
 #include <iomanip>
 
@@ -62,6 +68,9 @@ void DebugManager::UpdateDebugManager(float dt)
 
 	// Update the debug info text
 	if (pause || debugView) UpdateDebugInfoText(dt);
+
+	// Update the debug shapes (shapes don't expire if engine is paused)
+	if (!pause) UpdateDebugShapes(dt);
 }
 
 void DebugManager::ProcessDebugInputs()
@@ -268,4 +277,39 @@ bool DebugManager::GetFreecamState() noexcept
 bool DebugManager::GetDebugViewState() noexcept
 {
 	return debugView;
+}
+
+
+void DebugManager::DrawDebugPoint(const Vector3& pointPosition, const Color& color, float duration)
+{
+	ShapeRendererComponent& shape_renderer_component = ECS::GetComponent(ECS::CreateComponent<ShapeRendererComponent>());
+	shape_renderer_component.shape = std::make_shared<ShapePoint>(pointPosition, color);
+	shape_renderer_component.lifetime = duration;
+}
+
+void DebugManager::DrawDebugLine(const Vector3& pointA, const Vector3& pointB, const Color& color, float duration)
+{
+	ShapeRendererComponent& shape_renderer_component = ECS::GetComponent(ECS::CreateComponent<ShapeRendererComponent>());
+	shape_renderer_component.shape = std::make_shared<ShapeLine>(pointA, pointB, color);
+	shape_renderer_component.lifetime = duration;
+}
+
+void DebugManager::DrawDebugCube(const Box& boxInfos, const Color& color, float duration)
+{
+	ShapeRendererComponent& shape_renderer_component = ECS::GetComponent(ECS::CreateComponent<ShapeRendererComponent>());
+	shape_renderer_component.shape = std::make_shared<ShapeCube>(boxInfos, color);
+	shape_renderer_component.lifetime = duration;
+}
+
+void DebugManager::UpdateDebugShapes(float dt)
+{
+	auto& shape_renderers_manager = ECS::Manager<ShapeRendererComponent>();
+	shape_renderers_manager.ForEach([dt](ShapeRendererComponent& shape_renderer_component)
+	{
+		shape_renderer_component.lifetime -= dt;
+		if (shape_renderer_component.lifetime <= 0.0f)
+		{
+			ECS::DeleteComponent(shape_renderer_component.getSelfHandle<ShapeRendererComponent>());
+		}
+	});
 }

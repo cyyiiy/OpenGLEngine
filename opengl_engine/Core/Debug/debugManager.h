@@ -68,6 +68,35 @@ public:
 	/** Return true if the debug view is currently enabled. */
 	static bool GetDebugViewState() noexcept;
 
+
+	/**
+	* Draw a debug point for a desired duration.
+	* Note: debug shapes are visible even with debug view disabled.
+	* @param	pointPosition	The position in world-space of the point to draw.
+	* @param	color			The color of the point to draw.
+	* @param	duration		The duration of the debug draw (in seconds).
+	*/
+	static void DrawDebugPoint(const struct Vector3& pointPosition, const struct Color& color, float duration);
+
+	/**
+	* Draw a debug line between two points for a desired duration.
+	* Note: debug shapes are visible even with debug view disabled.
+	* @param	pointA		The position in world-space of the first extremity of the line.
+	* @param	pointB		The position in world-space of the second extremity of the line.
+	* @param	color		The color of the line to draw.
+	* @param	duration	The duration of the debug draw (in seconds).
+	*/
+	static void DrawDebugLine(const struct Vector3& pointA, const struct Vector3& pointB, const struct Color& color, float duration);
+
+	/*
+	* Draw a debug cube for a desired duration.
+	* Note: debug shapes are visible even with debug view disabled.
+	* @param	boxInfos	The box values of the cube to draw.
+	* @param	color		The color of the cube to draw.
+	* @param	duration	The duration of the debug draw (in seconds).
+	*/
+	static void DrawDebugCube(const class Box& boxInfos, const struct Color& color, float duration);
+
 private:
 	static bool pause;
 	static bool oneFrame;
@@ -86,4 +115,5 @@ private:
 	static void ProcessDebugInputs();
 	static void ProcessFreecamInputs(float dt);
 	static void UpdateDebugInfoText(float dt);
+	static void UpdateDebugShapes(float dt);
 };

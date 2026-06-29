@@ -189,7 +189,6 @@ void Engine::run()
 			if (game) game->update(deltaTime);
 
 			ECS::Update(deltaTime);
-			GameplayStatics::UpdateDebugs(game_paused ? 0.0f : deltaTime); //  debug draws don't expire if engine is paused
 
 			Locator::getPhysics().UpdatePhysics(deltaTime);
 		}
