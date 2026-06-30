@@ -14,7 +14,8 @@
 ~ Vue debug des lumières - en cours
 	- Refactor les shaders pour permettre d'avoir des geometry shader - fait
 	- Créer un billboard renderer component (3D sprite always oriented towards camera) - fait
-	- Rajouter un billboard sur chaque light component visible uniquement en debug view
+	- Rajouter un billboard sur chaque light component visible uniquement en debug view - fait
+	- Fix la position des light components sur les lampes du doomlike mdr
 
 ~ Petites améliorations ECS
 	- Faire que les fonctions qui retournent un handle en retournent un invalide au lieu d'une exception

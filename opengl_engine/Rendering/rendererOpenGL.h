@@ -76,6 +76,8 @@ private:
 	void drawBillboardComponent(const class BillboardRendererComponent& billboardComponent, Shader& shaderInUsage);
 
 	void drawBoxCollision(const class BoxCollisionComponent& boxColComponent, Shader& shaderInUsage);
+	void drawPointLightDebug(const class PointLightComponent& pointLightComponent, Shader& shaderInUsage);
+	void drawSpotLightDebug(const class SpotLightComponent& spotLightComponenent, Shader& shaderInUsage);
 
 	void drawTextComponent(const class TextComponent& textComponent, Shader& shaderInUsage);
 	void drawSpriteComponent(const class SpriteComponent& spriteComponent, Shader& shaderInUsage);

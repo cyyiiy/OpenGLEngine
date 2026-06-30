@@ -173,4 +173,9 @@ void DefaultAssets::LoadEngineAssets()
 
 	// Log on screen font (arial | ascii 128 | size 24)
 	AssetManager::LoadFont("arial_24", "arial_font/arial.ttf", 24, CharacterLoading::ASCII_128);
+
+
+	// Light debug textures
+	AssetManager::LoadTexture("debug_icon_point_light", "Default/Icons/icon_point_light.png", false);
+	AssetManager::LoadTexture("debug_icon_spot_light", "Default/Icons/icon_spot_light.png", false);
 }
