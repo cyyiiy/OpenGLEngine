@@ -98,6 +98,10 @@ void DefaultAssets::LoadEngineAssets()
 	VertexArray& va_quad_hud = AssetManager::CreateVertexArray("hud_quad");
 	va_quad_hud.LoadVAQuadHUD();
 
+	// Billboard vertex array
+	VertexArray& va_billboard = AssetManager::CreateVertexArray("billboard");
+	va_billboard.LoadVABillboard();
+
 	// Debug line
 	VertexArray& va_debug_line = AssetManager::CreateVertexArray("debug_line");
 	va_debug_line.LoadVALine();
@@ -158,9 +162,10 @@ void DefaultAssets::LoadEngineAssets()
 	draw_debug_mat.addParameter("color", Color::green);
 
 
-	// Engine shaders (text and sprite render)
+	// Engine shaders (text, sprite & billboard)
 	AssetManager::CreateShaderProgram("text_render", ShaderType::Unlit, { "Shaders/Unlit/text_render.vert", "Shaders/Unlit/text_render.frag" });
 	AssetManager::CreateShaderProgram("sprite_render", ShaderType::Unlit, { "Shaders/Unlit/sprite_render.vert", "Shaders/Unlit/sprite_render.frag" });
+	AssetManager::CreateShaderProgram("billboard_render", ShaderType::Unlit, { "Shaders/Unlit/billboard.vert", "Shaders/Unlit/billboard.frag", "Shaders/Unlit/billboard.geom" });
 
 
 	// Default and debug font (arial | ascii 128 | size 64)

@@ -245,6 +245,7 @@
     <ClInclude Include="PhysicsAABB\raycastRendererComponent.h" />
     <ClInclude Include="PhysicsAABB\raycastUtils.h" />
     <ClInclude Include="PhysicsAABB\rigidbodyComponent.h" />
+    <ClInclude Include="Rendering\billboardRendererComponent.h" />
     <ClInclude Include="Rendering\cameraComponent.h" />
     <ClInclude Include="Rendering\Hud\hudElement.h" />
     <ClInclude Include="Rendering\Hud\spriteComponent.h" />

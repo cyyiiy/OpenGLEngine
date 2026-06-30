@@ -4,6 +4,7 @@
 #include <ECS/ecs.h>
 #include <ECS/entity.h>
 #include <Rendering/modelRendererComponent.h>
+#include <Rendering/billboardRendererComponent.h>
 #include <Rendering/shapeRendererComponent.h>
 #include <Rendering/Lights/directionalLightComponent.h>
 #include <Rendering/Lights/pointLightComponent.h>
@@ -29,7 +30,7 @@ void RendererOpenGL::Draw()
 	CameraComponent& current_camera = selectCurrentCam();
 
 	//  RENDERING 3D
-	// ===================
+	// ========================
 
 	Matrix4 view = current_camera.getViewMatrix();
 	Matrix4 projection = Matrix4::createPerspectiveFOV(Maths::toRadians(current_camera.getFov()), static_cast<float>(windowSize.x), static_cast<float>(windowSize.y), 0.1f, 1000.0f);
@@ -142,8 +143,37 @@ void RendererOpenGL::Draw()
 	}
 
 
+	//  RENDERING BILLBOARDS
+	// ========================
+
+	// Bind the billboard vertex array
+	AssetManager::GetVertexArray("billboard").setActive();
+
+	// Compute the matrix and vectors used to render billboards
+	const Matrix4 view_proj = view * projection;
+	const Vector3 cam_up = current_camera.getCamUp();
+	const Vector3 cam_right = current_camera.getCamRight();
+
+	// Activate the billboard shader and set global uniforms
+	Shader* billboard_shader = &AssetManager::GetShader("billboard_render");
+	billboard_shader->use();
+	billboard_shader->setMatrix4("geomViewProj", view_proj.getAsFloatPtr());
+	billboard_shader->setVec3("geomCameraUp", cam_up);
+	billboard_shader->setVec3("geomCameraRight", cam_right);
+
+	// Render the billboard component
+	auto& billboard_renderers_manager = ECS::Manager<BillboardRendererComponent>();
+	billboard_renderers_manager.ForEach([this, billboard_shader](const BillboardRendererComponent& billboard_renderer_component)
+	{
+		this->drawBillboardComponent(billboard_renderer_component, *billboard_shader);
+	});
+
+	// Unbind the billboard vertex array
+	glBindVertexArray(0);
+
+
 	//  RENDERING HUD
-	// ===================
+	// ========================
 
 	glDisable(GL_DEPTH_TEST);
 
@@ -312,6 +342,55 @@ void RendererOpenGL::useSpotLight(const SpotLightComponent& spotLightComponent, 
 	}
 }
 
+void RendererOpenGL::drawBillboardComponent(const BillboardRendererComponent& billboardComponent, Shader& shaderInUsage)
+{
+	// 1. Check if the billboard texture is valid
+	Texture* billboard_tex = billboardComponent.billboardTexture;
+	if (billboard_tex == nullptr) return;
+
+	// 2. Compute the billboard transform
+	Matrix4 billboard_tranform = Matrix4::createTranslation(billboardComponent.positionOffset);
+	if (!billboardComponent.ignoreOwnerTransform)
+	{
+		Transform& billboard_owner = *billboardComponent.getOwner();
+		billboard_tranform *= billboard_owner.getModelMatrix();
+	}
+
+	// 3. Bind the billboard texture
+	glActiveTexture(GL_TEXTURE0);
+	billboard_tex->use();
+
+	// 4. Set the informations in the shader
+	shaderInUsage.setMatrix4("billboardTransform", billboard_tranform.getAsFloatPtr());
+	shaderInUsage.setVec2("geomScale", billboardComponent.billboardScale);
+
+	// 5. Draw the billboard
+	glDrawArrays(GL_POINTS, 0, 1);
+
+	// 6. Unbind the billboard texture
+	glActiveTexture(GL_TEXTURE0);
+}
+
+void RendererOpenGL::drawBoxCollision(const BoxCollisionComponent& boxColComponent, Shader& shaderInUsage)
+{
+	// 1. Compute the model matrix
+	const Box collision_box = boxColComponent.getTransformedBox();
+	const Matrix4 model_matrix =
+		Matrix4::createScale(collision_box.getHalfExtents() * 2.0f) *
+		Matrix4::createTranslation(collision_box.getCenterPoint());
+
+	// 2. Choose the debug color
+	const Color debug_color = boxColComponent.debugIntersectedLastFrame ? Color::red : Color::green;
+
+	// 3. Set the informations in the shader
+	shaderInUsage.setMatrix4("model", model_matrix.getAsFloatPtr());
+	shaderInUsage.setVec3("color", debug_color.toVector());
+
+	// 4. Draw the debug cube mesh
+	Mesh& cube_mesh = AssetManager::GetSingleMesh("debug_cube");
+	cube_mesh.draw(true);
+}
+
 void RendererOpenGL::drawTextComponent(const TextComponent& textComponent, Shader& shaderInUsage)
 {
 	// 1. Check if the text renderer component is valid
@@ -459,26 +538,6 @@ void RendererOpenGL::drawSpriteComponent(const SpriteComponent& spriteComponent,
 
 	// 6. Unbind the sprite texture
 	glActiveTexture(GL_TEXTURE0);
-}
-
-void RendererOpenGL::drawBoxCollision(const BoxCollisionComponent& boxColComponent, Shader& shaderInUsage)
-{
-	// 1. Compute the model matrix
-	const Box collision_box = boxColComponent.getTransformedBox();
-	const Matrix4 model_matrix =
-		Matrix4::createScale(collision_box.getHalfExtents() * 2.0f) *
-		Matrix4::createTranslation(collision_box.getCenterPoint());
-
-	// 2. Choose the debug color
-	const Color debug_color = boxColComponent.debugIntersectedLastFrame ? Color::red : Color::green;
-
-	// 3. Set the informations in the shader
-	shaderInUsage.setMatrix4("model", model_matrix.getAsFloatPtr());
-	shaderInUsage.setVec3("color", debug_color.toVector());
-
-	// 4. Draw the debug cube mesh
-	Mesh& cube_mesh = AssetManager::GetSingleMesh("debug_cube");
-	cube_mesh.draw(true);
 }
 
 

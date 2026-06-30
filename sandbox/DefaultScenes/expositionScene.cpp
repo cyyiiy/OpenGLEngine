@@ -7,6 +7,7 @@
 
 #include <Rendering/cameraComponent.h>
 #include <Rendering/modelRendererComponent.h>
+#include <Rendering/billboardRendererComponent.h>
 #include <Rendering/Lights/directionalLightComponent.h>
 #include <Rendering/Lights/pointLightComponent.h>
 #include <Rendering/Lights/spotLightComponent.h>
@@ -56,6 +57,16 @@ void ExpositionScene::loadScene()
 	backpack->setScale(0.002f);
 	ModelRendererComponent& backpack_model = ECS::GetComponent(backpack->addComponentByClass<ModelRendererComponent>());
 	backpack_model.model = &AssetManager::GetModel("backpack");
+
+
+	// Billboard
+
+	Entity* billboard_entity = createEntity();
+	billboard_entity->setPosition(Vector3{ -4.0f, 0.0f, 0.0f });
+	BillboardRendererComponent& billboard_renderer = ECS::GetComponent(billboard_entity->addComponentByClass<BillboardRendererComponent>());
+	billboard_renderer.billboardTexture = &AssetManager::GetTexture("smileyface_sprite");
+	billboard_renderer.billboardScale = Vector2{ 0.35f };
+	billboard_renderer.positionOffset = Vector3{ 0.0f, 1.0f, 0.0f };
 
 
 	// Lights

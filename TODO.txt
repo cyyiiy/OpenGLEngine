@@ -13,7 +13,7 @@
 
 ~ Vue debug des lumières - en cours
 	- Refactor les shaders pour permettre d'avoir des geometry shader - fait
-	- Créer un billboard renderer component (3D sprite always oriented towards camera)
+	- Créer un billboard renderer component (3D sprite always oriented towards camera) - fait
 	- Rajouter un billboard sur chaque light component visible uniquement en debug view
 
 ~ Petites améliorations ECS

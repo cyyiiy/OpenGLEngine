@@ -73,10 +73,12 @@ private:
 	void usePointLight(const class PointLightComponent& pointLightComponent, Shader& shaderInUsage);
 	void useSpotLight(const class SpotLightComponent& spotLightComponent, Shader& shaderInUsage);
 
-	void drawTextComponent(const class TextComponent& textComponent, Shader& shaderInUsage);
-	void drawSpriteComponent(const class SpriteComponent& spriteComponent, Shader& shaderInUsage);
+	void drawBillboardComponent(const class BillboardRendererComponent& billboardComponent, Shader& shaderInUsage);
 
 	void drawBoxCollision(const class BoxCollisionComponent& boxColComponent, Shader& shaderInUsage);
+
+	void drawTextComponent(const class TextComponent& textComponent, Shader& shaderInUsage);
+	void drawSpriteComponent(const class SpriteComponent& spriteComponent, Shader& shaderInUsage);
 
 
 	std::unordered_map<Shader*, std::vector<Material*>> materials;

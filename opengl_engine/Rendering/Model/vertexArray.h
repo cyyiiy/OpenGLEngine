@@ -26,6 +26,7 @@ public:
 	void LoadVAMesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices);
 	void LoadVAQuadHUD();
 	void LoadVALine();
+	void LoadVABillboard();
 
 	void setActive();
 	void deleteObjects();
@@ -46,8 +47,8 @@ private:
 
 	bool useEBO{ false };
 
-	unsigned int VAO{ 0 }; //  OpenGL ID
-	unsigned int VBO{ 0 }; //  OpenGL ID
-	unsigned int EBO{ 0 }; //  OpenGL ID
+	unsigned int VAO{ 0 }; // OpenGL ID
+	unsigned int VBO{ 0 }; // OpenGL ID
+	unsigned int EBO{ 0 }; // OpenGL ID
 };
 

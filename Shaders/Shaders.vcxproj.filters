@@ -25,5 +25,8 @@
     <None Include="Unlit\text_render.vert" />
     <None Include="Unlit\sprite_render.frag" />
     <None Include="Unlit\sprite_render.vert" />
+    <None Include="Unlit\billboard.frag" />
+    <None Include="Unlit\billboard.geom" />
+    <None Include="Unlit\billboard.vert" />
   </ItemGroup>
 </Project>
