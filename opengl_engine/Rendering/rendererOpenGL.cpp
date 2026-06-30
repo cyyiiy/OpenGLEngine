@@ -363,6 +363,7 @@ void RendererOpenGL::drawBillboardComponent(const BillboardRendererComponent& bi
 	// 4. Set the informations in the shader
 	shaderInUsage.setMatrix4("billboardTransform", billboard_tranform.getAsFloatPtr());
 	shaderInUsage.setVec2("geomScale", billboardComponent.billboardScale);
+	shaderInUsage.setVec3("tintColor", billboardComponent.tintColor.toVector());
 
 	// 5. Draw the billboard
 	glDrawArrays(GL_POINTS, 0, 1);
