@@ -24,7 +24,7 @@ Entity* LampFactory::CreateLamp(EntityContainer* entityContainer, const Vector3&
 
 		model_name = "chandelier";
 
-		light_comp_offset = Vector3{ 0.0f, -1000.0f, 0.0f };
+		light_comp_offset = Vector3{ 0.0f, 550.0f, 0.0f };
 		light_comp_diffuse = 0.41f;
 
 		col_comp_box = Box{ Vector3{0.0f, 0.6f, 0.0f}, Vector3{0.5f, 0.5f, 0.5f} };
@@ -36,7 +36,7 @@ Entity* LampFactory::CreateLamp(EntityContainer* entityContainer, const Vector3&
 
 		model_name = "lamp";
 
-		light_comp_offset = Vector3{ 0.0f, 200.0f, 0.0f };
+		light_comp_offset = Vector3{ 214.0f, 200.0f, 127.0f };
 		light_comp_diffuse = 0.23f;
 
 		col_comp_box = Box{ Vector3{2.58f, 1.87f, 1.52f}, Vector3{0.21f, 0.64f, 0.21f} };

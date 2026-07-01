@@ -11,11 +11,11 @@
 	- Ajouter un petit texte d'info pour la debug view, la pause et la freecam - fait
 	- Finir de nettoyer la classe engine pour qu'elle ait le moins de dépendances possible - fait
 
-~ Vue debug des lumières - en cours
+~ Vue debug des lumières - fait
 	- Refactor les shaders pour permettre d'avoir des geometry shader - fait
 	- Créer un billboard renderer component (3D sprite always oriented towards camera) - fait
 	- Rajouter un billboard sur chaque light component visible uniquement en debug view - fait
-	- Fix la position des light components sur les lampes du doomlike mdr
+	- Fix la position des light components sur les lampes du doomlike mdr - fait
 
 ~ Petites améliorations ECS
 	- Faire que les fonctions qui retournent un handle en retournent un invalide au lieu d'une exception
