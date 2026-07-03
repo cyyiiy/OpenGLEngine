@@ -80,7 +80,7 @@ public:
         
         if (slotId == SublistSize)
         {
-            throw std::runtime_error("Failed to find a free component slot.");
+            throw std::runtime_error("An unknown error occured while creating a component of type '" + std::string(typeid(T).name()) + "' in a sublist.");
         }
         
         sublist_creating_in.usedSlots[slotId] = true;
@@ -142,7 +142,7 @@ public:
         Sublist& sublist = *sublists[handle.raw.sublistId];
         
         if (sublist.generations[handle.raw.slotId] != handle.raw.generation)
-            throw std::runtime_error("Invalid component handle.");
+            throw std::runtime_error("Tried to get a component of type '" + std::string(typeid(T).name()) + "' with an invalid handle.");
         
         // `slotToPacked` allows to retrieve the packed index of the component in the sublist from the slot index in the handle
         const uint32_t packed_index = sublist.slotToPacked[handle.raw.slotId];

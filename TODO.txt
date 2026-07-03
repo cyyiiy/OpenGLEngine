@@ -17,9 +17,9 @@
 	- Rajouter un billboard sur chaque light component visible uniquement en debug view - fait
 	- Fix la position des light components sur les lampes du doomlike mdr - fait
 
-~ Petites améliorations ECS
-	- Faire que les fonctions qui retournent un handle en retournent un invalide au lieu d'une exception
-	- Améliorer les textes d'erreur de l'ECS pour qu'elles écrivent le nom de la classe quand nécessaire
+~ Petites améliorations ECS - en cours
+	- Faire que les fonctions qui retournent un handle en retournent un invalide au lieu d'une exception - fait
+	- Améliorer les textes d'erreur de l'ECS pour qu'elles écrivent le nom de la classe quand nécessaire - fait
 	- Ajouter un composant "lifetime" qui supprime son entité au bout d'un temps (avec un système extérieur)
 	- Modifier les balles du doomlike pour utiliser ce composant
 
@@ -67,6 +67,8 @@
 
 
 == AUTRES ==
+
+~ Rajouter une log category "crash" pour pouvoir doubler les throw exceptions (permet d'assurer que le crash est au moins mis dans le fichier de log)
 
 ~ Compute la direction des Spot Light en fonction de la rotation de l'Entity (avoir une rotation offset ? avoir un vecteur de direction offset ?)
 [Probablement obsolète une fois l'ECS V3 implémenté, à voir]

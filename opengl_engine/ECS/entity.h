@@ -9,6 +9,7 @@
 
 #include <Core/transform.h>
 #include <Core/Gameplay/gameplayTag.h>
+#include <ServiceLocator/locator.h>
 
 class EntityContainer;
 
@@ -97,7 +98,7 @@ public:
     T& getComponent(ComponentHandle<T> handle)
     {
         if (!hasComponent(handle))
-            throw std::runtime_error("Component doesn't belongs to this entity.");
+            throw std::runtime_error("Tried to get a component with a handle that doesn't belongs to this entity.");
         
         return ECS::GetComponent(handle);
     }
@@ -124,7 +125,10 @@ public:
     ComponentHandle<T> getComponentOfClass()
     {
         if (!hasComponentOfClass<T>())
-            throw std::runtime_error("Entity doesn't have a component of this class.");
+        {
+            Locator::getLog().LogMessage_Category("Entity doesn't have a component of type '" + std::string(typeid(T).name()) + "'.", LogCategory::Error);
+            return ComponentHandle<T>();
+        }
         
         const ComponentTypeId type_id = GetComponentTypeId<T>();
         const ComponentHandle<T> handle(components[type_id][0].raw_handle);
@@ -143,10 +147,16 @@ public:
         const ComponentTypeId type_id = GetComponentTypeId<T>();
         
         if (components.find(type_id) == components.end())
-            throw std::runtime_error("Entity doesn't have a component of this class.");
-        
+        {
+            Locator::getLog().LogMessage_Category("Entity doesn't have a component of type '" + std::string(typeid(T).name()) + "'.", LogCategory::Error);
+            return {};
+        }
+
         if (components[type_id].size() == 0)
-            throw std::runtime_error("Entity doesn't have a component of this class.");
+        {
+            Locator::getLog().LogMessage_Category("Entity doesn't have a component of type '" + std::string(typeid(T).name()) + "'.", LogCategory::Error);
+            return {};
+        }
         
         std::vector<ComponentHandle<T>> return_list;
         return_list.reserve(components[type_id].size());
@@ -171,7 +181,10 @@ public:
         const ComponentTypeId type_id = GetComponentTypeId<T>();
         
         if (!hasComponent(handle))
-            throw std::runtime_error("Component doesn't belongs to this entity.");
+        {
+            Locator::getLog().LogMessage_Category("Tried to delete a component.a component with a handle that doesn't belongs to this entity.", LogCategory::Error);
+            return;
+        }
 
         const auto iter = 
             std::find(components[type_id].begin(), components[type_id].end(), handle.raw);
