@@ -68,8 +68,6 @@
 
 == AUTRES ==
 
-~ Rajouter une log category "crash" pour pouvoir doubler les throw exceptions (permet d'assurer que le crash est au moins mis dans le fichier de log)
-
 ~ Compute la direction des Spot Light en fonction de la rotation de l'Entity (avoir une rotation offset ? avoir un vecteur de direction offset ?)
 [Probablement obsolète une fois l'ECS V3 implémenté, à voir]
 

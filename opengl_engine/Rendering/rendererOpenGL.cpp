@@ -638,6 +638,7 @@ const CameraComponent& RendererOpenGL::GetCamera() const
 	}
 	else
 	{
+		Locator::getLog().LogMessage_Category("The renderer doesn't have an active camera.", LogCategory::Crash);
 		throw std::runtime_error("The renderer doesn't have an active camera.");
 	}
 }

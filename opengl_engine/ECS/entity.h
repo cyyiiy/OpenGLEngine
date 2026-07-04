@@ -98,7 +98,10 @@ public:
     T& getComponent(ComponentHandle<T> handle)
     {
         if (!hasComponent(handle))
+        {
+            Locator::getLog().LogMessage_Category("Tried to get a component with a handle that doesn't belongs to this entity.", LogCategory::Crash);
             throw std::runtime_error("Tried to get a component with a handle that doesn't belongs to this entity.");
+        }
         
         return ECS::GetComponent(handle);
     }

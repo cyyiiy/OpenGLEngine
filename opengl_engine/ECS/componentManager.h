@@ -5,6 +5,8 @@
 #include "componentSubList.h"
 #include "ecsTypes.h"
 
+#include <ServiceLocator/locator.h>
+
 
 /**
  * Interface for `ComponentManager` so a list of all managers is possible (for global ECS methods such as `DeletePendings`).
@@ -80,6 +82,7 @@ public:
         
         if (slotId == SublistSize)
         {
+            Locator::getLog().LogMessage_Category("An unknown error occured while creating a component of type '" + std::string(typeid(T).name()) + "' in a sublist.", LogCategory::Crash);
             throw std::runtime_error("An unknown error occured while creating a component of type '" + std::string(typeid(T).name()) + "' in a sublist.");
         }
         
@@ -142,7 +145,10 @@ public:
         Sublist& sublist = *sublists[handle.raw.sublistId];
         
         if (sublist.generations[handle.raw.slotId] != handle.raw.generation)
+        {
+            Locator::getLog().LogMessage_Category("Tried to get a component of type '" + std::string(typeid(T).name()) + "' with an invalid handle.", LogCategory::Crash);
             throw std::runtime_error("Tried to get a component of type '" + std::string(typeid(T).name()) + "' with an invalid handle.");
+        }
         
         // `slotToPacked` allows to retrieve the packed index of the component in the sublist from the slot index in the handle
         const uint32_t packed_index = sublist.slotToPacked[handle.raw.slotId];
