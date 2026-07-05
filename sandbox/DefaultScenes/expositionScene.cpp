@@ -16,6 +16,7 @@
 #include <Audio/audioSourceComponent.h>
 #include <PhysicsAABB/boxCollisionComponent.h>
 #include <PhysicsAABB/rigidbodyComponent.h>
+#include <ECS/Gameplay/lifetimeComponent.h>
 
 
 void ExpositionScene::loadScene()
@@ -266,6 +267,19 @@ void ExpositionScene::updateScene(float dt)
 	{
 		Physics& physics = Locator::getPhysics();
 		physics.AABBSweepRaycast(whiteCube->getPosition(), cyanCube->getPosition(), Box{ Vector3::zero, Vector3::one * 0.1f }, { "solid" });
+	}
+
+	// Create an entity with a lifetime component
+	if (Input::IsKeyPressed(GLFW_KEY_KP_ADD))
+	{
+		Entity* lifetime_entity = createEntity();
+		lifetime_entity->setPosition(Vector3{ 0.0f, 1.0f, 0.0f });
+		lifetime_entity->setScale(0.2f);
+		lifetime_entity->setRotation(Quaternion{ Vector3::unitY, Maths::toRadians(45.0f) });
+		ModelRendererComponent& lifetime_model = ECS::GetComponent(lifetime_entity->addComponentByClass<ModelRendererComponent>());
+		lifetime_model.model = &AssetManager::GetModel("container");
+		LifetimeComponent& lifetime_lifetime = ECS::GetComponent(lifetime_entity->addComponentByClass<LifetimeComponent>());
+		lifetime_lifetime.lifetimeTimer = 4.0f;
 	}
 
 	// Automatic rotation of the sprite

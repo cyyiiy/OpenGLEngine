@@ -20,7 +20,7 @@
 ~ Petites améliorations ECS - en cours
 	- Faire que les fonctions qui retournent un handle en retournent un invalide au lieu d'une exception - fait
 	- Améliorer les textes d'erreur de l'ECS pour qu'elles écrivent le nom de la classe quand nécessaire - fait
-	- Ajouter un composant "lifetime" qui supprime son entité au bout d'un temps (avec un système extérieur) - en cours
+	- Ajouter un composant "lifetime" qui supprime son entité au bout d'un temps (avec un système extérieur) - fait
 	- Modifier les balles du doomlike pour utiliser ce composant
 
 ~ Refactor le model rendering

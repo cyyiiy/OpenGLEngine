@@ -5,8 +5,9 @@
 
 #include <GameplayStatics/gameplayStatics.h>
 #include <Inputs/input.h>
-#include <ECS/ecs.h>
 #include <Core/Debug/debugManager.h>
+#include <ECS/ecs.h>
+#include <ECS/Gameplay/gameplayComponentsManager.h>
 
 #include <ServiceLocator/locator.h>
 #include <Rendering/rendererOpenGL.h>
@@ -188,6 +189,7 @@ void Engine::run()
 		{
 			if (game) game->update(deltaTime);
 
+			GameplayComponentsManager::Update(deltaTime);
 			ECS::Update(deltaTime);
 
 			Locator::getPhysics().UpdatePhysics(deltaTime);

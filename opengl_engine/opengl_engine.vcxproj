@@ -150,6 +150,7 @@
     <ClCompile Include="Audio\audioSound.cpp" />
     <ClCompile Include="Audio\audioSourceComponent.cpp" />
     <ClCompile Include="Core\Debug\debugManager.cpp" />
+    <ClCompile Include="ECS\Gameplay\gameplayComponentsManager.cpp" />
     <ClCompile Include="ECS\Gameplay\gameplayTag.cpp" />
     <ClCompile Include="ECS\behaviorComponent.cpp" />
     <ClCompile Include="ECS\component.cpp" />
@@ -208,6 +209,7 @@
     <ClInclude Include="Audio\audioSourceComponent.h" />
     <ClInclude Include="Audio\audioUtils.h" />
     <ClInclude Include="Core\Debug\debugManager.h" />
+    <ClInclude Include="ECS\Gameplay\gameplayComponentsManager.h" />
     <ClInclude Include="ECS\Gameplay\gameplayTag.h" />
     <ClInclude Include="ECS\behaviorComponent.h" />
     <ClInclude Include="ECS\component.h" />
@@ -217,6 +219,7 @@
     <ClInclude Include="ECS\ecsTypes.h" />
     <ClInclude Include="ECS\entity.h" />
     <ClInclude Include="ECS\entityContainer.h" />
+    <ClInclude Include="ECS\Gameplay\lifetimeComponent.h" />
     <ClInclude Include="Events\event.h" />
     <ClInclude Include="Events\observer.h" />
     <ClInclude Include="GameplayStatics\gameplayStatics.h" />
