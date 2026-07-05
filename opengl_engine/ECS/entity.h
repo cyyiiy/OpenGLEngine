@@ -8,7 +8,7 @@
 #include "component.h"
 
 #include <Core/transform.h>
-#include <Core/Gameplay/gameplayTag.h>
+#include <ECS/Gameplay/gameplayTag.h>
 #include <ServiceLocator/locator.h>
 
 class EntityContainer;

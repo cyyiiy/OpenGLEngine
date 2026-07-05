@@ -66,7 +66,7 @@
     <ClCompile Include="Maths\vector4.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Gameplay\gameplayTag.cpp">
+    <ClCompile Include="ECS\Gameplay\gameplayTag.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="ECS\behaviorComponent.cpp">
@@ -242,7 +242,7 @@
     <ClInclude Include="Maths\vector4.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Gameplay\gameplayTag.h">
+    <ClInclude Include="ECS\Gameplay\gameplayTag.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="ECS\behaviorComponent.h">
