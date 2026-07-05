@@ -17,11 +17,11 @@
 	- Rajouter un billboard sur chaque light component visible uniquement en debug view - fait
 	- Fix la position des light components sur les lampes du doomlike mdr - fait
 
-~ Petites améliorations ECS - en cours
+~ Petites améliorations ECS - fait
 	- Faire que les fonctions qui retournent un handle en retournent un invalide au lieu d'une exception - fait
 	- Améliorer les textes d'erreur de l'ECS pour qu'elles écrivent le nom de la classe quand nécessaire - fait
 	- Ajouter un composant "lifetime" qui supprime son entité au bout d'un temps (avec un système extérieur) - fait
-	- Modifier les balles du doomlike pour utiliser ce composant
+	- Modifier les balles du doomlike pour utiliser ce composant - fait
 
 ~ Refactor le model rendering
 	- Vérifier que le bug des model noté tout en bas est bien réel (99% sur)

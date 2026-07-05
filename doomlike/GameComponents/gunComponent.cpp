@@ -17,11 +17,11 @@ void GunComponent::reset()
 {
 	if (!gunValid) return;
 
-	for (auto& active_bullet : activeBullets)
+	auto& bullets_manager = ECS::Manager<BulletComponent>();
+	bullets_manager.ForEach([](BulletComponent& bullet_component)
 	{
-		ECS::GetComponent(active_bullet).deleteBullet();
-	}
-	activeBullets.clear();
+		bullet_component.getOwner()->destroyEntity();
+	});
 
 	reloadTimer = 0.0f;
 	ammoCount = MAX_AMMO;
@@ -62,15 +62,6 @@ void GunComponent::init()
 	crosshair_sprite_comp.scale = Vector2{ 0.5f };
 }
 
-void GunComponent::exit()
-{
-	for (auto& active_bullet : activeBullets)
-	{
-		if (ECS::IsComponentHandleValid(active_bullet)) ECS::GetComponent(active_bullet).deleteBullet();
-	}
-	activeBullets.clear();
-}
-
 void GunComponent::update(float deltaTime)
 {
 	if (!gunValid) return;
@@ -101,8 +92,8 @@ void GunComponent::update(float deltaTime)
 		}
 
 		Entity* bullet_entity = GameplayStatics::GetGame()->createEntity();
-		activeBullets.push_back(bullet_entity->addComponentByClass<BulletComponent>());
-		ECS::GetComponent(activeBullets.back()).setupBullet(gun_model_comp.offset.getPosition(), bullet_rotation, bullet_direction, SHOOT_VELOCITY, BULLET_LIFETIME);
+		BulletComponent& bullet_comp = ECS::GetComponent(bullet_entity->addComponentByClass<BulletComponent>());
+		bullet_comp.setupBullet(gun_model_comp.offset.getPosition(), bullet_rotation, bullet_direction, SHOOT_VELOCITY, BULLET_LIFETIME);
 
 		// Play shoot sound
 		Locator::getAudio().InstantPlaySound2D(AssetManager::GetSound("shoot"), 0.15f);
@@ -127,22 +118,6 @@ void GunComponent::update(float deltaTime)
 			ammoCount = MAX_AMMO;
 			writeAmmoText();
 		}
-	}
-
-
-	// Delete expired bullets
-	for (int i = 0; i < activeBullets.size(); i++)
-	{
-		BulletComponent& bullet = ECS::GetComponent(activeBullets[i]);
-
-		if (!bullet.isLifetimeOver()) continue;
-
-		bullet.deleteBullet();
-
-		std::iter_swap(activeBullets.begin() + i, activeBullets.end() - 1);
-		activeBullets.pop_back();
-
-		break; // Assume that we can't create 2 bullets on the same frame so 2 bullets cannot be destroyed by time out on the same frame
 	}
 }
 

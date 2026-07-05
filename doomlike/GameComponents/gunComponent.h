@@ -7,7 +7,6 @@ class PlayerComponent;
 class ModelRendererComponent;
 class TextComponent;
 class SpriteComponent;
-class BulletComponent;
 
 
 /**
@@ -25,7 +24,6 @@ public:
 	void reset();
 
 	void init() override;
-	void exit() override;
 	void update(float dt) override;
 
 	void onPlayerTransformUpdated();
@@ -36,8 +34,6 @@ private:
 	ComponentHandle<ModelRendererComponent> gunModel;
 	ComponentHandle<TextComponent> ammoText;
 	ComponentHandle<SpriteComponent> crosshairSprite;
-
-	std::vector<ComponentHandle<BulletComponent>> activeBullets;
 
 	bool gunValid{ false };
 	int ammoCount{ 0 };

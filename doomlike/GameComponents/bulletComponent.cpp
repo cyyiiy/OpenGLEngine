@@ -5,13 +5,13 @@
 #include <Rendering/modelRendererComponent.h>
 #include <PhysicsAABB/boxCollisionComponent.h>
 #include <PhysicsAABB/rigidbodyComponent.h>
+#include <ECS/Gameplay/lifetimeComponent.h>
 
 
 void BulletComponent::setupBullet(const Vector3& spawnPos, const Quaternion& spawnRot, const Vector3& bulletDirection, const float bulletVelocity, const float bulletLifetime)
 {
 	getOwner()->setPosition(spawnPos);
 	getOwner()->setRotation(spawnRot);
-	lifetime = bulletLifetime;
 
 	ModelRendererComponent& bullet_model_comp = ECS::GetComponent(bulletModel);
 	BoxCollisionComponent& collision_comp = ECS::GetComponent(collision);
@@ -32,22 +32,10 @@ void BulletComponent::setupBullet(const Vector3& spawnPos, const Quaternion& spa
 	rigidbody_comp.onCollisionRepulse.subscribe(this, &BulletComponent::onBulletCollisionHit);
 	collision_comp.onCollisionIntersect.subscribe(this, &BulletComponent::onBulletRigidbodyHit);
 
+	LifetimeComponent& bullet_lifetime_comp = ECS::GetComponent(getOwner()->addComponentByClass<LifetimeComponent>());
+	bullet_lifetime_comp.lifetimeTimer = bulletLifetime;
+
 	getOwner()->addGameplayTag("Bullet");
-
-	setUpdateActivated(true);
-}
-
-void BulletComponent::deleteBullet()
-{
-	ECS::GetComponent(rigidbody).onCollisionRepulse.unsubscribe(this);
-	ECS::GetComponent(collision).onCollisionIntersect.unsubscribe(this);
-
-	getOwner()->destroyEntity();
-}
-
-bool BulletComponent::isLifetimeOver() const
-{
-	return lifetime <= 0.0f;
 }
 
 void BulletComponent::onBulletCollisionHit(const BoxCollisionComponent& boxCollided, const Vector3& collisionNormal)
@@ -63,7 +51,7 @@ void BulletComponent::onBulletRigidbodyHit(const RigidbodyComponent& bodyCollide
 {
 	if (bodyCollided.getOwner()->hasGameplayTag("Enemy"))
 	{
-		lifetime = 0.0f; // Allow the gun component to properly delete the bullet
+		getOwner()->destroyEntity();
 	}
 }
 
@@ -75,10 +63,5 @@ void BulletComponent::init()
 	rigidbody = getOwner()->addComponentByClass<RigidbodyComponent>();
 	ECS::GetComponent(rigidbody).associateCollision(collision);
 
-	setUpdateActivated(false); // Update will be activated once 'setupBullet' has been called
-}
-
-void BulletComponent::update(float deltaTime)
-{
-	lifetime -= deltaTime;
+	setUpdateActivated(false); // Bullets don't need the update function
 }
