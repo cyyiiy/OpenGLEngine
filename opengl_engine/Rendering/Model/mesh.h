@@ -19,8 +19,7 @@ public:
 	~Mesh() {}
 
 	int getMaterialIndex() const { return materialIndex; }
-
-	void draw(bool drawAsLines = false);
+	const VertexArray& getVertexArray() const { return vertexArray; }
 
 private:
 	VertexArray vertexArray;

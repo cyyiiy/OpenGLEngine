@@ -126,7 +126,7 @@ void VertexArray::LoadVABillboard()
 }
 
 
-void VertexArray::setActive()
+void VertexArray::setActive() const
 {
 	glBindVertexArray(VAO);
 }

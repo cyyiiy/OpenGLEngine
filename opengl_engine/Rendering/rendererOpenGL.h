@@ -68,6 +68,7 @@ private:
 	bool isCurrentCamValid();
 
 	void drawModelComponent(const class ModelRendererComponent& modelComponent, Material& materialInUsage);
+	void drawVertexArray(const class VertexArray& vertexArray, bool drawAsLines);
 
 	void useDirectionalLight(const class DirectionalLightComponent& dirLightComponent, Shader& shaderInUsage);
 	void usePointLight(const class PointLightComponent& pointLightComponent, Shader& shaderInUsage);

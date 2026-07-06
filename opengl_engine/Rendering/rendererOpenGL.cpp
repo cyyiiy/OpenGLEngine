@@ -258,6 +258,22 @@ void RendererOpenGL::drawModelComponent(const ModelRendererComponent& modelCompo
 	model->draw(materialInUsage);
 }
 
+void RendererOpenGL::drawVertexArray(const VertexArray& vertexArray, bool drawAsLines)
+{
+	vertexArray.setActive();
+
+	GLuint draw_method = drawAsLines ? GL_LINE_STRIP : GL_TRIANGLES;
+
+	if (vertexArray.getUseEBO())
+	{
+		glDrawElements(draw_method, vertexArray.getNBIndices(), GL_UNSIGNED_INT, 0);
+	}
+	else
+	{
+		glDrawArrays(draw_method, 0, vertexArray.getNBVertices());
+	}
+}
+
 void RendererOpenGL::useDirectionalLight(const DirectionalLightComponent& dirLightComponent, Shader& shaderInUsage)
 {
 	// 1. Check if the directional lights limit has been reached
@@ -395,16 +411,16 @@ void RendererOpenGL::drawBoxCollision(const BoxCollisionComponent& boxColCompone
 		Matrix4::createScale(collision_box.getHalfExtents() * 2.0f) *
 		Matrix4::createTranslation(collision_box.getCenterPoint());
 
-	// 2. Choose the debug color
+	// 2. Select the debug color
 	const Color debug_color = boxColComponent.debugIntersectedLastFrame ? Color::red : Color::green;
 
 	// 3. Set the informations in the shader
 	shaderInUsage.setMatrix4("model", model_matrix.getAsFloatPtr());
 	shaderInUsage.setVec3("color", debug_color.toVector());
 
-	// 4. Draw the debug cube mesh
-	Mesh& cube_mesh = AssetManager::GetSingleMesh("debug_cube");
-	cube_mesh.draw(true);
+	// 4. Draw the debug cube
+	VertexArray& debug_cube = AssetManager::GetVertexArray("debug_cube");
+	drawVertexArray(debug_cube, true);
 }
 
 void RendererOpenGL::drawPointLightDebug(const PointLightComponent& pointLightComponent, Shader& shaderInUsage)
@@ -601,7 +617,6 @@ void RendererOpenGL::drawSpriteComponent(const SpriteComponent& spriteComponent,
 	// 6. Unbind the sprite texture
 	glActiveTexture(GL_TEXTURE0);
 }
-
 
 
 void RendererOpenGL::SetCamera(ComponentHandle<CameraComponent> camera)

@@ -28,7 +28,7 @@ public:
 	void LoadVALine();
 	void LoadVABillboard();
 
-	void setActive();
+	void setActive() const;
 	void deleteObjects();
 
 	unsigned int getNBVertices() const { return nbVertices; }

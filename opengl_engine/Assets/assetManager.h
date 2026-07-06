@@ -1,5 +1,4 @@
 #pragma once
-#include "assetMesh.h"
 #include <Rendering/texture.h>
 #include <Rendering/shader.h>
 #include <Rendering/material.h>
@@ -75,70 +74,24 @@ public:
 
 
 // -----------------------------------------------------------------------------
-//                 Meshes
-// -----------------------------------------------------------------------------
-
-	/**
-	* Load a single mesh from handcoded vertices and stores it.
-	* @param	name		The name you want to give to this mesh in the asset storage.
-	* @param	vertices	The vertices of the mesh.
-	* @param	indices		The indices of the mesh.
-	*/
-	static void LoadSingleMesh(const std::string& name, const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices = {});
-
-	/**
-	* Load a single mesh from file and stores it.
-	* Warning: It will only load the root mesh.
-	* @param	name		The name you want to give to this mesh in the asset storage.
-	* @param	filepath	The path to the mesh file to read.
-	*/
-	static void LoadSingleMesh(const std::string& name, const std::string& filepath);
-
-	/**
-	* Load a mesh collection from file and stores it.
-	* @param	name		The name you want to give to this mesh collection in the asset storage.
-	* @param	filepath	The path to the mesh file to read.
-	*/
-	static void LoadMeshCollection(const std::string& name, const std::string& filepath);
-
-	/**
-	* Retrieve a single mesh from the asset storage.
-	* @param	name	The name of the single mesh you want to retrieve.
-	* @return			The single mesh with corresponding name (if it exists).
-	*/
-	static Mesh& GetSingleMesh(const std::string& name);
-
-	/**
-	* Retrieve a mesh collection from the asset storage.
-	* @param	name	The name of the mesh collection you want to retrieve.
-	* @return			The mesh collection with corresponding name (if it exists).
-	*/
-	static MeshCollection& GetMeshCollection(const std::string& name);
-
-	/**
-	* Delete a a single mesh from the asset storage.
-	* @param	name	The name of the a single mesh you want to delete.
-	*/
-	static void DeleteSingleMesh(const std::string& name);
-
-	/**
-	* Delete a mesh collection from the asset storage.
-	* @param	name	The name of the mesh collection you want to delete.
-	*/
-	static void DeleteMeshCollection(const std::string& name);
-
-
-
-// -----------------------------------------------------------------------------
 //                 Models
 // -----------------------------------------------------------------------------
 
 	/**
-	* Create a model and stores it.
-	* @param	name	The name you want to give to this model in the asset storage.
-	* @return			The newly created model.
+	* Load a model from file and stores it.
+	* @param	name		The name you want to give to this model in the asset storage.
+	* @param	modelPath	The path to the model file to load.
+	* @return				The newly created model.
 	*/
-	static Model& CreateModel(const std::string& name);
+	static Model& LoadModel(const std::string& name, const std::string& modelPath);
+
+	/**
+	* Create a model from raw data and stores it.
+	* @param	name			The name you want to give to this model in the asset storage.
+	* @param	rawData			The data used to create the model.
+	* @param	fillMaterial	The material used to fill the default materials of the model.
+	*/
+	static Model& CreateModelFromRawData(const std::string& name, std::vector<LoadMeshData> rawData, Material* fillMaterial);
 
 	/**
 	* Retrieve a model from the asset storage.
@@ -316,8 +269,6 @@ public:
 private:
 	static std::unordered_map<std::string, std::unique_ptr<Texture>> textures;
 	static std::unordered_map<std::string, std::unique_ptr<VertexArray>> vertexArrays;
-	static std::unordered_map<std::string, std::unique_ptr<Mesh>> meshesSingle;
-	static std::unordered_map<std::string, std::unique_ptr<MeshCollection>> meshesCollection;
 	static std::unordered_map<std::string, std::unique_ptr<Model>> models;
 	static std::unordered_map<std::string, std::unique_ptr<Shader>> shaders;
 	static std::unordered_map<std::string, std::unique_ptr<Material>> materials;

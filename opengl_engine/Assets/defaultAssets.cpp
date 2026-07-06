@@ -58,7 +58,8 @@ void DefaultAssets::LoadDefaultAssets()
 		Vertex{Vector3{-0.5f,  0.5f,  0.5f},   Vector3{ 0.0f,  1.0f,  0.0f},   Vector2{0.0f, 0.0f}},
 		Vertex{Vector3{-0.5f,  0.5f, -0.5f},   Vector3{ 0.0f,  1.0f,  0.0f},   Vector2{0.0f, 1.0f}}
 	};
-	AssetManager::LoadSingleMesh("default_cube", cube_vertices);
+	LoadMeshData cube_mesh_data{ cube_vertices, {}, 0 };
+	AssetManager::CreateModelFromRawData("default_cube", { cube_mesh_data }, nullptr);
 
 	std::vector<Vertex> plane_vertices
 	{
@@ -70,7 +71,8 @@ void DefaultAssets::LoadDefaultAssets()
 		Vertex{Vector3{-0.5f, 0.0f,  0.5f},  Vector3{ 0.0f, 1.0f, 0.0f},  Vector2{-0.5f,  0.5f}},
 		Vertex{Vector3{-0.5f, 0.0f, -0.5f},  Vector3{ 0.0f, 1.0f, 0.0f},  Vector2{-0.5f, -0.5f}}
 	};
-	AssetManager::LoadSingleMesh("default_plane", plane_vertices);
+	LoadMeshData plane_mesh_data{ plane_vertices, {}, 0 };
+	AssetManager::CreateModelFromRawData("default_plane", { plane_mesh_data }, nullptr);
 
 
 	// Default shaders (flat emissive & object lit)
@@ -106,7 +108,7 @@ void DefaultAssets::LoadEngineAssets()
 	VertexArray& va_debug_line = AssetManager::CreateVertexArray("debug_line");
 	va_debug_line.LoadVALine();
 
-	// Debug cube mesh
+	// Debug cube
 	std::vector<Vertex> cube_vertices
 	{
 		// Positions                           // Normals                      // Tex coords
@@ -152,7 +154,8 @@ void DefaultAssets::LoadEngineAssets()
 		Vertex{Vector3{-0.5f,  0.5f,  0.5f},   Vector3{ 0.0f,  1.0f,  0.0f},   Vector2{0.0f, 0.0f}},
 		Vertex{Vector3{-0.5f,  0.5f, -0.5f},   Vector3{ 0.0f,  1.0f,  0.0f},   Vector2{0.0f, 1.0f}}
 	};
-	AssetManager::LoadSingleMesh("debug_cube", cube_vertices);
+	VertexArray& va_debug_cube = AssetManager::CreateVertexArray("debug_cube");
+	va_debug_cube.LoadVAMesh(cube_vertices, {});
 
 
 	// Draw debug material and shader
