@@ -23,8 +23,8 @@
 	- Ajouter un composant "lifetime" qui supprime son entité au bout d'un temps (avec un système extérieur) - fait
 	- Modifier les balles du doomlike pour utiliser ce composant - fait
 
-~ Refactor le model rendering
-	- Vérifier que le bug des model noté tout en bas est bien réel (99% sur)
+~ Refactor le model rendering - fait
+	- Vérifier que le bug des model noté tout en bas est bien réel (99% sur) - fait
 	- Changer le système pour qu'un model soit un ou plusieurs mesh avec des indexs pour les matériaux
 	(Potentiellement avoir des matériaux par défaut sur le model - regarder comment fonctionne Unreal)
 	- Changer le model renderer component pour pouvoir setup les matériaux directement dessus
@@ -92,8 +92,5 @@
 
 
 == REFLEXIONS / PROBLEMES CONNUS ==
-
-~ Actuellement, il n'est pas possible de changer le matérial d'un model sur un renderer component sans affecter tous les renderer components qui utilisent ce model, parce que le model n'existe qu'une seule fois
--> Solution pourrait être d'enlever le système de modèle et que le renderer component contienne un pointeur vers un mesh et des pointeurs vers des matériaux ? (similaire à Unreal)
 
 ~ Réfléchir au fonctionnement du load asset des scenes, est-ce qu'il faudrait faire gaffe à l'utilisation de ram et unload genre les textures qui ne sont plus nécessaires ?

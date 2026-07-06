@@ -409,53 +409,47 @@ void RendererOpenGL::drawBoxCollision(const BoxCollisionComponent& boxColCompone
 
 void RendererOpenGL::drawPointLightDebug(const PointLightComponent& pointLightComponent, Shader& shaderInUsage)
 {
-	// 1. Check if the light component is active
-	if (!pointLightComponent.active) return;
-
-	// 2. Compute the point light transform
+	// 1. Compute the point light transform
 	const Matrix4 point_light_transform =
 		Matrix4::createTranslation(pointLightComponent.offset) *
 		pointLightComponent.getOwner()->getModelMatrix();
 
-	// 3. Bind the debug point light texture
+	// 2. Bind the debug point light texture
 	glActiveTexture(GL_TEXTURE0);
 	AssetManager::GetTexture("debug_icon_point_light").use();
 
-	// 4. Set the informations in the shader
+	// 3. Set the informations in the shader
 	shaderInUsage.setMatrix4("billboardTransform", point_light_transform.getAsFloatPtr());
 	shaderInUsage.setVec2("geomScale", 0.35f, 0.35f);
-	shaderInUsage.setVec3("tintColor", pointLightComponent.lightColor);
+	shaderInUsage.setVec3("tintColor", pointLightComponent.active ? pointLightComponent.lightColor : Color::black);
 
-	// 5. Draw the billboard
+	// 4. Draw the billboard
 	glDrawArrays(GL_POINTS, 0, 1);
 
-	// 6. Unbind the billboard texture
+	// 5. Unbind the billboard texture
 	glActiveTexture(GL_TEXTURE0);
 }
 
-void RendererOpenGL::drawSpotLightDebug(const SpotLightComponent& spotLightComponenent, Shader& shaderInUsage)
+void RendererOpenGL::drawSpotLightDebug(const SpotLightComponent& spotLightComponent, Shader& shaderInUsage)
 {
-	// 1. Check if the light component is active
-	if (!spotLightComponenent.active) return;
-
-	// 2. Compute the spot light transform
+	// 1. Compute the spot light transform
 	const Matrix4 spot_light_transform =
-		Matrix4::createTranslation(spotLightComponenent.offset) *
-		spotLightComponenent.getOwner()->getModelMatrix();
+		Matrix4::createTranslation(spotLightComponent.offset) *
+		spotLightComponent.getOwner()->getModelMatrix();
 
-	// 3. Bind the debug spot light texture
+	// 2. Bind the debug spot light texture
 	glActiveTexture(GL_TEXTURE0);
 	AssetManager::GetTexture("debug_icon_spot_light").use();
 
-	// 4. Set the informations in the shader
+	// 3. Set the informations in the shader
 	shaderInUsage.setMatrix4("billboardTransform", spot_light_transform.getAsFloatPtr());
 	shaderInUsage.setVec2("geomScale", 0.35f, 0.35f);
-	shaderInUsage.setVec3("tintColor", spotLightComponenent.lightColor);
+	shaderInUsage.setVec3("tintColor", spotLightComponent.active ? spotLightComponent.lightColor : Color::black);
 
-	// 5. Draw the billboard
+	// 4. Draw the billboard
 	glDrawArrays(GL_POINTS, 0, 1);
 
-	// 6. Unbind the billboard texture
+	// 5. Unbind the billboard texture
 	glActiveTexture(GL_TEXTURE0);
 }
 
