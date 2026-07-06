@@ -1,73 +1,32 @@
 #include "model.h"
-#include <Assets/assetManager.h>
+#include <ServiceLocator/locator.h>
 
-Model::Model()
+
+Model::Model(std::vector<LoadMeshData> loadDatas, Material* fillMaterial)
 {
-}
-
-Model::~Model()
-{
-}
-
-void Model::draw(Material& materialInUsage)
-{
-	//  assume the shader is already in use (the rendering process should have done it)
-
-	for (auto& mesh_material : meshMaterials)
+	for (auto& mesh_data : loadDatas)
 	{
-		if (*mesh_material.material != materialInUsage) continue;
-
-		mesh_material.mesh.draw();
+		meshes[mesh_data.matId].emplace_back(mesh_data);
+		defaultMaterials[mesh_data.matId] = fillMaterial;
 	}
 }
 
-
-void Model::addMesh(Mesh& mesh, Material& material)
+Model::Model(const Model& other) : meshes(other.meshes), defaultMaterials(other.defaultMaterials)
 {
-	meshMaterials.push_back(MeshMaterial{ mesh, &material });
 }
 
-void Model::addMeshes(MeshCollection& meshes, MaterialCollection& materials)
+void Model::changeDefaultMaterial(int materialId, Material* newMaterial)
 {
-	for (int i = 0; i < meshes.collection.size(); i++)
+	if (!doesMaterialIndexExists(materialId))
 	{
-		int mesh_mat_id = meshes.collection[i]->getMaterialIndex();
-		if (mesh_mat_id < materials.collection.size()) // mesh material ID exist in the material collection
-		{
-			meshMaterials.push_back(MeshMaterial{ *meshes.collection[i], materials.collection[mesh_mat_id] });
-		}
-		else
-		{
-			meshMaterials.push_back(MeshMaterial{ *meshes.collection[i], &AssetManager::GetMaterial("null_material") });
-		}
+		Locator::getLog().LogMessage_Category("Model: Tried to change the default material of a material index that doesn't exist on this model.", LogCategory::Warning);
+		return;
 	}
+
+	defaultMaterials[materialId] = newMaterial;
 }
 
-void Model::addMeshes(MeshCollection& meshes, Material& material)
+bool Model::doesMaterialIndexExists(int materialId) const
 {
-	for (int i = 0; i < meshes.collection.size(); i++)
-	{
-		meshMaterials.push_back(MeshMaterial{ *meshes.collection[i], &material });
-	}
-}
-
-void Model::changeMaterial(int materialId, Material& newMaterial)
-{
-	for (int i = 0; i < meshMaterials.size(); i++)
-	{
-		if (meshMaterials[i].mesh.getMaterialIndex() == materialId)
-		{
-			meshMaterials[i].material = &newMaterial;
-		}
-	}
-}
-
-bool Model::useMaterial(Material& material)
-{
-	for (auto& mesh_material : meshMaterials)
-	{
-		if (*mesh_material.material == material) return true;
-	}
-
-	return false;
+	return meshes.find(materialId) != meshes.end();
 }
