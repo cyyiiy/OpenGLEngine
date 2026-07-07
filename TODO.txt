@@ -28,7 +28,7 @@
 	- Changer le système pour qu'un model soit un ou plusieurs mesh avec des indexs pour les matériaux - fait
 	(Potentiellement avoir des matériaux par défaut sur le model - regarder comment fonctionne Unreal)
 	- Changer le model renderer component pour pouvoir setup les matériaux directement dessus - fait
-	- Modifier les différents projets pour utiliser ce nouveau système
+	- Modifier les différents projets pour utiliser ce nouveau système - en cours
 
 
 == MOYEN TERME == (possible pour fin 2026 ?)

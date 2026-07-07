@@ -29,35 +29,41 @@ void ExpositionScene::loadScene()
 	Entity* floor = createEntity();
 	floor->setScale(10.0f);
 	ModelRendererComponent& floor_model = ECS::GetComponent(floor->addComponentByClass<ModelRendererComponent>());
-	floor_model.model = &AssetManager::GetModel("floor_wood");
+	floor_model.setModel(&AssetManager::GetModel("default_plane"));
+	floor_model.setMaterial(&AssetManager::GetMaterial("floor_wood"), 0);
 
 	whiteCube = createEntity();
 	whiteCube->setPosition(Vector3{ -2.0f, 0.4f, 1.5f });
 	whiteCube->setScale(0.2f);
 	ModelRendererComponent& white_cube_model = ECS::GetComponent(whiteCube->addComponentByClass<ModelRendererComponent>());
-	white_cube_model.model = &AssetManager::GetModel("white_emissive_cube");
+	white_cube_model.setModel(&AssetManager::GetModel("default_cube"));
+	white_cube_model.setMaterial(&AssetManager::GetMaterial("flat_emissive_white"), 0);
 
 	cyanCube = createEntity();
 	cyanCube->setPosition(Vector3{ 1.0f, 0.5f, 2.5f });
 	cyanCube->setScale(0.2f);
 	ModelRendererComponent& cyan_cube_model = ECS::GetComponent(cyanCube->addComponentByClass<ModelRendererComponent>());
-	cyan_cube_model.model = &AssetManager::GetModel("cyan_emissive_cube");
+	cyan_cube_model.setModel(&AssetManager::GetModel("default_cube"));
+	cyan_cube_model.setMaterial(&AssetManager::GetMaterial("flat_emissive_cyan"), 0);
 
 	Entity* crate = createEntity();
 	crate->setPosition(Vector3{ 1.0f, 0.5f, 2.5f });
-	ModelRendererComponent& crate_model = ECS::GetComponent(crate->addComponentByClass<ModelRendererComponent>());
-	crate_model.model = &AssetManager::GetModel("container");
+	crateModel = crate->addComponentByClass<ModelRendererComponent>();
+	ModelRendererComponent& crate_model = ECS::GetComponent(crateModel);
+	crate_model.setModel(&AssetManager::GetModel("default_cube"));
+	crate_model.setMaterial(&AssetManager::GetMaterial("container"), 0);
 
 	gravityCrate = createEntity();
 	gravityCrate->setPosition(Vector3{ 2.0f, 5.0f, -1.5f });
 	ModelRendererComponent& gravity_crate_model = ECS::GetComponent(gravityCrate->addComponentByClass<ModelRendererComponent>());
-	gravity_crate_model.model = &AssetManager::GetModel("container");
+	gravity_crate_model.setModel(&AssetManager::GetModel("default_cube"));
+	gravity_crate_model.setMaterial(&AssetManager::GetMaterial("container"), 0);
 
 	Entity* backpack = createEntity();
 	backpack->setPosition(Vector3{ -1.0f, 0.5f, -2.5f });
 	backpack->setScale(0.002f);
 	ModelRendererComponent& backpack_model = ECS::GetComponent(backpack->addComponentByClass<ModelRendererComponent>());
-	backpack_model.model = &AssetManager::GetModel("backpack");
+	backpack_model.setModel(&AssetManager::GetModel("backpack"));
 
 
 	// Billboard
@@ -277,9 +283,19 @@ void ExpositionScene::updateScene(float dt)
 		lifetime_entity->setScale(0.2f);
 		lifetime_entity->setRotation(Quaternion{ Vector3::unitY, Maths::toRadians(45.0f) });
 		ModelRendererComponent& lifetime_model = ECS::GetComponent(lifetime_entity->addComponentByClass<ModelRendererComponent>());
-		lifetime_model.model = &AssetManager::GetModel("container");
+		lifetime_model.setModel(&AssetManager::GetModel("default_cube"));
+		lifetime_model.setMaterial(&AssetManager::GetMaterial("container"), 0);
 		LifetimeComponent& lifetime_lifetime = ECS::GetComponent(lifetime_entity->addComponentByClass<LifetimeComponent>());
 		lifetime_lifetime.lifetimeTimer = 4.0f;
+	}
+
+	// Change the material of the crate
+	if (Input::IsKeyPressed(GLFW_KEY_KP_SUBTRACT))
+	{
+		ModelRendererComponent& crate_model_comp = ECS::GetComponent(crateModel);
+		useMatrixMaterial = !useMatrixMaterial;
+		const std::string material_name = useMatrixMaterial ? "container_matrix" : "container";
+		crate_model_comp.setMaterial(&AssetManager::GetMaterial(material_name), 0);
 	}
 
 	// Automatic rotation of the sprite

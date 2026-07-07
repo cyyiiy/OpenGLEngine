@@ -22,6 +22,7 @@ void ExpositionGame::loadGameAssets()
 	// Load textures and materials
 	AssetManager::LoadTexture("container_diffuse", "container2.png", false);
 	AssetManager::LoadTexture("container_specular", "container2_specular.png", false);
+	AssetManager::LoadTexture("matrix_emissive", "matrix.jpg", false);
 
 	AssetManager::LoadTexture("backpack_diffuse", "backpack/backpack_basecolor.jpg", false);
 	AssetManager::LoadTexture("backpack_specular", "backpack/backpack_specular.jpg", false);
@@ -36,6 +37,12 @@ void ExpositionGame::loadGameAssets()
 	container_mat.addTexture(&AssetManager::GetTexture("container_specular"), TextureType::Specular);
 	container_mat.addTexture(&AssetManager::GetTexture("default_black"), TextureType::Emissive);
 	container_mat.addParameter("material.shininess", 32.0f);
+
+	Material& container_matrix_mat = AssetManager::CreateMaterial("container_matrix", AssetManager::GetShader("lit_object"));
+	container_matrix_mat.addTexture(&AssetManager::GetTexture("container_diffuse"), TextureType::Diffuse);
+	container_matrix_mat.addTexture(&AssetManager::GetTexture("container_specular"), TextureType::Specular);
+	container_matrix_mat.addTexture(&AssetManager::GetTexture("matrix_emissive"), TextureType::Emissive);
+	container_matrix_mat.addParameter("material.shininess", 32.0f);
 
 	Material& backpack_mat = AssetManager::CreateMaterial("backpack", AssetManager::GetShader("lit_object"));
 	backpack_mat.addTexture(&AssetManager::GetTexture("backpack_diffuse"), TextureType::Diffuse);
@@ -59,14 +66,7 @@ void ExpositionGame::loadGameAssets()
 
 
 	// Load models 
-	AssetManager::CreateModel("container").addMesh(AssetManager::GetSingleMesh("default_cube"), AssetManager::GetMaterial("container"));
-	AssetManager::LoadMeshCollection("backpack", "backpack/backpack.fbx");
-	AssetManager::CreateModel("backpack").addMeshes(AssetManager::GetMeshCollection("backpack"), AssetManager::GetMaterial("backpack"));
-
-	AssetManager::CreateModel("floor_wood").addMesh(AssetManager::GetSingleMesh("default_plane"), AssetManager::GetMaterial("floor_wood"));
-
-	AssetManager::CreateModel("white_emissive_cube").addMesh(AssetManager::GetSingleMesh("default_cube"), AssetManager::GetMaterial("flat_emissive_white"));
-	AssetManager::CreateModel("cyan_emissive_cube").addMesh(AssetManager::GetSingleMesh("default_cube"), AssetManager::GetMaterial("flat_emissive_cyan"));
+	AssetManager::LoadModel("backpack", "backpack/backpack.fbx", &AssetManager::GetMaterial("backpack"));
 
 
 	// Load font
