@@ -18,7 +18,16 @@ void ShapePoint::draw(Shader& shader) const
 	shader.setMatrix4("model", point_model_matrix.getAsFloatPtr());
 	shader.setVec3("color", shapeColor);
 
-	// 3. Draw the point mesh (it's a cube)
-	Mesh& point_mesh = AssetManager::GetSingleMesh("debug_cube");
-	point_mesh.draw(false);
+	// 3. Draw the point vertex array (it's a cube)
+	VertexArray& cube_va = AssetManager::GetVertexArray("debug_cube");
+	cube_va.setActive();
+
+	if (cube_va.getUseEBO())
+	{
+		glDrawElements(GL_TRIANGLES, cube_va.getNBIndices(), GL_UNSIGNED_INT, 0);
+	}
+	else
+	{
+		glDrawArrays(GL_TRIANGLES, 0, cube_va.getNBVertices());
+	}
 }
