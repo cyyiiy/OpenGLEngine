@@ -8,6 +8,8 @@
 #include <unordered_map>
 #include <string>
 
+typedef std::uint32_t MaterialUniqueID;
+
 
 enum class TextureType : uint8_t
 {
@@ -48,9 +50,11 @@ public:
 	bool operator==(const Material& other) const;
 	bool operator!=(const Material& other) const;
 
+	MaterialUniqueID getUniqueID() const { return uniqueID; }
+
 
 private:
-	uint32_t uniqueID{ 0 };
+	MaterialUniqueID uniqueID{ 0 };
 
 	Shader& shader;
 	std::unordered_map<TextureType, std::vector<Texture*>> textures;
@@ -59,19 +63,4 @@ private:
 	std::unordered_map<std::string, int> intParameters;
 	std::unordered_map<std::string, float> floatParameters;
 	std::unordered_map<std::string, Vector3> vector3Parameters;
-};
-
-
-/**
-* Material collections does not "possess" the materials.
-* If a material from the collection is modified (by adding a parameter or a texture for exemple), all collections that include this material will be modified.
-*/
-struct MaterialCollection
-{
-	std::vector<Material*> collection{};
-
-	MaterialCollection() {}
-	MaterialCollection(const std::vector<Material*>& collection_) : collection(collection_) {}
-	MaterialCollection(const MaterialCollection&) = delete;
-	MaterialCollection& operator=(const MaterialCollection&) = delete;
 };
