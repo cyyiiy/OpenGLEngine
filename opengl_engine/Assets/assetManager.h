@@ -79,11 +79,12 @@ public:
 
 	/**
 	* Load a model from file and stores it.
-	* @param	name		The name you want to give to this model in the asset storage.
-	* @param	modelPath	The path to the model file to load.
+	* @param	name			The name you want to give to this model in the asset storage.
+	* @param	modelPath		The path to the model file to load.
+	* @param	fillMaterial	The material used to fill the default materials of the model.
 	* @return				The newly created model.
 	*/
-	static Model& LoadModel(const std::string& name, const std::string& modelPath);
+	static Model& LoadModel(const std::string& name, const std::string& modelPath, Material* fillMaterial);
 
 	/**
 	* Create a model from raw data and stores it.
@@ -149,26 +150,11 @@ public:
 	static Material& CreateMaterial(const std::string& name, Shader& shaderUsed);
 
 	/**
-	* Create a material collection in the storage.
-	* @param	name				The name you want to give to this material collection in the asset storage.
-	* @param	materialCollection	The materials to set in this collection.
-	* @return						The newly created material collection.
-	*/
-	static MaterialCollection& CreateMaterialCollection(const std::string& name, const std::vector<Material*>& materialCollection);
-
-	/**
 	* Retrieve a material from the asset storage.
 	* @param	name	The name of the material you want to retrieve.
 	* @return			The material with corresponding name (if it exists).
 	*/
 	static Material& GetMaterial(const std::string& name);
-
-	/**
-	* Retrieve a material collection from the asset storage.
-	* @param	name	The name of the material collection you want to retrieve.
-	* @return			The material collection with corresponding name (if it exists).
-	*/
-	static MaterialCollection& GetMaterialCollection(const std::string& name);
 
 	/**
 	* Delete a material from the asset storage.
@@ -272,7 +258,6 @@ private:
 	static std::unordered_map<std::string, std::unique_ptr<Model>> models;
 	static std::unordered_map<std::string, std::unique_ptr<Shader>> shaders;
 	static std::unordered_map<std::string, std::unique_ptr<Material>> materials;
-	static std::unordered_map<std::string, std::unique_ptr<MaterialCollection>> materialsCollection;
 	static std::unordered_map<std::string, std::unique_ptr<Font>> fonts;
 	static std::unordered_map<std::string, std::unique_ptr<AudioSound>> sounds;
 	static std::unordered_map<std::string, AudioCollisionOcclusion> audioCollisionTypes;

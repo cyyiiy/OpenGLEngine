@@ -11,8 +11,8 @@
 
 namespace MeshLoader
 {
-	static std::vector<LoadMeshData> LoadMeshes(const std::string& meshesPath);
-	static void ProcessAssimpNode(aiNode* node, const aiScene* scene, std::vector<LoadMeshData>& meshesDatas);
-	static LoadMeshData ProcessAssimpMesh(aiMesh* mesh, aiNode* node, const aiScene* scene);
-	static aiMatrix4x4 RetrieveAssimpParentTransform(aiNode* node);
+	std::vector<LoadMeshData> LoadMeshes(const std::string& meshesPath);
+	void ProcessAssimpNode(aiNode* node, const aiScene* scene, std::vector<LoadMeshData>& meshesDatas);
+	LoadMeshData ProcessAssimpMesh(aiMesh* mesh, aiNode* node, const aiScene* scene);
+	aiMatrix4x4 RetrieveAssimpParentTransform(aiNode* node);
 };
