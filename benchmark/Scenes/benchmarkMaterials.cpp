@@ -15,7 +15,7 @@ const float CAMERA_SPEED = 0.3f;
 
 void BenchmarkMaterials::loadScene()
 {
-	// Create 729 unique materials & models
+	// Create 729 unique materials
 	// =========================================
 	for (int r = 0; r < 9; r++)
 	{
@@ -30,9 +30,6 @@ void BenchmarkMaterials::loadScene()
 				const Color material_color = Color{ 10 + 29 * r, 10 + 29 * g, 10 + 29 * b, 255 };
 				Material& material = AssetManager::CreateMaterial(material_name, AssetManager::GetShader("flat_emissive"));
 				material.addParameter("emissive", material_color.toVector());
-
-				const std::string model_name = "model" + name_suffix.str();
-				AssetManager::CreateModel(model_name).addMesh(AssetManager::GetSingleMesh("default_cube"), material);
 			}
 		}
 	}
@@ -61,9 +58,12 @@ void BenchmarkMaterials::loadScene()
 				Entity* cube = createEntity();
 				cube->setPosition(Vector3{ (x - 4) * 4.0f, (y - 4) * 4.0f, (z - 4) * 4.0f });
 
-				std::stringstream model_name;
-				model_name << "model_" << x << "_" << y << "_" << z;
-				ECS::GetComponent(cube->addComponentByClass<ModelRendererComponent>()).model = &AssetManager::GetModel(model_name.str());
+				std::stringstream material_name;
+				material_name << "material_" << x << "_" << y << "_" << z;
+
+				ModelRendererComponent& cube_model = ECS::GetComponent(cube->addComponentByClass<ModelRendererComponent>());
+				cube_model.setModel(&AssetManager::GetModel("default_cube"));
+				cube_model.setMaterial(&AssetManager::GetMaterial(material_name.str()), 0);
 			}
 		}
 	}
@@ -71,7 +71,7 @@ void BenchmarkMaterials::loadScene()
 
 void BenchmarkMaterials::unloadScene()
 {
-	// Delete the materials and models
+	// Delete the materials
 	for (int r = 0; r < 9; r++)
 	{
 		for (int g = 0; g < 9; g++)
@@ -82,9 +82,6 @@ void BenchmarkMaterials::unloadScene()
 				name_suffix << "_" << r << "_" << g << "_" << b;
 
 				const std::string material_name = "material" + name_suffix.str();
-				const std::string model_name = "model" + name_suffix.str();
-
-				AssetManager::DeleteModel(model_name);
 				AssetManager::DeleteMaterial(material_name);
 			}
 		}

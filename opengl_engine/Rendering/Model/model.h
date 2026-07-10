@@ -1,59 +1,32 @@
 #pragma once
 #include "mesh.h"
 #include <Rendering/material.h>
-
 #include <unordered_map>
 #include <vector>
-
-
-struct MeshMaterial
-{
-	Mesh& mesh;
-	Material* material;
-};
+#include <memory>
 
 
 class Model
 {
 public:
-	Model();
-	~Model();
-
-	Model(const Model&) = delete;
+	Model(std::vector<LoadMeshData> loadDatas, Material* fillMaterial);
+	Model(const Model& other);
 	Model& operator=(const Model&) = delete;
+	~Model() {}
 
-	/**
-	* Draw the model.
-	* This function is called by the rendering sequence, do not call it manually.
-	*/
-	void draw(Material& materialInUsage);
+	/** Change a default material of the model. Note: This doesn't affect the components that already use this model. */
+	void changeDefaultMaterial(int materialId, Material* newMaterial);
 
-	/**
-	* Add a single mesh to a model with a material.
-	*/
-	void addMesh(Mesh& mesh, Material& material);
+	/** Get all the meshes of the model that uses the given material id. */
+	const std::vector<std::shared_ptr<Mesh>> getMeshesOfMaterialId(int materialId) const;
 
-	/**
-	* Add a collection of meshes to a model with a collection of materials.
-	*/
-	void addMeshes(MeshCollection& meshes, MaterialCollection& materials);
+	/** Return the default materials of the model. */
+	const std::unordered_map<int, Material*>& getDefaultMaterials() const;
 
-	/**
-	* Add a collection of meshes to a model with the same material for all.
-	*/
-	void addMeshes(MeshCollection& meshes, Material& material);
-
-	/**
-	* Change the material of meshes that uses this material ID. 
-	*/
-	void changeMaterial(int materialId, Material& newMaterial);
-
-	/**
-	* Return true if the model uses this material for at least one of its meshes.
-	*/
-	bool useMaterial(Material& material);
+	/** Check if the given material index exists on this model. */
+	bool doesMaterialIndexExists(int materialId) const;
 
 private:
-	std::vector<MeshMaterial> meshMaterials;
+	std::unordered_map<int, std::vector<std::shared_ptr<Mesh>>> meshes;
+	std::unordered_map<int, Material*> defaultMaterials;
 };
-

@@ -95,28 +95,13 @@ void DoomlikeGame::loadGameAssets()
 	load_time = glfwGetTime();
 
 
-	// Load meshes and models
-	AssetManager::LoadMeshCollection("taxi", "taxi/taxi.fbx");
-	AssetManager::LoadMeshCollection("enemy", "doomlike/enemy/enemy.obj");
-	AssetManager::LoadMeshCollection("bullet", "doomlike/bullet/bullet.fbx");
-	AssetManager::LoadMeshCollection("gun", "doomlike/gun/gun.obj");
+	// Load models
+	AssetManager::LoadModel("taxi", "taxi/taxi.fbx", &AssetManager::GetMaterial("taxi"));
+	AssetManager::LoadModel("enemy", "doomlike/enemy/enemy.obj", &AssetManager::GetMaterial("enemy"));
+	AssetManager::LoadModel("bullet", "doomlike/bullet/bullet.fbx", &AssetManager::GetMaterial("bullet"));
+	AssetManager::LoadModel("gun", "doomlike/gun/gun.obj", &AssetManager::GetMaterial("gun"));
 
-	AssetManager::CreateModel("crate");
-	AssetManager::GetModel("crate").addMesh(AssetManager::GetSingleMesh("default_cube"), AssetManager::GetMaterial("crate"));
-
-	AssetManager::CreateModel("taxi");
-	AssetManager::GetModel("taxi").addMeshes(AssetManager::GetMeshCollection("taxi"), AssetManager::GetMaterial("taxi"));
-
-	AssetManager::CreateModel("enemy");
-	AssetManager::GetModel("enemy").addMeshes(AssetManager::GetMeshCollection("enemy"), AssetManager::GetMaterial("enemy"));
-
-	AssetManager::CreateModel("bullet");
-	AssetManager::GetModel("bullet").addMeshes(AssetManager::GetMeshCollection("bullet"), AssetManager::GetMaterial("bullet"));
-
-	AssetManager::CreateModel("gun");
-	AssetManager::GetModel("gun").addMeshes(AssetManager::GetMeshCollection("gun"), AssetManager::GetMaterial("gun"));
-
-	if (DEBUG) log.LogMessage_Category("Doomlike: Load meshes & create models time: " + std::to_string(glfwGetTime() - load_time), LogCategory::Info);
+	if (DEBUG) log.LogMessage_Category("Doomlike: Load models time: " + std::to_string(glfwGetTime() - load_time), LogCategory::Info);
 	load_time = glfwGetTime();
 
 

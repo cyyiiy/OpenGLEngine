@@ -33,7 +33,9 @@ void BenchmarkMovement::loadScene()
 	// Create floor
 	Entity* floor = createEntity();
 	floor->setScale(100.0f);
-	ECS::GetComponent(floor->addComponentByClass<ModelRendererComponent>()).model = &AssetManager::GetModel("floor");
+	ModelRendererComponent& floor_model = ECS::GetComponent(floor->addComponentByClass<ModelRendererComponent>());
+	floor_model.setModel(&AssetManager::GetModel("default_plane"));
+	floor_model.setMaterial(&AssetManager::GetMaterial("floor"), 0);
 
 	// Create 400 wooden chests
 	for (int x = 0; x < 20; x++)
@@ -45,7 +47,7 @@ void BenchmarkMovement::loadScene()
 			Entity* chest = createEntity();
 			chest->setPosition(Vector3{ (x - 9.5f) * 5.0f, 0.0f, (z - 9.5f) * 5.0f });
 			chest->setScale(0.1f);
-			ECS::GetComponent(chest->addComponentByClass<ModelRendererComponent>()).model = &AssetManager::GetModel("woodenchest");
+			ECS::GetComponent(chest->addComponentByClass<ModelRendererComponent>()).setModel(&AssetManager::GetModel("woodenchest"));
 			ECS::GetComponent(chest->addComponentByClass<BenchmarkComponentMovement>()).initializeTimer(timer, MovementMode::Wave);
 		}
 	}

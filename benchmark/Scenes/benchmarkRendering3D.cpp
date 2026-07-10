@@ -38,7 +38,9 @@ void BenchmarkRendering3D::loadScene()
 	// Create floor
 	Entity* floor = createEntity();
 	floor->setScale(100.0f);
-	ECS::GetComponent(floor->addComponentByClass<ModelRendererComponent>()).model = &AssetManager::GetModel("floor");
+	ModelRendererComponent& floor_model = ECS::GetComponent(floor->addComponentByClass<ModelRendererComponent>());
+	floor_model.setModel(&AssetManager::GetModel("default_plane"));
+	floor_model.setMaterial(&AssetManager::GetMaterial("floor"), 0);
 
 	// Create 400 wooden chests
 	for (int x = 0; x < 20; x++)
@@ -48,7 +50,7 @@ void BenchmarkRendering3D::loadScene()
 			Entity* chest = createEntity();
 			chest->setPosition(Vector3{ (x - 9.5f) * 5.0f, 1.0f, (z - 9.5f) * 5.0f });
 			chest->setScale(0.1f);
-			ECS::GetComponent(chest->addComponentByClass<ModelRendererComponent>()).model = &AssetManager::GetModel("woodenchest");
+			ECS::GetComponent(chest->addComponentByClass<ModelRendererComponent>()).setModel(&AssetManager::GetModel("woodenchest"));
 		}
 	}
 
@@ -60,7 +62,7 @@ void BenchmarkRendering3D::loadScene()
 			Entity* statue = createEntity();
 			statue->setPosition(Vector3{ (x - 4) * 10.0f, 0.0f, (z - 4) * 10.0f });
 			statue->setScale(0.03f);
-			ECS::GetComponent(statue->addComponentByClass<ModelRendererComponent>()).model = &AssetManager::GetModel("romanstatue");
+			ECS::GetComponent(statue->addComponentByClass<ModelRendererComponent>()).setModel(&AssetManager::GetModel("romanstatue"));
 		}
 	}
 

@@ -1,32 +1,27 @@
 #pragma once
 #include "vertexArray.h"
-#include <memory>
+
+
+struct LoadMeshData
+{
+	std::vector<Vertex> vertices{};
+	std::vector<unsigned int> indices{};
+	int matId{ 0 };
+};
 
 
 class Mesh
 {
 public:
-	Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices = {}, const int matId = 0);
-	Mesh();
-	Mesh(const Mesh& other) = delete;
+	Mesh(LoadMeshData meshData);
+	Mesh(const Mesh& other);
 	Mesh& operator=(const Mesh&) = delete;
-	~Mesh();
+	~Mesh() {}
 
 	int getMaterialIndex() const { return materialIndex; }
-
-	void draw(bool drawAsLines = false);
+	const VertexArray& getVertexArray() const { return vertexArray; }
 
 private:
 	VertexArray vertexArray;
 	int materialIndex;
-};
-
-
-struct MeshCollection
-{
-	std::vector<std::unique_ptr<Mesh>> collection{};
-
-	MeshCollection() {}
-	MeshCollection(const MeshCollection&) = delete;
-	MeshCollection& operator=(const MeshCollection&) = delete;
 };

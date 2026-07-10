@@ -44,7 +44,7 @@ void GunComponent::init()
 
 	gunModel = entity->addComponentByClass<ModelRendererComponent>();
 	ModelRendererComponent& gun_model_comp = ECS::GetComponent(gunModel);
-	gun_model_comp.model = &AssetManager::GetModel("gun");
+	gun_model_comp.setModel(&AssetManager::GetModel("gun"));
 	gun_model_comp.ignoreOwnerTransform = true;
 	gun_model_comp.offset.setScale(0.1f);
 

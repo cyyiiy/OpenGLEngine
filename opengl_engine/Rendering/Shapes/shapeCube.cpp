@@ -18,7 +18,16 @@ void ShapeCube::draw(Shader& shader) const
 	shader.setMatrix4("model", box_model_matrix.getAsFloatPtr());
 	shader.setVec3("color", shapeColor);
 
-	// 3. Draw the cube mesh
-	Mesh& cube_mesh = AssetManager::GetSingleMesh("debug_cube");
-	cube_mesh.draw(true);
+	// 3. Draw the cube vertex array
+	VertexArray& cube_va = AssetManager::GetVertexArray("debug_cube");
+	cube_va.setActive();
+
+	if (cube_va.getUseEBO())
+	{
+		glDrawElements(GL_LINE_STRIP, cube_va.getNBIndices(), GL_UNSIGNED_INT, 0);
+	}
+	else
+	{
+		glDrawArrays(GL_LINE_STRIP, 0, cube_va.getNBVertices());
+	}
 }

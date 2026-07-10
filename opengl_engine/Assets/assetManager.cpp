@@ -1,5 +1,6 @@
 #include "assetManager.h"
-#include "ServiceLocator/locator.h"
+#include "MeshModel/modelLoader.h"
+#include <ServiceLocator/locator.h>
 
 
 
@@ -9,12 +10,9 @@
 
 std::unordered_map<std::string, std::unique_ptr<Texture>> AssetManager::textures;
 std::unordered_map<std::string, std::unique_ptr<VertexArray>> AssetManager::vertexArrays;
-std::unordered_map<std::string, std::unique_ptr<Mesh>> AssetManager::meshesSingle;
-std::unordered_map<std::string, std::unique_ptr<MeshCollection>> AssetManager::meshesCollection;
 std::unordered_map<std::string, std::unique_ptr<Model>> AssetManager::models;
 std::unordered_map<std::string, std::unique_ptr<Shader>> AssetManager::shaders;
 std::unordered_map<std::string, std::unique_ptr<Material>> AssetManager::materials;
-std::unordered_map<std::string, std::unique_ptr<MaterialCollection>> AssetManager::materialsCollection;
 std::unordered_map<std::string, std::unique_ptr<Font>> AssetManager::fonts;
 std::unordered_map<std::string, std::unique_ptr<AudioSound>> AssetManager::sounds;
 std::unordered_map<std::string, AudioCollisionOcclusion> AssetManager::audioCollisionTypes;
@@ -101,102 +99,22 @@ void AssetManager::DeleteVertexArray(const std::string& name)
 
 
 // --------------------------------------------------------------
-//            Meshes
-// --------------------------------------------------------------
-
-void AssetManager::LoadSingleMesh(const std::string& name, const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices)
-{
-	if (meshesSingle.find(name) != meshesSingle.end())
-	{
-		Locator::getLog().LogMessage_Category("Asset Manager: Tried to load a single mesh with a name that already exists. Name is " + name + ".", LogCategory::Error);
-		return;
-	}
-
-	meshesSingle.emplace(name, std::make_unique<Mesh>(vertices, indices));
-}
-
-void AssetManager::LoadSingleMesh(const std::string& name, const std::string& filepath)
-{
-	if (meshesSingle.find(name) != meshesSingle.end())
-	{
-		Locator::getLog().LogMessage_Category("Asset Manager: Tried to load a single mesh with a name that already exists. Name is " + name + ".", LogCategory::Error);
-		return;
-	}
-
-	LoadMeshData mesh_data = AssetMesh::LoadSingleMesh(filepath);
-	meshesSingle.emplace(name, std::make_unique<Mesh>(mesh_data.vertices, mesh_data.indices, mesh_data.matId));
-}
-
-void AssetManager::LoadMeshCollection(const std::string& name, const std::string& filepath)
-{
-	if (meshesCollection.find(name) != meshesCollection.end())
-	{
-		Locator::getLog().LogMessage_Category("Asset Manager: Tried to load a mesh collection with a name that already exists. Name is " + name + ".", LogCategory::Error);
-		return;
-	}
-
-	meshesCollection.emplace(name, std::make_unique<MeshCollection>());
-	MeshCollection& mesh_collection = *meshesCollection[name];
-
-	std::vector<LoadMeshData> meshes_datas = AssetMesh::LoadMeshCollection(filepath);
-	mesh_collection.collection.reserve(meshes_datas.size());
-	for (auto& mesh_data : meshes_datas)
-	{
-		mesh_collection.collection.push_back(std::make_unique<Mesh>(mesh_data.vertices, mesh_data.indices, mesh_data.matId));
-	}
-}
-
-Mesh& AssetManager::GetSingleMesh(const std::string& name)
-{
-	if (meshesSingle.find(name) == meshesSingle.end())
-	{
-		Locator::getLog().LogMessage_Category("Asset Manager: Tried to get a single mesh with a name that doesn't exists. Name is " + name + ".", LogCategory::Error);
-		return *meshesSingle["null_mesh"];
-	}
-
-	return *meshesSingle[name];
-}
-
-MeshCollection& AssetManager::GetMeshCollection(const std::string& name)
-{
-	if (meshesCollection.find(name) == meshesCollection.end())
-	{
-		Locator::getLog().LogMessage_Category("Asset Manager: Tried to get a mesh collection with a name that doesn't exists. Name is " + name + ".", LogCategory::Error);
-		return *meshesCollection["null_collection"];
-	}
-
-	return *meshesCollection[name];
-}
-
-void AssetManager::DeleteSingleMesh(const std::string& name)
-{
-	if (meshesSingle.find(name) == meshesSingle.end())
-	{
-		Locator::getLog().LogMessage_Category("Asset Manager: Tried to delete a single mesh with a name that doesn't exists. Name is " + name + ".", LogCategory::Error);
-		return;
-	}
-
-	meshesSingle.erase(name);
-}
-
-void AssetManager::DeleteMeshCollection(const std::string& name)
-{
-	if (meshesCollection.find(name) == meshesCollection.end())
-	{
-		Locator::getLog().LogMessage_Category("Asset Manager: Tried to delete a mesh collection with a name that doesn't exists. Name is " + name + ".", LogCategory::Error);
-		return;
-	}
-
-	meshesCollection.erase(name);
-}
-
-
-
-// --------------------------------------------------------------
 //            Models
 // --------------------------------------------------------------
 
-Model& AssetManager::CreateModel(const std::string& name)
+Model& AssetManager::LoadModel(const std::string& name, const std::string& modelPath, Material* fillMaterial)
+{
+	if (models.find(name) != models.end())
+	{
+		Locator::getLog().LogMessage_Category("Asset Manager: Tried to load a model with a name that already exists. Name is " + name + ".", LogCategory::Error);
+		return *models["null_model"];
+	}
+
+	models.emplace(name, std::make_unique<Model>(ModelLoader::LoadModel(modelPath, fillMaterial)));
+	return *models[name];
+}
+
+Model& AssetManager::CreateModelFromRawData(const std::string& name, std::vector<LoadMeshData> rawData, Material* fillMaterial)
 {
 	if (models.find(name) != models.end())
 	{
@@ -204,7 +122,7 @@ Model& AssetManager::CreateModel(const std::string& name)
 		return *models["null_model"];
 	}
 
-	models.emplace(name, std::make_unique<Model>());
+	models.emplace(name, std::make_unique<Model>(rawData, fillMaterial));
 	return *models[name];
 }
 
@@ -288,18 +206,6 @@ Material& AssetManager::CreateMaterial(const std::string& name, Shader& shaderUs
 	return *materials[name];
 }
 
-MaterialCollection& AssetManager::CreateMaterialCollection(const std::string& name, const std::vector<Material*>& materialCollection)
-{
-	if (materialsCollection.find(name) != materialsCollection.end())
-	{
-		Locator::getLog().LogMessage_Category("Asset Manager: Tried to create a material collection with a name that already exists. Name is " + name + ".", LogCategory::Error);
-		return *materialsCollection["null_mat_collection"];
-	}
-
-	materialsCollection.emplace(name, std::make_unique<MaterialCollection>(materialCollection));
-	return *materialsCollection[name];
-}
-
 Material& AssetManager::GetMaterial(const std::string& name)
 {
 	if (materials.find(name) == materials.end())
@@ -309,17 +215,6 @@ Material& AssetManager::GetMaterial(const std::string& name)
 	}
 
 	return *materials[name];
-}
-
-MaterialCollection& AssetManager::GetMaterialCollection(const std::string& name)
-{
-	if (materialsCollection.find(name) == materialsCollection.end())
-	{
-		Locator::getLog().LogMessage_Category("Asset Manager: Tried to get a material collection with a name that doesn't exists. Name is " + name + ".", LogCategory::Error);
-		return *materialsCollection["null_mat_collection"];
-	}
-
-	return *materialsCollection[name];
 }
 
 void AssetManager::DeleteMaterial(const std::string& name)
@@ -465,12 +360,9 @@ void AssetManager::LoadNullAssets()
 {
 	LoadTexture("null_texture", "Default/notexture.png", false);
 	vertexArrays.emplace("null_vertexarray", std::make_unique<VertexArray>());
-	meshesSingle.emplace("null_mesh", std::make_unique<Mesh>());
-	meshesCollection.emplace("null_collection", std::make_unique<MeshCollection>());
-	models.emplace("null_model", std::make_unique<Model>());
+	models.emplace("null_model", std::make_unique<Model>(std::vector<LoadMeshData>{}, nullptr));
 	shaders.emplace("null_shader", std::make_unique<Shader>());
 	materials.emplace("null_material", std::make_unique<Material>(GetShader("null_shader")));
-	materialsCollection.emplace("null_mat_collection", std::make_unique<MaterialCollection>());
 	fonts.emplace("null_font", std::make_unique<Font>());
 	sounds.emplace("null_sound", std::make_unique<AudioSound>(nullptr, 0));
 	audioCollisionTypes.emplace("null_audio_collision_type", AudioCollisionOcclusion{ 0.0f, 0.0f });
@@ -480,12 +372,9 @@ void AssetManager::ClearAllAssets()
 {
 	textures.clear();
 	vertexArrays.clear();
-	meshesSingle.clear();
-	meshesCollection.clear();
 	models.clear();
 	shaders.clear();
 	materials.clear();
-	materialsCollection.clear();
 	fonts.clear();
 	sounds.clear();
 	audioCollisionTypes.clear();

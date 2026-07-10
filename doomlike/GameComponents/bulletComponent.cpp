@@ -17,7 +17,7 @@ void BulletComponent::setupBullet(const Vector3& spawnPos, const Quaternion& spa
 	BoxCollisionComponent& collision_comp = ECS::GetComponent(collision);
 	RigidbodyComponent& rigidbody_comp = ECS::GetComponent(rigidbody);
 
-	bullet_model_comp.model = &AssetManager::GetModel("bullet");
+	bullet_model_comp.setModel(&AssetManager::GetModel("bullet"));
 	bullet_model_comp.offset.setRotation(Quaternion{ Vector3::unitY, Maths::toRadians(90.0f) });
 	bullet_model_comp.offset.setScale(0.0002f);
 

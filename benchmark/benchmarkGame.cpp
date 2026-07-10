@@ -34,8 +34,6 @@ void BenchmarkGame::loadGameAssets()
 	floor_mat.addParameter("material.shininess", 32.0f);
 	floor_mat.addParameter("beta_prevent_tex_scaling", true);
 	floor_mat.addParameter("beta_tex_scaling_factor", 2.0f);
-	AssetManager::CreateModel("floor").
-		addMesh(AssetManager::GetSingleMesh("default_plane"), AssetManager::GetMaterial("floor"));
 	log.LogMessage_Category("Benchmark: Loaded floor texture in " + std::to_string(glfwGetTime() - load_time) + " seconds.", LogCategory::Info);
 	load_time = glfwGetTime();
 
@@ -59,7 +57,6 @@ void BenchmarkGame::loadGame()
 
 void BenchmarkGame::unloadGame()
 {
-	AssetManager::DeleteModel("floor");
 	AssetManager::DeleteMaterial("floor");
 	AssetManager::DeleteTexture("floor_diffuse");
 	AssetManager::DeleteTexture("floor_specular");
@@ -183,10 +180,8 @@ void BenchmarkGame::loadProp(const std::string& name)
 	prop_mat.addTexture(&AssetManager::GetTexture("default_black"), TextureType::Emissive);
 	prop_mat.addParameter("material.shininess", 32.0f);
 
-	// Load prop mesh and create model
-	AssetManager::LoadMeshCollection(name, prop_path + ".fbx");
-	AssetManager::CreateModel(name).
-		addMeshes(AssetManager::GetMeshCollection(name), AssetManager::GetMaterial(name));
+	// Load prop model
+	AssetManager::LoadModel(name, prop_path + ".fbx", &AssetManager::GetMaterial(name));
 
 	Locator::getLog().LogMessage_Category(
 		"Benchmark: Loaded prop \"" + name + "\" in " + std::to_string(glfwGetTime() - load_prop_time) + " seconds.", 
@@ -196,7 +191,6 @@ void BenchmarkGame::loadProp(const std::string& name)
 void BenchmarkGame::unloadProp(const std::string& name)
 {
 	AssetManager::DeleteModel(name);
-	AssetManager::DeleteMeshCollection(name);
 	AssetManager::DeleteMaterial(name);
 	AssetManager::DeleteTexture(name + "_diffuse");
 	AssetManager::DeleteTexture(name + "_specular");

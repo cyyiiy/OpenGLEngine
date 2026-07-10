@@ -19,16 +19,16 @@ class VertexArray
 {
 public:
 	VertexArray();
-	VertexArray(const VertexArray& other) = delete;
+	VertexArray(const VertexArray& other);
 	VertexArray& operator=(const VertexArray&) = delete;
-	~VertexArray();
+	~VertexArray() {}
 
 	void LoadVAMesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices);
 	void LoadVAQuadHUD();
 	void LoadVALine();
 	void LoadVABillboard();
 
-	void setActive();
+	void setActive() const;
 	void deleteObjects();
 
 	unsigned int getNBVertices() const { return nbVertices; }
@@ -51,4 +51,3 @@ private:
 	unsigned int VBO{ 0 }; // OpenGL ID
 	unsigned int EBO{ 0 }; // OpenGL ID
 };
-

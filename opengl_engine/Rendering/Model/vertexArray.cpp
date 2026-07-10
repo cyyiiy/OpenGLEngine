@@ -126,7 +126,7 @@ void VertexArray::LoadVABillboard()
 }
 
 
-void VertexArray::setActive()
+void VertexArray::setActive() const
 {
 	glBindVertexArray(VAO);
 }
@@ -137,11 +137,13 @@ void VertexArray::deleteObjects()
 	glDeleteBuffers(1, &VBO);
 }
 
+
 VertexArray::VertexArray()
 {
 }
 
-VertexArray::~VertexArray()
+VertexArray::VertexArray(const VertexArray& other) :
+	nbVertices(other.nbVertices), nbIndices(other.nbIndices),
+	useEBO(other.useEBO), VAO(other.VAO), VBO(other.VBO), EBO(other.EBO)
 {
-	deleteObjects();
 }

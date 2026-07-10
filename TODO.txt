@@ -25,10 +25,10 @@
 
 ~ Refactor le model rendering - fait
 	- Vérifier que le bug des model noté tout en bas est bien réel (99% sur) - fait
-	- Changer le système pour qu'un model soit un ou plusieurs mesh avec des indexs pour les matériaux
+	- Changer le système pour qu'un model soit un ou plusieurs mesh avec des indexs pour les matériaux - fait
 	(Potentiellement avoir des matériaux par défaut sur le model - regarder comment fonctionne Unreal)
-	- Changer le model renderer component pour pouvoir setup les matériaux directement dessus
-	- Modifier les différents projets pour utiliser ce nouveau système le problème connu en bas)
+	- Changer le model renderer component pour pouvoir setup les matériaux directement dessus - fait
+	- Modifier les différents projets pour utiliser ce nouveau système - fait
 
 
 == MOYEN TERME == (possible pour fin 2026 ?)
@@ -94,3 +94,8 @@
 == REFLEXIONS / PROBLEMES CONNUS ==
 
 ~ Réfléchir au fonctionnement du load asset des scenes, est-ce qu'il faudrait faire gaffe à l'utilisation de ram et unload genre les textures qui ne sont plus nécessaires ?
+
+~ Ajouter des outils de debug/benchmark en realtime, qui permettraient d'avoir des stats sur le nombre de chaque type d'asset actuellement chargés, des infos sur l'ECS, le nombre de materials actifs, etc...
+
+~ Surveiller les performances du rendering des models. Devoir regarder les clés d'une unordered_map pour savoir si un model renderer component utilise un material n'est pas très optimisé (le benchmark "materials" lag énormément mais surtout en debug).
+Les potentielles solutions seraient de stocker les matériaux et les IDs différemment dans le composant (s'inspirer de la struct hybride de l'ancien système qui laggait moins ?), ou de carrément changer la manière dont le rendering des model est fait (créer des "draw calls" de mesh ordonnés par matériaux ?)

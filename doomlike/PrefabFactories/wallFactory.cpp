@@ -42,7 +42,8 @@ Entity* WallFactory::CreateWall(EntityContainer* entityContainer, WallFacingDire
 	}
 
 	ModelRendererComponent& wall_model_comp = ECS::GetComponent(wall_entity->addComponentByClass<ModelRendererComponent>());
-	wall_model_comp.model = &AssetManager::GetModel(isAltTex ? "wall_alt" : "wall");
+	wall_model_comp.setModel(&AssetManager::GetModel("default_plane"));
+	wall_model_comp.setMaterial(&AssetManager::GetMaterial(isAltTex ? "wall_alt" : "wall"), 0);
 
 	if (createCollision)
 	{
@@ -81,12 +82,6 @@ void WallFactory::SetupWallAssets()
 	wall_alt_mat.addParameter("material.shininess", 10.0f);
 	wall_alt_mat.addParameter("beta_prevent_tex_scaling", true);
 	wall_alt_mat.addParameter("beta_tex_scaling_factor", 2.0f);
-
-	AssetManager::CreateModel("wall");
-	AssetManager::GetModel("wall").addMesh(AssetManager::GetSingleMesh("default_plane"), AssetManager::GetMaterial("wall"));
-
-	AssetManager::CreateModel("wall_alt");
-	AssetManager::GetModel("wall_alt").addMesh(AssetManager::GetSingleMesh("default_plane"), AssetManager::GetMaterial("wall_alt"));
 }
 
 void WallFactory::ReleaseWallAssets()

@@ -13,7 +13,8 @@ Entity* FloorCeilingFactory::CreateFloor(EntityContainer* entityContainer, const
 	floor_entity->setScale(scale.x, 1.0f, scale.y);
 
 	ModelRendererComponent& floor_model_comp = ECS::GetComponent(floor_entity->addComponentByClass<ModelRendererComponent>());
-	floor_model_comp.model = &AssetManager::GetModel(isWood ? "floor_wood" : "floor");
+	floor_model_comp.setModel(&AssetManager::GetModel("default_plane"));
+	floor_model_comp.setMaterial(&AssetManager::GetMaterial(isWood ? "floor_wood" : "floor"), 0);
 
 	if (createCollision)
 	{
@@ -34,7 +35,8 @@ Entity* FloorCeilingFactory::CreateCeiling(EntityContainer* entityContainer, con
 	ceiling_entity->setRotation(Quaternion::fromEuler(0.0f, Maths::toRadians(180.0f), 0.0f));
 
 	ModelRendererComponent& ceiling_model_comp = ECS::GetComponent(ceiling_entity->addComponentByClass<ModelRendererComponent>());
-	ceiling_model_comp.model = &AssetManager::GetModel("ceiling");
+	ceiling_model_comp.setModel(&AssetManager::GetModel("default_plane"));
+	ceiling_model_comp.setMaterial(&AssetManager::GetMaterial("ceiling"), 0);
 
 	if (createCollision)
 	{
@@ -82,15 +84,6 @@ void FloorCeilingFactory::SetupFloorCeilingAssets()
 	ceiling_mat.addParameter("material.shininess", 32.0f);
 	ceiling_mat.addParameter("beta_prevent_tex_scaling", true);
 	ceiling_mat.addParameter("beta_tex_scaling_factor", 2.0f);
-
-	AssetManager::CreateModel("floor");
-	AssetManager::GetModel("floor").addMesh(AssetManager::GetSingleMesh("default_plane"), AssetManager::GetMaterial("floor"));
-
-	AssetManager::CreateModel("floor_wood");
-	AssetManager::GetModel("floor_wood").addMesh(AssetManager::GetSingleMesh("default_plane"), AssetManager::GetMaterial("floor_wood"));
-
-	AssetManager::CreateModel("ceiling");
-	AssetManager::GetModel("ceiling").addMesh(AssetManager::GetSingleMesh("default_plane"), AssetManager::GetMaterial("ceiling"));
 }
 
 void FloorCeilingFactory::ReleaseFloorCeilingAssets()

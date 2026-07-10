@@ -1,11 +1,6 @@
 #pragma once
 #include <Core/scene.h>
 
-class CameraComponent;
-class TextComponent;
-class SpriteComponent;
-class AudioSourceComponent;
-
 
 class ExpositionScene : public Scene
 {
@@ -15,14 +10,16 @@ protected:
 	void updateScene(float dt) override;
 
 private:
-	ComponentHandle<CameraComponent> cameraOne;
-	ComponentHandle<CameraComponent> cameraTwo;
-	ComponentHandle<CameraComponent> activeCamera;
+	ComponentHandle<class CameraComponent> cameraOne;
+	ComponentHandle<class CameraComponent> cameraTwo;
+	ComponentHandle<class CameraComponent> activeCamera;
 
-	ComponentHandle<TextComponent> camText;
-	ComponentHandle<SpriteComponent> sprite;
+	ComponentHandle<class TextComponent> camText;
+	ComponentHandle<class SpriteComponent> sprite;
 
-	ComponentHandle<AudioSourceComponent> musicSource;
+	ComponentHandle<class AudioSourceComponent> musicSource;
+
+	ComponentHandle<class ModelRendererComponent> crateModel;
 
 	Entity* gravityCrate{ nullptr };
 	Entity* whiteCube{ nullptr };
@@ -33,4 +30,5 @@ private:
 	const float cameraSensitivity{ 0.1f };
 
 	int logCounter{ 0 };
+	bool useMatrixMaterial{ false };
 };
