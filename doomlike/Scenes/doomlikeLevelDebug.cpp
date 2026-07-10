@@ -59,16 +59,36 @@ void DoomlikeLevelDebug::loadScene()
 	trigger_zone->setPosition(Vector3{ 12.0f, 1.0f, 12.0f });
 
 	// Model components
-	ECS::GetComponent(crate1->addComponentByClass<ModelRendererComponent>()).model = &AssetManager::GetModel("crate");
-	ECS::GetComponent(crate2->addComponentByClass<ModelRendererComponent>()).model = &AssetManager::GetModel("crate");
-	ECS::GetComponent(crate3->addComponentByClass<ModelRendererComponent>()).model = &AssetManager::GetModel("crate");
-	ECS::GetComponent(crate4->addComponentByClass<ModelRendererComponent>()).model = &AssetManager::GetModel("crate");
-	ECS::GetComponent(crate5->addComponentByClass<ModelRendererComponent>()).model = &AssetManager::GetModel("crate");
-	ECS::GetComponent(lowcrate1->addComponentByClass<ModelRendererComponent>()).model = &AssetManager::GetModel("crate");
-	ECS::GetComponent(lowcrate2->addComponentByClass<ModelRendererComponent>()).model = &AssetManager::GetModel("crate");
-	ECS::GetComponent(movingPlatform1->addComponentByClass<ModelRendererComponent>()).model = &AssetManager::GetModel("crate");
-	ECS::GetComponent(movingPlatform2->addComponentByClass<ModelRendererComponent>()).model = &AssetManager::GetModel("crate");
-	ECS::GetComponent(movingPlatform3->addComponentByClass<ModelRendererComponent>()).model = &AssetManager::GetModel("crate");
+	ModelRendererComponent& crate1_model = ECS::GetComponent(crate1->addComponentByClass<ModelRendererComponent>());
+	crate1_model.setModel(&AssetManager::GetModel("default_cube"));
+	crate1_model.setMaterial(&AssetManager::GetMaterial("crate"), 0);
+	ModelRendererComponent& crate2_model = ECS::GetComponent(crate2->addComponentByClass<ModelRendererComponent>());
+	crate2_model.setModel(&AssetManager::GetModel("default_cube"));
+	crate2_model.setMaterial(&AssetManager::GetMaterial("crate"), 0);
+	ModelRendererComponent& crate3_model = ECS::GetComponent(crate3->addComponentByClass<ModelRendererComponent>());
+	crate3_model.setModel(&AssetManager::GetModel("default_cube"));
+	crate3_model.setMaterial(&AssetManager::GetMaterial("crate"), 0);
+	ModelRendererComponent& crate4_model = ECS::GetComponent(crate4->addComponentByClass<ModelRendererComponent>());
+	crate4_model.setModel(&AssetManager::GetModel("default_cube"));
+	crate4_model.setMaterial(&AssetManager::GetMaterial("crate"), 0);
+	ModelRendererComponent& crate5_model = ECS::GetComponent(crate5->addComponentByClass<ModelRendererComponent>());
+	crate5_model.setModel(&AssetManager::GetModel("default_cube"));
+	crate5_model.setMaterial(&AssetManager::GetMaterial("crate"), 0);
+	ModelRendererComponent& lowcrate1_model = ECS::GetComponent(lowcrate1->addComponentByClass<ModelRendererComponent>());
+	lowcrate1_model.setModel(&AssetManager::GetModel("default_cube"));
+	lowcrate1_model.setMaterial(&AssetManager::GetMaterial("crate"), 0);
+	ModelRendererComponent& lowcrate2_model = ECS::GetComponent(lowcrate2->addComponentByClass<ModelRendererComponent>());
+	lowcrate2_model.setModel(&AssetManager::GetModel("default_cube"));
+	lowcrate2_model.setMaterial(&AssetManager::GetMaterial("crate"), 0);
+	ModelRendererComponent& movingPlatform1_model = ECS::GetComponent(movingPlatform1->addComponentByClass<ModelRendererComponent>());
+	movingPlatform1_model.setModel(&AssetManager::GetModel("default_cube"));
+	movingPlatform1_model.setMaterial(&AssetManager::GetMaterial("crate"), 0);
+	ModelRendererComponent& movingPlatform2_model = ECS::GetComponent(movingPlatform2->addComponentByClass<ModelRendererComponent>());
+	movingPlatform2_model.setModel(&AssetManager::GetModel("default_cube"));
+	movingPlatform2_model.setMaterial(&AssetManager::GetMaterial("crate"), 0);
+	ModelRendererComponent& movingPlatform3_model = ECS::GetComponent(movingPlatform3->addComponentByClass<ModelRendererComponent>());
+	movingPlatform3_model.setModel(&AssetManager::GetModel("default_cube"));
+	movingPlatform3_model.setMaterial(&AssetManager::GetMaterial("crate"), 0);
 
 	// Collision components
 	ECS::GetComponent(crate1->addComponentByClass<BoxCollisionComponent>()).collisionChannel = "solid";

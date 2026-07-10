@@ -35,12 +35,12 @@ void LampComponent::changeStatus(bool lightOn)
 	
 	if (isChandelier)
 	{
-		model_comp.model->changeMaterial(2, AssetManager::GetMaterial(lightOn ? "flame" : "chandelier_candle"));
-		model_comp.model->changeMaterial(3, AssetManager::GetMaterial(lightOn ? "flame" : "flame_off"));
+		model_comp.setMaterial(&AssetManager::GetMaterial(lightOn ? "flame" : "chandelier_candle"), 2);
+		model_comp.setMaterial(&AssetManager::GetMaterial(lightOn ? "flame" : "flame_off"), 3);
 	}
 	else
 	{
-		model_comp.model->changeMaterial(1, AssetManager::GetMaterial(lightOn ? "flame" : "flame_off"));
+		model_comp.setMaterial(&AssetManager::GetMaterial(lightOn ? "flame" : "flame_off"), 1);
 	}
 }
 

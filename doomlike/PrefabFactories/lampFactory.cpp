@@ -45,7 +45,7 @@ Entity* LampFactory::CreateLamp(EntityContainer* entityContainer, const Vector3&
 
 	ComponentHandle<ModelRendererComponent> lamp_model_handle = lamp_entity->addComponentByClass<ModelRendererComponent>();
 	ModelRendererComponent& lamp_model_comp = ECS::GetComponent(lamp_model_handle);
-	lamp_model_comp.model = &AssetManager::GetModel(model_name);
+	lamp_model_comp.setModel(&AssetManager::GetModel(model_name));
 
 	ComponentHandle<PointLightComponent> lamp_light_handle = lamp_entity->addComponentByClass<PointLightComponent>();
 	PointLightComponent& lamp_light_comp = ECS::GetComponent(lamp_light_handle);
@@ -107,25 +107,15 @@ void LampFactory::SetupLampAssets()
 	Material& flame_off = AssetManager::CreateMaterial("flame_off", AssetManager::GetShader("flat_emissive"));
 	flame_off.addParameter("emissive", Color{ 20, 14 ,3, 255 });
 
-	AssetManager::LoadMeshCollection("lamp", "doomlike/lamp/lamp.fbx");
-	AssetManager::LoadMeshCollection("chandelier", "doomlike/chandelier/chandelier.fbx");
+	Model& lamp = AssetManager::LoadModel("lamp", "doomlike/lamp/lamp.fbx", nullptr);
+	lamp.changeDefaultMaterial(0, &AssetManager::GetMaterial("lamp"));
+	lamp.changeDefaultMaterial(1, &AssetManager::GetMaterial("flame"));
 
-	AssetManager::CreateMaterialCollection("lamp", { 
-		&AssetManager::GetMaterial("lamp"), 
-		&AssetManager::GetMaterial("flame") 
-	});
-	AssetManager::CreateMaterialCollection("chandelier", {
-		&AssetManager::GetMaterial("chandelier_base"),
-		&AssetManager::GetMaterial("chandelier_leather"),
-		&AssetManager::GetMaterial("flame"), // Allows a better visibility than the candle material
-		&AssetManager::GetMaterial("flame") 
-	});
-
-	Model& lamp = AssetManager::CreateModel("lamp");
-	lamp.addMeshes(AssetManager::GetMeshCollection("lamp"), AssetManager::GetMaterialCollection("lamp"));
-
-	Model& chandelier = AssetManager::CreateModel("chandelier");
-	chandelier.addMeshes(AssetManager::GetMeshCollection("chandelier"), AssetManager::GetMaterialCollection("chandelier"));
+	Model& chandelier = AssetManager::LoadModel("chandelier", "doomlike/chandelier/chandelier.fbx", nullptr);
+	chandelier.changeDefaultMaterial(0, &AssetManager::GetMaterial("chandelier_base"));
+	chandelier.changeDefaultMaterial(1, &AssetManager::GetMaterial("chandelier_leather"));
+	chandelier.changeDefaultMaterial(2, &AssetManager::GetMaterial("flame")); // Could be "chandelier_candle" but "flame" allows a better visibility
+	chandelier.changeDefaultMaterial(3, &AssetManager::GetMaterial("flame"));
 }
 
 void LampFactory::ReleaseLampAssets()

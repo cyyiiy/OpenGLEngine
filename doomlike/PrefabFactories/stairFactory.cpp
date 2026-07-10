@@ -59,7 +59,7 @@ Entity* StairFactory::CreateStair(EntityContainer* entityContainer, StairFacingD
 	}
 
 	ModelRendererComponent& stair_model_comp = ECS::GetComponent(stair_entity->addComponentByClass<ModelRendererComponent>());
-	stair_model_comp.model = &AssetManager::GetModel("stairs");
+	stair_model_comp.setModel(&AssetManager::GetModel("stairs"));
 	stair_model_comp.offset.setScale(0.0044f);
 	stair_model_comp.offset.setPosition(Vector3{ -1.03f, -1.11f, 0.93f });
 	
@@ -88,10 +88,7 @@ void StairFactory::SetupStairAssets()
 	stairs_mat.addParameter("material.shininess", 32.0f);
 	//stairs_mat.addParameter("beta_prevent_tex_scaling", false);
 
-	AssetManager::LoadMeshCollection("stairs", "doomlike/stairs/stairs.fbx");
-
-	AssetManager::CreateModel("stairs");
-	AssetManager::GetModel("stairs").addMeshes(AssetManager::GetMeshCollection("stairs"), AssetManager::GetMaterial("stairs"));
+	AssetManager::LoadModel("stairs", "doomlike/stairs/stairs.fbx", &AssetManager::GetMaterial("stairs"));
 }
 
 void StairFactory::ReleaseStairAssets()

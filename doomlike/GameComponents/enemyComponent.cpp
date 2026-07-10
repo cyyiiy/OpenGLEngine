@@ -25,7 +25,7 @@ void EnemyComponent::init()
 	BoxCollisionComponent& collision_comp = ECS::GetComponent(collision);
 	RigidbodyComponent& rigidbody_comp = ECS::GetComponent(rigidbody);
 
-	enemy_model_comp.model = &AssetManager::GetModel("enemy");
+	enemy_model_comp.setModel(&AssetManager::GetModel("enemy"));
 	enemy_model_comp.offset.setScale(0.7f);
 
 	collision_comp.collisionBox = Box{ Vector3::zero, Vector3{ 0.5f, 0.5f, 0.5f } };

@@ -36,11 +36,19 @@ void TestFpsScene::loadScene()
 	taxi->setScale(0.01f);
 
 	// Model components
-	ECS::GetComponent(crate1->addComponentByClass<ModelRendererComponent>()).model = &AssetManager::GetModel("crate");
-	ECS::GetComponent(crate2->addComponentByClass<ModelRendererComponent>()).model = &AssetManager::GetModel("crate");
-	ECS::GetComponent(crate3->addComponentByClass<ModelRendererComponent>()).model = &AssetManager::GetModel("crate");
-	ECS::GetComponent(target->addComponentByClass<ModelRendererComponent>()).model = &AssetManager::GetModel("crate");
-	ECS::GetComponent(taxi->addComponentByClass<ModelRendererComponent>()).model = &AssetManager::GetModel("taxi");
+	ModelRendererComponent& crate1_model = ECS::GetComponent(crate1->addComponentByClass<ModelRendererComponent>());
+	crate1_model.setModel(&AssetManager::GetModel("default_cube"));
+	crate1_model.setMaterial(&AssetManager::GetMaterial("crate"), 0);
+	ModelRendererComponent& crate2_model = ECS::GetComponent(crate2->addComponentByClass<ModelRendererComponent>());
+	crate2_model.setModel(&AssetManager::GetModel("default_cube"));
+	crate2_model.setMaterial(&AssetManager::GetMaterial("crate"), 0);
+	ModelRendererComponent& crate3_model = ECS::GetComponent(crate3->addComponentByClass<ModelRendererComponent>());
+	crate3_model.setModel(&AssetManager::GetModel("default_cube"));
+	crate3_model.setMaterial(&AssetManager::GetMaterial("crate"), 0);
+	ModelRendererComponent& target_model = ECS::GetComponent(target->addComponentByClass<ModelRendererComponent>());
+	target_model.setModel(&AssetManager::GetModel("default_cube"));
+	target_model.setMaterial(&AssetManager::GetMaterial("crate"), 0);
+	ECS::GetComponent(taxi->addComponentByClass<ModelRendererComponent>()).setModel(&AssetManager::GetModel("taxi"));
 
 	// Collision components
 	ECS::GetComponent(crate1->addComponentByClass<BoxCollisionComponent>()).collisionChannel = "solid";

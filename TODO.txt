@@ -23,12 +23,12 @@
 	- Ajouter un composant "lifetime" qui supprime son entité au bout d'un temps (avec un système extérieur) - fait
 	- Modifier les balles du doomlike pour utiliser ce composant - fait
 
-~ Refactor le model rendering - fait
+~ Refactor le model rendering - en cours
 	- Vérifier que le bug des model noté tout en bas est bien réel (99% sur) - fait
 	- Changer le système pour qu'un model soit un ou plusieurs mesh avec des indexs pour les matériaux - fait
 	(Potentiellement avoir des matériaux par défaut sur le model - regarder comment fonctionne Unreal)
 	- Changer le model renderer component pour pouvoir setup les matériaux directement dessus - fait
-	- Modifier les différents projets pour utiliser ce nouveau système - en cours
+	- Modifier les différents projets pour utiliser ce nouveau système - fait
 
 
 == MOYEN TERME == (possible pour fin 2026 ?)
