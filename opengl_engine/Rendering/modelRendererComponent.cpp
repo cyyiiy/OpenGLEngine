@@ -70,8 +70,7 @@ void ModelRendererComponent::resetToDefaultMaterials()
 const std::vector<std::shared_ptr<Mesh>> ModelRendererComponent::retrieveMeshesOfMaterial(const Material& material) const
 {
 	if (!isValid()) return {};
-
-	if (materials.find(getMaterialUniqueID(&material)) == materials.end()) return {};
+	if (!usesMaterial(material)) return {};
 
 	std::vector<std::shared_ptr<Mesh>> meshes_of_material;
 	const std::vector<int>& ids_of_material = materials.at(getMaterialUniqueID(&material));
@@ -83,6 +82,11 @@ const std::vector<std::shared_ptr<Mesh>> ModelRendererComponent::retrieveMeshesO
 	}
 
 	return meshes_of_material;
+}
+
+bool ModelRendererComponent::usesMaterial(const Material& material) const
+{
+	return materials.find(material.getUniqueID()) != materials.end();
 }
 
 bool ModelRendererComponent::isValid() const

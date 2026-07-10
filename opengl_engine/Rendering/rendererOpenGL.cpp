@@ -230,8 +230,7 @@ void RendererOpenGL::drawModelComponent(const ModelRendererComponent& modelCompo
 {
 	// 1. Check if the model component is valid and uses the currently processed material
 	if (!modelComponent.isValid()) return;
-	const std::vector<std::shared_ptr<Mesh>> meshes_of_material = modelComponent.retrieveMeshesOfMaterial(materialInUsage);
-	if (meshes_of_material.empty()) return;
+	if (!modelComponent.usesMaterial(materialInUsage)) return;
 
 	// 2. Compute the model matrices
 	Matrix4 model_matrix = modelComponent.offset.getModelMatrix();
@@ -256,6 +255,7 @@ void RendererOpenGL::drawModelComponent(const ModelRendererComponent& modelCompo
 	shader_used.setVec3("scale", model_scale);
 
 	// 4. Draw the meshes of the model component that uses the current material
+	const std::vector<std::shared_ptr<Mesh>> meshes_of_material = modelComponent.retrieveMeshesOfMaterial(materialInUsage);
 	for (const std::shared_ptr<Mesh> mesh : meshes_of_material)
 	{
 		drawVertexArray(mesh->getVertexArray(), false);

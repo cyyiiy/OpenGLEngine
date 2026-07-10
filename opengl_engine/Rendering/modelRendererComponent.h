@@ -26,6 +26,9 @@ public:
 	/** Get all the meshes of the model that are drawn with the given material. */
 	const std::vector<std::shared_ptr<Mesh>> retrieveMeshesOfMaterial(const Material& material) const;
 
+	/** Know if this component uses the given material. */
+	bool usesMaterial(const Material& material) const;
+
 	/** Return true if this component has a valid model. */
 	bool isValid() const;
 
