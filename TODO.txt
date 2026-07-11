@@ -1,34 +1,16 @@
 == COURT TERME ==
 
-~ Rework du service locator - fait
-	- Stocker les services dans des shared_ptr (créés dans les fonctions "register service" comme pour les shape draw) - fait
-	- Enlever les fonctions où seul engine.cpp a accès, tout passe par les interfaces de services - fait
-	(supprime la dépendance de engine aux "vrais" services, et pose moins de problème en cas de désactivation)
+~ Designer l'Asset Manager V2 (sera fait sur un projet à part) :
+	- Utilise un chemin de ressources configurable par projet
+	- Peut load les assets comme actuellement
+	- Peut load les assets en utilisant les informations d'un fichier .meta lié
+	- Peut load des assets en cascade (par exemple load un model load le matérial qui load les textures)
+	Attention cependant, un même asset ne doit pas être load deux fois si il est utilisé par plusieurs autres assets
+	- Essayer d'utiliser les templates, au moins pour le load avec fichier .meta
+	- Essayer de pouvoir gérer automatiquement le cycle de vie de certains assets (load & unload avec les changements de scène)
+	- Trouver un moyen de gérer les assets "defaults" et les assets "engine"
 
-~ Rework des outils de debug - fait
-	- Créer un debug manager responsable de mettre le jeu en pause, de la freecam et du texte fps - fait
-	- Réduire la taille du texte fps et ajouter la durée en millisecondes - fait
-	- Ajouter un petit texte d'info pour la debug view, la pause et la freecam - fait
-	- Finir de nettoyer la classe engine pour qu'elle ait le moins de dépendances possible - fait
-
-~ Vue debug des lumières - fait
-	- Refactor les shaders pour permettre d'avoir des geometry shader - fait
-	- Créer un billboard renderer component (3D sprite always oriented towards camera) - fait
-	- Rajouter un billboard sur chaque light component visible uniquement en debug view - fait
-	- Fix la position des light components sur les lampes du doomlike mdr - fait
-
-~ Petites améliorations ECS - fait
-	- Faire que les fonctions qui retournent un handle en retournent un invalide au lieu d'une exception - fait
-	- Améliorer les textes d'erreur de l'ECS pour qu'elles écrivent le nom de la classe quand nécessaire - fait
-	- Ajouter un composant "lifetime" qui supprime son entité au bout d'un temps (avec un système extérieur) - fait
-	- Modifier les balles du doomlike pour utiliser ce composant - fait
-
-~ Refactor le model rendering - fait
-	- Vérifier que le bug des model noté tout en bas est bien réel (99% sur) - fait
-	- Changer le système pour qu'un model soit un ou plusieurs mesh avec des indexs pour les matériaux - fait
-	(Potentiellement avoir des matériaux par défaut sur le model - regarder comment fonctionne Unreal)
-	- Changer le model renderer component pour pouvoir setup les matériaux directement dessus - fait
-	- Modifier les différents projets pour utiliser ce nouveau système - fait
+~ Implémenter l'Asset Manager V2 (dernière étape avant l'éditeur d'assets)
 
 
 == MOYEN TERME == (possible pour fin 2026 ?)
@@ -92,8 +74,6 @@
 
 
 == REFLEXIONS / PROBLEMES CONNUS ==
-
-~ Réfléchir au fonctionnement du load asset des scenes, est-ce qu'il faudrait faire gaffe à l'utilisation de ram et unload genre les textures qui ne sont plus nécessaires ?
 
 ~ Ajouter des outils de debug/benchmark en realtime, qui permettraient d'avoir des stats sur le nombre de chaque type d'asset actuellement chargés, des infos sur l'ECS, le nombre de materials actifs, etc...
 
