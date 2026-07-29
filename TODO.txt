@@ -1,21 +1,27 @@
-== COURT TERME ==
+== COURT TERME == (engine v0.3 - pre-alpha)
 
-~ Designer l'Asset Manager V2 (sera fait sur un projet à part) :
-	- Utilise un chemin de ressources configurable par projet
-	- Peut load les assets comme actuellement
-	- Peut load les assets en utilisant les informations d'un fichier .meta lié
-	- Peut load des assets en cascade (par exemple load un model load le matérial qui load les textures)
-	Attention cependant, un même asset ne doit pas être load deux fois si il est utilisé par plusieurs autres assets
-	- Essayer d'utiliser les templates, au moins pour le load avec fichier .meta
-	- Essayer de pouvoir gérer automatiquement le cycle de vie de certains assets (load & unload avec les changements de scène)
-	- Trouver un moyen de gérer les assets "defaults" et les assets "engine"
+~ Designer l'Asset Manager V2 (sur un projet à part) - fait
 
-~ Implémenter l'Asset Manager V2 (dernière étape avant l'éditeur d'assets)
+~ Implémenter l'Asset Manager V2 :
+	- Intégrer les éléments de l'Asset Manager qui ne font pas de conflits (utils, IAsset, json & CyassetDocument)
+	- Créer une classe statique pour les assets engine (shaders, vertex arrays, fonts statiques récupérables via références)
+	- Modifier la classe Texture pour le nouveau format (si possible, garder le moteur compilable)
+	- Modifier la classe Shader pour le nouveau format
+	- Modifier la classe Material pour le nouveau format (essayer de faire un LoadParams au mieux)
+	- Modifier la classe Model pour le nouveau format (plus de déplacement -> les modèles gardent leurs meshes chez eux ?)
+	- Modifier la classe Font pour le nouveau format
+	- Modifier la classe AudioSound pour le nouveau format (mettre les paramètres flag en LoadParams ?)
+	- Intégrer le reste de l'Asset Manager (AssetManager, AssetManagerType, AssetTraits)
+	- Mettre à jour le code qui utilise l'ancien Asset Manager dans les projets pour le nouveau
+	- Nettoyer le moteur si nécessaire
+
+~ Faire le début de l'éditeur de projet (utiliser ImGUI pour l'interface)
+	- Note: Avoir un chemin de projet qui se renseigne à l'asset manager (notamment)
+
+~ Faire un éditeur d'assets (permettre de générer des fichiers .cyasset)
 
 
-== MOYEN TERME == (possible pour fin 2026 ?)
-
-~ Faire un éditeur d'assets (utiliser ImGUI pour l'interface)
+== MOYEN TERME == (engine v0.4 - pre-alpha)
 
 ~ Créer et implémenter l'ECS V3 :
 	- une entité ne peut plus avoir qu'un seul composant de chaque type (et a obligatoirement un transform ?)
@@ -24,10 +30,12 @@
 
 ~ Etendre l'éditeur d'assets pour faire un éditeur de préfab
 
+~ Améliorer l'éditeur de projet (et l'éditeur en général) ?
+
 ~ Améliorer le doomlike avec l'éditeur de préfab
 
 
-== LONG TERME == (améliorer d'autres systèmes au niveau de finition de l'ECS V3)
+== LONG TERME == (améliorer d'autres systèmes au niveau de finition de l'ECS V3 | engine v0.5+ - alpha)
 
 ~ Intégrer une librairie physique beaucoup plus complète (adieu le AABB custom)
 
