@@ -144,6 +144,7 @@
   <ItemGroup>
     <ClCompile Include="Assets\assetManager.cpp" />
     <ClCompile Include="Assets\assetsIDs.cpp" />
+    <ClCompile Include="Assets\cyassetDocument.cpp" />
     <ClCompile Include="Assets\defaultAssets.cpp" />
     <ClCompile Include="Assets\MeshModel\meshLoader.cpp" />
     <ClCompile Include="Assets\MeshModel\modelLoader.cpp" />
@@ -200,10 +201,13 @@
     <ClCompile Include="Rendering\Text\textRenderUtils.cpp" />
     <ClCompile Include="ServiceLocator\locator.cpp" />
     <ClCompile Include="Utils\color.cpp" />
+    <ClCompile Include="Utils\stringUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Assets\assetInterface.h" />
     <ClInclude Include="Assets\assetManager.h" />
     <ClInclude Include="Assets\assetsIDs.h" />
+    <ClInclude Include="Assets\cyassetDocument.h" />
     <ClInclude Include="Assets\defaultAssets.h" />
     <ClInclude Include="Assets\MeshModel\meshLoader.h" />
     <ClInclude Include="Assets\MeshModel\modelLoader.h" />
@@ -287,6 +291,8 @@
     <ClInclude Include="ServiceLocator\renderer.h" />
     <ClInclude Include="Utils\color.h" />
     <ClInclude Include="Utils\defines.h" />
+    <ClInclude Include="Utils\hashUtils.h" />
+    <ClInclude Include="Utils\stringUtils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

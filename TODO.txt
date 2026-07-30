@@ -3,7 +3,7 @@
 ~ Designer l'Asset Manager V2 (sur un projet à part) - fait
 
 ~ Implémenter l'Asset Manager V2 : - en cours
-	- Intégrer les éléments de l'Asset Manager qui ne font pas de conflits (utils, IAsset, json & CyassetDocument) - en cours
+	- Intégrer les éléments de l'Asset Manager qui ne font pas de conflits (utils, IAsset, json & CyassetDocument) - fait
 	- Créer une classe statique pour les assets engine (shaders, vertex arrays, fonts statiques récupérables via références)
 	- Modifier la classe Texture pour le nouveau format (si possible, garder le moteur compilable)
 	- Modifier la classe Shader pour le nouveau format
