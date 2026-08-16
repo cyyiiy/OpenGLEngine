@@ -146,6 +146,7 @@
     <ClCompile Include="Assets\assetsIDs.cpp" />
     <ClCompile Include="Assets\cyassetDocument.cpp" />
     <ClCompile Include="Assets\defaultAssets.cpp" />
+    <ClCompile Include="Assets\engineAssets.cpp" />
     <ClCompile Include="Assets\MeshModel\meshLoader.cpp" />
     <ClCompile Include="Assets\MeshModel\modelLoader.cpp" />
     <ClCompile Include="Audio\audioManager.cpp" />
@@ -209,6 +210,7 @@
     <ClInclude Include="Assets\assetsIDs.h" />
     <ClInclude Include="Assets\cyassetDocument.h" />
     <ClInclude Include="Assets\defaultAssets.h" />
+    <ClInclude Include="Assets\engineAssets.h" />
     <ClInclude Include="Assets\MeshModel\meshLoader.h" />
     <ClInclude Include="Assets\MeshModel\modelLoader.h" />
     <ClInclude Include="Audio\audioManager.h" />
