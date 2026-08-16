@@ -1,7 +1,7 @@
 #include "shapeLine.h"
 #include <Maths/Matrix4.h>
 #include <Rendering/Model/vertexArray.h>
-#include <Assets/assetManager.h>
+#include <Assets/engineAssets.h>
 
 
 ShapeLine::ShapeLine(const Vector3& pointA, const Vector3& pointB, const Color& color) : ShapeBase(color), linePointA(pointA), linePointB(pointB)
@@ -19,7 +19,7 @@ void ShapeLine::draw(Shader& shader) const
 	shader.setVec3("linePointOffset", linePointB - linePointA);
 
 	// 3. Draw the line vertex array
-	VertexArray& line_va = AssetManager::GetVertexArray("debug_line");
+	const VertexArray& line_va = EngineAssets::GetVertexArray(EngineAssets::VertexArrayID::Line);
 	line_va.setActive();
 	glDrawArrays(GL_LINE_STRIP, 0, 2);
 

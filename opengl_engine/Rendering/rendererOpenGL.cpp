@@ -1,5 +1,5 @@
 #include "rendererOpenGL.h"
-#include <Assets/assetManager.h>
+#include <Assets/engineAssets.h>
 #include <ServiceLocator/locator.h>
 #include <ECS/ecs.h>
 #include <ECS/entity.h>
@@ -106,7 +106,7 @@ void RendererOpenGL::Draw()
 	}
 
 	// Draw debug part
-	Material& debug_draw_mat = AssetManager::GetMaterial("debug_draws");
+	Material& debug_draw_mat = EngineAssets::GetMaterial(EngineAssets::MaterialID::DrawDebug);
 	Shader& debug_draw_shader = debug_draw_mat.getShader();
 	debug_draw_shader.use();
 	debug_draw_shader.setMatrix4("view", view.getAsFloatPtr());
@@ -147,7 +147,7 @@ void RendererOpenGL::Draw()
 	// ========================
 
 	// Bind the billboard vertex array
-	AssetManager::GetVertexArray("billboard").setActive();
+	EngineAssets::GetVertexArray(EngineAssets::VertexArrayID::Billboard).setActive();
 
 	// Compute the matrix and vectors used to render billboards
 	const Matrix4 view_proj = view * projection;
@@ -155,7 +155,7 @@ void RendererOpenGL::Draw()
 	const Vector3 cam_right = current_camera.getCamRight();
 
 	// Activate the billboard shader and set global uniforms
-	Shader* billboard_shader = &AssetManager::GetShader("billboard_render");
+	Shader* billboard_shader = &EngineAssets::GetShader(EngineAssets::ShaderID::BillboardRender);
 	billboard_shader->use();
 	billboard_shader->setMatrix4("geomViewProj", view_proj.getAsFloatPtr());
 	billboard_shader->setVec3("geomCameraUp", cam_up);
@@ -195,10 +195,10 @@ void RendererOpenGL::Draw()
 	Matrix4 hud_projection = Matrix4::createSimpleViewProj(static_cast<float>(windowSize.x), static_cast<float>(windowSize.y));
 
 	// Bind the hud (char and sprite) vertex array
-	AssetManager::GetVertexArray("hud_quad").setActive();
+	EngineAssets::GetVertexArray(EngineAssets::VertexArrayID::QuadHUD).setActive();
 
 	// Prepare the shader used in text rendering
-	Shader& text_render_shader = AssetManager::GetShader("text_render");
+	Shader& text_render_shader = EngineAssets::GetShader(EngineAssets::ShaderID::TextRender);
 	text_render_shader.use();
 	text_render_shader.setMatrix4("projection", hud_projection.getAsFloatPtr());
 
@@ -210,7 +210,7 @@ void RendererOpenGL::Draw()
 	});
 
 	// Prepare the shader used in sprite rendering
-	Shader& sprite_render_shader = AssetManager::GetShader("sprite_render");
+	Shader& sprite_render_shader = EngineAssets::GetShader(EngineAssets::ShaderID::SpriteRender);
 	sprite_render_shader.use();
 	sprite_render_shader.setMatrix4("projection", hud_projection.getAsFloatPtr());
 
@@ -423,7 +423,7 @@ void RendererOpenGL::drawBoxCollision(const BoxCollisionComponent& boxColCompone
 	shaderInUsage.setVec3("color", debug_color.toVector());
 
 	// 4. Draw the debug cube
-	VertexArray& debug_cube = AssetManager::GetVertexArray("debug_cube");
+	const VertexArray& debug_cube = EngineAssets::GetVertexArray(EngineAssets::VertexArrayID::Cube);
 	drawVertexArray(debug_cube, true);
 }
 
@@ -436,7 +436,7 @@ void RendererOpenGL::drawPointLightDebug(const PointLightComponent& pointLightCo
 
 	// 2. Bind the debug point light texture
 	glActiveTexture(GL_TEXTURE0);
-	AssetManager::GetTexture("debug_icon_point_light").use();
+	EngineAssets::GetTexture(EngineAssets::TextureID::IconPointLight).use();
 
 	// 3. Set the informations in the shader
 	shaderInUsage.setMatrix4("billboardTransform", point_light_transform.getAsFloatPtr());
@@ -459,7 +459,7 @@ void RendererOpenGL::drawSpotLightDebug(const SpotLightComponent& spotLightCompo
 
 	// 2. Bind the debug spot light texture
 	glActiveTexture(GL_TEXTURE0);
-	AssetManager::GetTexture("debug_icon_spot_light").use();
+	EngineAssets::GetTexture(EngineAssets::TextureID::IconSpotLight).use();
 
 	// 3. Set the informations in the shader
 	shaderInUsage.setMatrix4("billboardTransform", spot_light_transform.getAsFloatPtr());

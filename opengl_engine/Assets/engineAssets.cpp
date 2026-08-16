@@ -13,22 +13,22 @@ const VertexArray& EngineAssets::GetVertexArray(VertexArrayID id)
 	return *vertexArrays.at(id);
 }
 
-const Shader& EngineAssets::GetShader(ShaderID id)
+Shader& EngineAssets::GetShader(ShaderID id)
 {
 	return *shaders.at(id);
 }
 
-const Material& EngineAssets::GetMaterial(MaterialID id)
+Material& EngineAssets::GetMaterial(MaterialID id)
 {
 	return *materials.at(id);
 }
 
-const Texture& EngineAssets::GetTexture(TextureID id)
+Texture& EngineAssets::GetTexture(TextureID id)
 {
 	return *textures.at(id);
 }
 
-const Font& EngineAssets::GetFont(FontID id)
+Font& EngineAssets::GetFont(FontID id)
 {
 	return *fonts.at(id);
 }
@@ -107,8 +107,8 @@ void EngineAssets::LoadEngineAssets()
 	const std::vector<std::string> sprite_render_paths = { "Shaders/Unlit/sprite_render.vert", "Shaders/Unlit/sprite_render.frag" };
 	shaders.emplace(ShaderID::SpriteRender, std::make_unique<Shader>(sprite_render_paths, ShaderType::Unlit));
 
-	const std::vector<std::string> billboard_render_paths = { "Shaders/Unlit/billboard_render.vert", "Shaders/Unlit/billboard_render.frag" };
-	shaders.emplace(ShaderID::BillboardRender, std::make_unique<Shader>(billboard_render_paths, ShaderType::Unlit));
+	const std::vector<std::string> billboard_paths = { "Shaders/Unlit/billboard.vert", "Shaders/Unlit/billboard.frag", "Shaders/Unlit/billboard.geom" };
+	shaders.emplace(ShaderID::BillboardRender, std::make_unique<Shader>(billboard_paths, ShaderType::Unlit));
 
 
 	// ------------------------- Materials -----------------------------

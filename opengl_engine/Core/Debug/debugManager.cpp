@@ -2,7 +2,7 @@
 #include <ECS/ecs.h>
 #include <Inputs/Input.h>
 #include <ECS/entityContainer.h>
-#include <Assets/assetManager.h>
+#include <Assets/engineAssets.h>
 #include <ServiceLocator/locator.h>
 #include <Rendering/cameraComponent.h>
 #include <Rendering/Text/textComponent.h>
@@ -51,7 +51,7 @@ void DebugManager::InitializeDebugManager(EntityContainer& entityOwner)
 	// Create the fps text
 	debugInfoText = entityOwner.createEntity()->addComponentByClass<TextComponent>();
 	TextComponent& fps_text_comp = ECS::GetComponent(debugInfoText);
-	fps_text_comp.setTextDatas("", AssetManager::GetFont("arial_24"));
+	fps_text_comp.setTextDatas("", EngineAssets::GetFont(EngineAssets::FontID::Arial24));
 	fps_text_comp.position = HudPosition{ Vector2::one, Vector2::one, Vector2{ -20.0f, -20.0f } };
 	fps_text_comp.active = false;
 }

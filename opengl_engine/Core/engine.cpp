@@ -1,7 +1,6 @@
 #include "engine.h"
 #include <Assets/assetManager.h>
 #include <Assets/engineAssets.h>
-#include <Assets/defaultAssets.h>
 #include <Assets/assetsIDs.h>
 
 #include <GameplayStatics/gameplayStatics.h>
@@ -136,7 +135,6 @@ bool Engine::initialize(int wndw_width, int wndw_height, std::string wndw_name, 
 	AssetManager::LoadNullAssets();
 	AssetsIDs::InitializeAssetIDs();
 	EngineAssets::LoadEngineAssets();
-	DefaultAssets::LoadEngineAssets();
 	std::cout << " Done.\n";
 
 	// Initialize debug manager
