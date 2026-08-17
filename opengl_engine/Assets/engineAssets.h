@@ -58,10 +58,10 @@ private:
 	static void LoadEngineAssets();
 	static void UnloadEngineAssets();
 
-	static std::unordered_map<VertexArrayID, std::unique_ptr<VertexArray>> vertexArrays;
-	static std::unordered_map<ShaderID, std::unique_ptr<Shader>> shaders;
-	static std::unordered_map<MaterialID, std::unique_ptr<Material>> materials;
-	static std::unordered_map<TextureID, std::unique_ptr<Texture>> textures;
-	static std::unordered_map<FontID, std::unique_ptr<Font>> fonts;
+	static std::unordered_map<VertexArrayID, std::shared_ptr<VertexArray>> vertexArrays;
+	static std::unordered_map<ShaderID, std::shared_ptr<Shader>> shaders;
+	static std::unordered_map<MaterialID, std::shared_ptr<Material>> materials;
+	static std::unordered_map<TextureID, std::shared_ptr<Texture>> textures;
+	static std::unordered_map<FontID, std::shared_ptr<Font>> fonts;
 };
 

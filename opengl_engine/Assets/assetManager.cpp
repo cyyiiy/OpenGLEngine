@@ -8,7 +8,7 @@
 //            Assets lists
 // --------------------------------------------------------------
 
-std::unordered_map<std::string, std::unique_ptr<Texture>> AssetManager::textures;
+std::unordered_map<std::string, std::shared_ptr<Texture>> AssetManager::textures;
 std::unordered_map<std::string, std::unique_ptr<VertexArray>> AssetManager::vertexArrays;
 std::unordered_map<std::string, std::unique_ptr<Model>> AssetManager::models;
 std::unordered_map<std::string, std::unique_ptr<Shader>> AssetManager::shaders;
@@ -31,7 +31,8 @@ void AssetManager::LoadTexture(const std::string& name, const std::string& textu
 		return;
 	}
 
-	textures.emplace(name, std::make_unique<Texture>(texturePath, flipVertical));
+	Texture::LoadParams texture_params = { texturePath, flipVertical };
+	textures.emplace(name, Texture::Create(texture_params));
 }
 
 Texture& AssetManager::GetTexture(const std::string& name)

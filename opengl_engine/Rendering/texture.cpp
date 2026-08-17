@@ -9,63 +9,81 @@
 #include <ServiceLocator/locator.h>
 #include <Utils/defines.h>
 
+// Define anisotropic filtering since it's not defined in glad
+#define GL_TEXTURE_MAX_ANISOTROPY_EXT 0x84FE
+#define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT 0x84FF
 
-Texture::Texture()
+
+
+Texture::Texture(unsigned int _ID, int _width, int _height) : 
+	IAsset(), ID(_ID), width(_width), height(_height)
+{}
+
+Texture::~Texture()
 {
-	load("Default/notexture.png", false);
+	glDeleteTextures(1, &ID);
 }
 
-Texture::Texture(const std::string& texturePath, const bool flipVertical)
+
+std::string Texture::GetTypeName()
 {
-	load(texturePath, flipVertical);
+	return "Texture";
 }
 
-void Texture::load(const std::string& texturePath, bool flipVertical)
+std::shared_ptr<Texture> Texture::Create(const LoadParams& params)
 {
-	std::string tex_path = RESOURCES_PATH + texturePath;
+	// Initialize the texture id and the texture path
+	unsigned int id;
+	int width, height;
+	std::filesystem::path tex_path = RESOURCES_PATH;
+	tex_path += params.texturePath;
 
-	//  create texture
-	glGenTextures(1, &ID);
-	glBindTexture(GL_TEXTURE_2D, ID);
+	// Create the texture in OpenGL
+	glGenTextures(1, &id);
+	glBindTexture(GL_TEXTURE_2D, id);
 
-	// set the texture wrapping parameters
+	// Set the texture wrapping and filtering parameters (default values for now)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	// set texture filtering parameters
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
 
 	int nr_channels;
-	stbi_set_flip_vertically_on_load(flipVertical);
-	unsigned char* data = stbi_load(tex_path.c_str(), &width, &height, &nr_channels, 0);
-	unsigned int gl_format = getGlFormat(nr_channels);
+	stbi_set_flip_vertically_on_load(params.flipVertical);
+	unsigned char* data = stbi_load(tex_path.string().c_str(), &width, &height, &nr_channels, 0);
 
 	if (data)
 	{
+		unsigned int gl_format = GetGlFormat(nr_channels);
 		glTexImage2D(GL_TEXTURE_2D, 0, gl_format, width, height, 0, gl_format, GL_UNSIGNED_BYTE, data);
-		//  in some cases, the glGenerateMipmap function can cause crashes (it's related to the size of the image, but I don't know exactly what causes this problem)
+
+		// Note: In some cases, the glGenerateMipmap function can cause crashes (it's related to the size of the image, but I don't know exactly what causes this problem)
 		glGenerateMipmap(GL_TEXTURE_2D);
-		
-		//  set anisotropy
+
+		// Set the anisotropy
 		GLfloat max_anisotropy;
 		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &max_anisotropy);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, Maths::clamp(max_anisotropy, 0.0f, 16.0f));
+
+		stbi_image_free(data);
 	}
 	else
 	{
-		Locator::getLog().LogMessage_Category("Texture: Failed to load texture at path " + tex_path + ".", LogCategory::Error);
-
-		stbi_set_flip_vertically_on_load(false);
-		std::string notex_path = RESOURCES_PATH + "Default/notexture.png";
-		data = stbi_load(notex_path.c_str(), &width, &height, &nr_channels, 0);
-
-		if (!data) Locator::getLog().LogMessage_Category("Texture: Default texture 'notexture' not found!", LogCategory::Error); //  I choose to not prevent the crash
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
+		Locator::getLog().LogMessage_Category("Texture: Failed to load texture at path " + tex_path.string() + ".", LogCategory::Error);
 	}
 
-	stbi_image_free(data);
+	return std::make_shared<Texture>(id, width, height);
+}
+
+Texture::LoadParams Texture::ParseCyasset(const CyassetDocument& cyasset)
+{
+	throw std::exception("Cyasset is not implemented yet.");
+}
+
+uint64_t Texture::getAssetMemorySize() const
+{
+	return sizeof(unsigned int) + 2 * sizeof(int);
 }
 
 
@@ -74,21 +92,13 @@ void Texture::use() const
 	glBindTexture(GL_TEXTURE_2D, ID);
 }
 
-void Texture::setWrappingParameters(unsigned int sAxis, unsigned int tAxis)
+Vector2Int Texture::getTextureSize() const
 {
-	use();
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, sAxis);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, tAxis);
+	return Vector2Int{ width, height };
 }
 
-void Texture::setFilteringParameters(unsigned int minifying, unsigned int magnifying)
-{
-	use();
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minifying);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magnifying);
-}
 
-unsigned int Texture::getGlFormat(const int nbChannels)
+unsigned int Texture::GetGlFormat(const int nbChannels)
 {
 	switch (nbChannels)
 	{
@@ -104,10 +114,4 @@ unsigned int Texture::getGlFormat(const int nbChannels)
 	default:
 		return GL_RGBA;
 	}
-}
-
-
-Vector2Int Texture::getTextureSize() const
-{
-	return Vector2Int{ width, height };
 }
