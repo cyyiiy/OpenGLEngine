@@ -36,7 +36,6 @@ public:
 
 	// Texture part
 	void use() const;
-	unsigned int getTextureID() const { return ID; }
 
 	int getTextureWidth() const { return width; }
 	int getTextureHeight() const { return height; }

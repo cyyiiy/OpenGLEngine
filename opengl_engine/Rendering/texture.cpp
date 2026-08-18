@@ -71,6 +71,7 @@ std::shared_ptr<Texture> Texture::Create(const LoadParams& params)
 	else
 	{
 		Locator::getLog().LogMessage_Category("Texture: Failed to load texture at path " + tex_path.string() + ".", LogCategory::Error);
+		return nullptr;
 	}
 
 	return std::make_shared<Texture>(id, width, height);

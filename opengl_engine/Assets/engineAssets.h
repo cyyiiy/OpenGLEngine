@@ -48,7 +48,7 @@ public:
 	[[nodiscard]] static const VertexArray& GetVertexArray(VertexArrayID id);
 	[[nodiscard]] static Shader& GetShader(ShaderID id);
 	[[nodiscard]] static Material& GetMaterial(MaterialID id);
-	[[nodiscard]] static Texture& GetTexture(TextureID id);
+	[[nodiscard]] static const Texture& GetTexture(TextureID id);
 	[[nodiscard]] static Font& GetFont(FontID id);
 
 

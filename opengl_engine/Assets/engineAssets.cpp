@@ -23,7 +23,7 @@ Material& EngineAssets::GetMaterial(MaterialID id)
 	return *materials.at(id);
 }
 
-Texture& EngineAssets::GetTexture(TextureID id)
+const Texture& EngineAssets::GetTexture(TextureID id)
 {
 	return *textures.at(id);
 }

@@ -32,7 +32,8 @@ void AssetManager::LoadTexture(const std::string& name, const std::string& textu
 	}
 
 	Texture::LoadParams texture_params = { texturePath, flipVertical };
-	textures.emplace(name, Texture::Create(texture_params));
+	std::shared_ptr<Texture> texture = Texture::Create(texture_params);
+	if (texture) textures.emplace(name, texture);
 }
 
 Texture& AssetManager::GetTexture(const std::string& name)
