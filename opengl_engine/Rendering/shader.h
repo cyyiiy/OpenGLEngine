@@ -1,4 +1,7 @@
 #pragma once
+#include <Assets/assetInterface.h>
+#include <Assets/cyassetDocument.h>
+#include <filesystem>
 #include <string>
 #include <vector>
 #include <unordered_map>
@@ -13,18 +16,37 @@ enum class ShaderType : uint8_t
 };
 
 
-class Shader
+class Shader : public IAsset
 {
 public:
-	Shader();
-	Shader(std::vector<std::string> shaderPaths, const ShaderType shaderType);
+	// Asset part
+	struct LoadParams
+	{
+		std::vector<std::filesystem::path> shaderPaths;
+		ShaderType shaderType;
+	};
 
+	Shader(unsigned int _ID, ShaderType _type);
 	~Shader();
 
-	void use(); // Use (activate) the shader
-	void deleteProgram();
+	Shader(const Shader&) = delete;
+	Shader(Shader&&) = delete;
+	Shader& operator=(const Shader&) = delete;
+	Shader& operator=(Shader&&) = delete;
 
-	// Setter uniform fonctions
+
+	static std::string GetTypeName();
+	static std::shared_ptr<Shader> Create(const LoadParams& params);
+	static LoadParams ParseCyasset(const CyassetDocument& cyasset);
+
+	[[nodiscard]] uint64_t getAssetMemorySize() const override;
+
+
+	// Shader part
+	void use() const;
+	ShaderType getShaderType() const { return type; }
+
+	// Shader uniform setters
 	void setBool(const std::string& name, const bool value) const;
 	void setInt(const std::string& name, const int value) const;
 	void setFloat(const std::string& name, const float value) const;
@@ -45,21 +67,10 @@ public:
 	void setMatrix4(const std::string& name, const float* value) const;
 	void setMatrix4Array(const std::string& name, const float* firstValue, const int arraySize) const;
 
-	unsigned int getProgram() const { return ID; }
-
-	ShaderType getShaderType() const { return type; }
-
-	bool isLoaded() const { return loaded; }
-
 private:
-	bool loaded{ false };
-
-	unsigned int ID{ 0 }; // Program ID
-
+	unsigned int ID{ 0 };
 	ShaderType type{ ShaderType::Null };
 
-
-	std::unordered_map<GLenum, std::string> convertShaderPaths(std::vector<std::string> shaderPaths);
-	void loadShader(std::unordered_map<GLenum, std::string> shaderParts);
-	bool loadShaderPart(const GLenum shaderPartType, const std::string& shaderPartPath, unsigned int& outShaderPartId);
+	static std::unordered_map<GLenum, std::string> ConvertShaderPaths(std::vector<std::filesystem::path> shaderPaths);
+	static bool LoadShaderPart(const GLenum shaderPartType, const std::string& shaderPartPath, unsigned int& outShaderPartId);
 };

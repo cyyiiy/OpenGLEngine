@@ -256,7 +256,7 @@ private:
 	static std::unordered_map<std::string, std::shared_ptr<Texture>> textures;
 	static std::unordered_map<std::string, std::unique_ptr<VertexArray>> vertexArrays;
 	static std::unordered_map<std::string, std::unique_ptr<Model>> models;
-	static std::unordered_map<std::string, std::unique_ptr<Shader>> shaders;
+	static std::unordered_map<std::string, std::shared_ptr<Shader>> shaders;
 	static std::unordered_map<std::string, std::unique_ptr<Material>> materials;
 	static std::unordered_map<std::string, std::unique_ptr<Font>> fonts;
 	static std::unordered_map<std::string, std::unique_ptr<AudioSound>> sounds;

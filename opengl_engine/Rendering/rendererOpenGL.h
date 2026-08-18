@@ -70,18 +70,18 @@ private:
 	void drawModelComponent(const class ModelRendererComponent& modelComponent, Material& materialInUsage);
 	void drawVertexArray(const class VertexArray& vertexArray, bool drawAsLines);
 
-	void useDirectionalLight(const class DirectionalLightComponent& dirLightComponent, Shader& shaderInUsage);
-	void usePointLight(const class PointLightComponent& pointLightComponent, Shader& shaderInUsage);
-	void useSpotLight(const class SpotLightComponent& spotLightComponent, Shader& shaderInUsage);
+	void useDirectionalLight(const class DirectionalLightComponent& dirLightComponent, const Shader& shaderInUsage);
+	void usePointLight(const class PointLightComponent& pointLightComponent, const Shader& shaderInUsage);
+	void useSpotLight(const class SpotLightComponent& spotLightComponent, const Shader& shaderInUsage);
 
-	void drawBillboardComponent(const class BillboardRendererComponent& billboardComponent, Shader& shaderInUsage);
+	void drawBillboardComponent(const class BillboardRendererComponent& billboardComponent, const Shader& shaderInUsage);
 
-	void drawBoxCollision(const class BoxCollisionComponent& boxColComponent, Shader& shaderInUsage);
-	void drawPointLightDebug(const class PointLightComponent& pointLightComponent, Shader& shaderInUsage);
-	void drawSpotLightDebug(const class SpotLightComponent& spotLightComponent, Shader& shaderInUsage);
+	void drawBoxCollision(const class BoxCollisionComponent& boxColComponent, const Shader& shaderInUsage);
+	void drawPointLightDebug(const class PointLightComponent& pointLightComponent, const Shader& shaderInUsage);
+	void drawSpotLightDebug(const class SpotLightComponent& spotLightComponent, const Shader& shaderInUsage);
 
-	void drawTextComponent(const class TextComponent& textComponent, Shader& shaderInUsage);
-	void drawSpriteComponent(const class SpriteComponent& spriteComponent, Shader& shaderInUsage);
+	void drawTextComponent(const class TextComponent& textComponent, const Shader& shaderInUsage);
+	void drawSpriteComponent(const class SpriteComponent& spriteComponent, const Shader& shaderInUsage);
 
 
 	std::unordered_map<Shader*, std::vector<Material*>> materials;

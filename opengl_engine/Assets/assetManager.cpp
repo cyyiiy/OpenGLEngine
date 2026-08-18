@@ -1,5 +1,6 @@
 #include "assetManager.h"
 #include "MeshModel/modelLoader.h"
+#include <Utils/filesystemUtils.h>
 #include <ServiceLocator/locator.h>
 
 
@@ -11,7 +12,7 @@
 std::unordered_map<std::string, std::shared_ptr<Texture>> AssetManager::textures;
 std::unordered_map<std::string, std::unique_ptr<VertexArray>> AssetManager::vertexArrays;
 std::unordered_map<std::string, std::unique_ptr<Model>> AssetManager::models;
-std::unordered_map<std::string, std::unique_ptr<Shader>> AssetManager::shaders;
+std::unordered_map<std::string, std::shared_ptr<Shader>> AssetManager::shaders;
 std::unordered_map<std::string, std::unique_ptr<Material>> AssetManager::materials;
 std::unordered_map<std::string, std::unique_ptr<Font>> AssetManager::fonts;
 std::unordered_map<std::string, std::unique_ptr<AudioSound>> AssetManager::sounds;
@@ -164,7 +165,9 @@ void AssetManager::CreateShaderProgram(const std::string& name, const ShaderType
 		return;
 	}
 
-	shaders.emplace(name, std::make_unique<Shader>(shaderPaths, shaderType));
+	Shader::LoadParams shader_params = { FilesystemUtils::ConvertStringsToPaths(shaderPaths), shaderType };
+	std::shared_ptr<Shader> shader = Shader::Create(shader_params);
+	if (shader) shaders.emplace(name, shader);
 }
 
 Shader& AssetManager::GetShader(const std::string& name)
@@ -363,8 +366,8 @@ void AssetManager::LoadNullAssets()
 	LoadTexture("null_texture", "Default/notexture.png", false);
 	vertexArrays.emplace("null_vertexarray", std::make_unique<VertexArray>());
 	models.emplace("null_model", std::make_unique<Model>(std::vector<LoadMeshData>{}, nullptr));
-	shaders.emplace("null_shader", std::make_unique<Shader>());
-	materials.emplace("null_material", std::make_unique<Material>(GetShader("null_shader")));
+	//shaders.emplace("null_shader", std::make_unique<Shader>());
+	//materials.emplace("null_material", std::make_unique<Material>(GetShader("null_shader")));
 	fonts.emplace("null_font", std::make_unique<Font>());
 	sounds.emplace("null_sound", std::make_unique<AudioSound>(nullptr, 0));
 	audioCollisionTypes.emplace("null_audio_collision_type", AudioCollisionOcclusion{ 0.0f, 0.0f });

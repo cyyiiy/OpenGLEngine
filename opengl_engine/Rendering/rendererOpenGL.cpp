@@ -47,7 +47,7 @@ void RendererOpenGL::Draw()
 		// Retrieve the shader
 		Shader* shader = materials_by_shaders.first;
 
-		if (!shader->isLoaded()) continue;
+		if (!shader) continue;
 
 		// Activate the shader and set the primary uniforms
 		shader->use();
@@ -155,7 +155,7 @@ void RendererOpenGL::Draw()
 	const Vector3 cam_right = current_camera.getCamRight();
 
 	// Activate the billboard shader and set global uniforms
-	Shader* billboard_shader = &EngineAssets::GetShader(EngineAssets::ShaderID::BillboardRender);
+	const Shader* billboard_shader = &EngineAssets::GetShader(EngineAssets::ShaderID::BillboardRender);
 	billboard_shader->use();
 	billboard_shader->setMatrix4("geomViewProj", view_proj.getAsFloatPtr());
 	billboard_shader->setVec3("geomCameraUp", cam_up);
@@ -198,24 +198,24 @@ void RendererOpenGL::Draw()
 	EngineAssets::GetVertexArray(EngineAssets::VertexArrayID::QuadHUD).setActive();
 
 	// Prepare the shader used in text rendering
-	Shader& text_render_shader = EngineAssets::GetShader(EngineAssets::ShaderID::TextRender);
+	const Shader& text_render_shader = EngineAssets::GetShader(EngineAssets::ShaderID::TextRender);
 	text_render_shader.use();
 	text_render_shader.setMatrix4("projection", hud_projection.getAsFloatPtr());
 
 	auto& hud_texts_manager = ECS::Manager<TextComponent>();
-	Shader* text_shader_ptr = &text_render_shader;
+	const Shader* text_shader_ptr = &text_render_shader;
 	hud_texts_manager.ForEach([this, text_shader_ptr](const TextComponent& text_component)
 	{
 		this->drawTextComponent(text_component, *text_shader_ptr);
 	});
 
 	// Prepare the shader used in sprite rendering
-	Shader& sprite_render_shader = EngineAssets::GetShader(EngineAssets::ShaderID::SpriteRender);
+	const Shader& sprite_render_shader = EngineAssets::GetShader(EngineAssets::ShaderID::SpriteRender);
 	sprite_render_shader.use();
 	sprite_render_shader.setMatrix4("projection", hud_projection.getAsFloatPtr());
 
 	auto& hud_sprites_manager = ECS::Manager<SpriteComponent>();
-	Shader* sprite_shader_ptr = &sprite_render_shader;
+	const Shader* sprite_shader_ptr = &sprite_render_shader;
 	hud_sprites_manager.ForEach([this, sprite_shader_ptr](const SpriteComponent& sprite_component)
 	{
 		this->drawSpriteComponent(sprite_component, *sprite_shader_ptr);
@@ -278,7 +278,7 @@ void RendererOpenGL::drawVertexArray(const VertexArray& vertexArray, bool drawAs
 	}
 }
 
-void RendererOpenGL::useDirectionalLight(const DirectionalLightComponent& dirLightComponent, Shader& shaderInUsage)
+void RendererOpenGL::useDirectionalLight(const DirectionalLightComponent& dirLightComponent, const Shader& shaderInUsage)
 {
 	// 1. Check if the directional lights limit has been reached
 	const int limit = LIGHTS_LIMITS.at(EDirectionalLight);
@@ -301,7 +301,7 @@ void RendererOpenGL::useDirectionalLight(const DirectionalLightComponent& dirLig
 	}
 }
 
-void RendererOpenGL::usePointLight(const PointLightComponent& pointLightComponent, Shader& shaderInUsage)
+void RendererOpenGL::usePointLight(const PointLightComponent& pointLightComponent, const Shader& shaderInUsage)
 {
 	// 1. Check if the point lights limit has been reached
 	const int limit = LIGHTS_LIMITS.at(EPointLight);
@@ -337,7 +337,7 @@ void RendererOpenGL::usePointLight(const PointLightComponent& pointLightComponen
 	}
 }
 
-void RendererOpenGL::useSpotLight(const SpotLightComponent& spotLightComponent, Shader& shaderInUsage)
+void RendererOpenGL::useSpotLight(const SpotLightComponent& spotLightComponent, const Shader& shaderInUsage)
 {
 	// 1. Check if the spot lights limit has been reached
 	const int limit = LIGHTS_LIMITS.at(ESpotLight);
@@ -377,7 +377,7 @@ void RendererOpenGL::useSpotLight(const SpotLightComponent& spotLightComponent, 
 	}
 }
 
-void RendererOpenGL::drawBillboardComponent(const BillboardRendererComponent& billboardComponent, Shader& shaderInUsage)
+void RendererOpenGL::drawBillboardComponent(const BillboardRendererComponent& billboardComponent, const Shader& shaderInUsage)
 {
 	// 1. Check if the billboard texture is valid
 	Texture* billboard_tex = billboardComponent.billboardTexture;
@@ -407,7 +407,7 @@ void RendererOpenGL::drawBillboardComponent(const BillboardRendererComponent& bi
 	glActiveTexture(GL_TEXTURE0);
 }
 
-void RendererOpenGL::drawBoxCollision(const BoxCollisionComponent& boxColComponent, Shader& shaderInUsage)
+void RendererOpenGL::drawBoxCollision(const BoxCollisionComponent& boxColComponent, const Shader& shaderInUsage)
 {
 	// 1. Compute the model matrix
 	const Box collision_box = boxColComponent.getTransformedBox();
@@ -427,7 +427,7 @@ void RendererOpenGL::drawBoxCollision(const BoxCollisionComponent& boxColCompone
 	drawVertexArray(debug_cube, true);
 }
 
-void RendererOpenGL::drawPointLightDebug(const PointLightComponent& pointLightComponent, Shader& shaderInUsage)
+void RendererOpenGL::drawPointLightDebug(const PointLightComponent& pointLightComponent, const Shader& shaderInUsage)
 {
 	// 1. Compute the point light transform
 	const Matrix4 point_light_transform =
@@ -450,7 +450,7 @@ void RendererOpenGL::drawPointLightDebug(const PointLightComponent& pointLightCo
 	glActiveTexture(GL_TEXTURE0);
 }
 
-void RendererOpenGL::drawSpotLightDebug(const SpotLightComponent& spotLightComponent, Shader& shaderInUsage)
+void RendererOpenGL::drawSpotLightDebug(const SpotLightComponent& spotLightComponent, const Shader& shaderInUsage)
 {
 	// 1. Compute the spot light transform
 	const Matrix4 spot_light_transform =
@@ -473,7 +473,7 @@ void RendererOpenGL::drawSpotLightDebug(const SpotLightComponent& spotLightCompo
 	glActiveTexture(GL_TEXTURE0);
 }
 
-void RendererOpenGL::drawTextComponent(const TextComponent& textComponent, Shader& shaderInUsage)
+void RendererOpenGL::drawTextComponent(const TextComponent& textComponent, const Shader& shaderInUsage)
 {
 	// 1. Check if the text renderer component is valid
 	if (!textComponent.active) return;
@@ -589,7 +589,7 @@ void RendererOpenGL::drawTextComponent(const TextComponent& textComponent, Shade
 	glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 }
 
-void RendererOpenGL::drawSpriteComponent(const SpriteComponent& spriteComponent, Shader& shaderInUsage)
+void RendererOpenGL::drawSpriteComponent(const SpriteComponent& spriteComponent, const Shader& shaderInUsage)
 {
 	// 1. Check if the sprite renderer component is valid
 	if (!spriteComponent.active) return;

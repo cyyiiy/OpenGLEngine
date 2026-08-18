@@ -1,12 +1,15 @@
 == COURT TERME == (engine v0.3 - pre-alpha)
 
 ~ Designer l'Asset Manager V2 (sur un projet à part) - fait
+	À rajouter :
+	- Une option pour retourner un élément par défaut (comme la texture noire et violette) au lieu de nullptr si disponible
+	- Une option pour un constructeur alternatif (comme les models à partir de données brutes)
 
 ~ Implémenter l'Asset Manager V2 : - en cours
 	- Intégrer les éléments de l'Asset Manager qui ne font pas de conflits (utils, IAsset, json & CyassetDocument) - fait
 	- Créer une classe statique pour les assets engine (shaders, vertex arrays, fonts statiques récupérables via références) - fait
 	- Modifier la classe Texture pour le nouveau format (si possible, garder le moteur compilable) - fait
-	- Modifier la classe Shader pour le nouveau format
+	- Modifier la classe Shader pour le nouveau format - fait
 	- Modifier la classe Material pour le nouveau format (essayer de faire un LoadParams au mieux)
 	- Modifier la classe Model pour le nouveau format (plus de déplacement -> les modèles gardent leurs meshes chez eux ?)
 	- Modifier la classe Font pour le nouveau format

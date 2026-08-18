@@ -3,8 +3,6 @@
 #include <fstream>
 #include <sstream>
 #include <limits>
-#include <unordered_map>
-#include <filesystem>
 
 #include <Maths/vector2.h>
 #include <Maths/vector3.h>
@@ -13,43 +11,123 @@
 #include <ServiceLocator/locator.h>
 
 
-Shader::Shader()
-{
-	// The default constructor will create a unloaded shader that will be unable to do anything
-}
-
-Shader::Shader(std::vector<std::string> shaderPaths, const ShaderType shaderType)
-{
-	std::unordered_map<GLenum, std::string> shader_parts = convertShaderPaths(shaderPaths);
-	if (shader_parts.empty()) return;
-
-	loadShader(shader_parts);
-	if (loaded) type = shaderType;
-}
+Shader::Shader(unsigned int _ID, ShaderType _type) :
+	IAsset(), ID(_ID), type(_type)
+{}
 
 Shader::~Shader()
 {
-	deleteProgram();
+	glDeleteProgram(ID);
 }
 
 
-std::unordered_map<GLenum, std::string> Shader::convertShaderPaths(std::vector<std::string> shaderPaths)
+std::string Shader::GetTypeName()
+{
+	return "Shader";
+}
+
+std::shared_ptr<Shader> Shader::Create(const LoadParams& params)
+{
+	unsigned int id;
+	std::unordered_map<GLenum, std::string> shader_parts = ConvertShaderPaths(params.shaderPaths);
+
+	// Check for the mandatory shader parts
+	if (shader_parts.find(GL_VERTEX_SHADER) == shader_parts.end())
+	{
+		Locator::getLog().LogMessage_Category("Shader: Cannot load a shader without a vertex shader part!", LogCategory::Error);
+		return nullptr;
+	}
+	if (shader_parts.find(GL_FRAGMENT_SHADER) == shader_parts.end())
+	{
+		Locator::getLog().LogMessage_Category("Shader: Cannot load a shader without a fragment shader part!", LogCategory::Error);
+		return nullptr;
+	}
+
+	// Prepare the shader program
+	id = glCreateProgram();
+	std::vector<unsigned int> shader_parts_ids;
+
+	// Load the individual shader parts
+	for (auto& shader_part : shader_parts)
+	{
+		// Load the individual shader part
+		unsigned int shader_part_id;
+		const bool success = LoadShaderPart(shader_part.first, shader_part.second, shader_part_id);
+
+		// Handle failed loads
+		if (!success)
+		{
+			switch (shader_part.first)
+			{
+			case GL_VERTEX_SHADER:
+				Locator::getLog().LogMessage_Category("Shader: Cannot load a shader with an invalid vertex shader part!", LogCategory::Error);
+				glDeleteProgram(id);
+				return nullptr;
+
+			case GL_FRAGMENT_SHADER:
+				Locator::getLog().LogMessage_Category("Shader: Cannot load a shader with an invalid fragment shader part!", LogCategory::Error);
+				glDeleteProgram(id);
+				return nullptr;
+
+			default:
+				Locator::getLog().LogMessage_Category("Shader: Failed to load a non-mandatory shader part. The shader will work, but will be incomplete.", LogCategory::Warning);
+				continue;
+			}
+		}
+
+		// Add the shader part id to the vector
+		shader_parts_ids.push_back(shader_part_id);
+	}
+
+	// Attach the shader parts to the shader program and link the program
+	for (unsigned int& shader_part_id : shader_parts_ids)
+	{
+		glAttachShader(id, shader_part_id);
+	}
+	glLinkProgram(id);
+
+	// Delete the shader parts once they are link into the program
+	for (unsigned int& shader_part_id : shader_parts_ids)
+	{
+		glDeleteShader(shader_part_id);
+	}
+
+	// Check if the shader program linked correctly
+	int success;
+	char info_log[512];
+	glGetShaderiv(id, GL_COMPILE_STATUS, &success);
+	if (!success)
+	{
+		glGetShaderInfoLog(id, 512, NULL, info_log);
+		Locator::getLog().LogMessage_Category("Shader: Failed to link the shader program. | " + std::string(info_log), LogCategory::Error);
+		glDeleteProgram(id);
+		return nullptr;
+	}
+
+	return std::make_shared<Shader>(id, params.shaderType);
+}
+
+Shader::LoadParams Shader::ParseCyasset(const CyassetDocument& cyasset)
+{
+	throw std::exception("Cyasset is not implemented yet.");
+}
+
+uint64_t Shader::getAssetMemorySize() const
+{
+	return sizeof(unsigned int) + sizeof(ShaderType);
+}
+
+
+std::unordered_map<GLenum, std::string> Shader::ConvertShaderPaths(std::vector<std::filesystem::path> shaderPaths)
 {
 	// Initialize the return map
 	std::unordered_map<GLenum, std::string> shader_parts;
 
-	// Convert the paths from string to filesystem::path
-	std::vector<std::filesystem::path> shader_paths_converted;
-	shader_paths_converted.reserve(shaderPaths.size());
-
-	for (std::string& shader_path : shaderPaths)
-		shader_paths_converted.push_back(std::filesystem::path(shader_path));
-
 	// Check the shader path extension and store them into the map with the correct key
-	for (std::filesystem::path& shader_path_converted : shader_paths_converted)
+	for (std::filesystem::path& shader_path_converted : shaderPaths)
 	{
 		const std::string path_extension = shader_path_converted.extension().string();
-		if (path_extension == ".vert")
+		if (path_extension == ".vert" || path_extension == ".vs")
 		{
 			if (shader_parts.find(GL_VERTEX_SHADER) != shader_parts.end())
 			{
@@ -59,7 +137,7 @@ std::unordered_map<GLenum, std::string> Shader::convertShaderPaths(std::vector<s
 			shader_parts.emplace(GL_VERTEX_SHADER, shader_path_converted.string());
 			continue;
 		}
-		if (path_extension == ".frag")
+		if (path_extension == ".frag" || path_extension == ".fs")
 		{
 			if (shader_parts.find(GL_FRAGMENT_SHADER) != shader_parts.end())
 			{
@@ -69,7 +147,7 @@ std::unordered_map<GLenum, std::string> Shader::convertShaderPaths(std::vector<s
 			shader_parts.emplace(GL_FRAGMENT_SHADER, shader_path_converted.string());
 			continue;
 		}
-		if (path_extension == ".geom")
+		if (path_extension == ".geom" || path_extension == ".gs")
 		{
 			if (shader_parts.find(GL_GEOMETRY_SHADER) != shader_parts.end())
 			{
@@ -86,87 +164,7 @@ std::unordered_map<GLenum, std::string> Shader::convertShaderPaths(std::vector<s
 	return shader_parts;
 }
 
-void Shader::loadShader(std::unordered_map<GLenum, std::string> shaderParts)
-{
-	loaded = false;
-
-	// Check for the mandatory shader parts
-	if (shaderParts.find(GL_VERTEX_SHADER) == shaderParts.end())
-	{
-		Locator::getLog().LogMessage_Category("Shader: Cannot load a shader without a vertex shader part!", LogCategory::Error);
-		return;
-	}
-	if (shaderParts.find(GL_FRAGMENT_SHADER) == shaderParts.end())
-	{
-		Locator::getLog().LogMessage_Category("Shader: Cannot load a shader without a fragment shader part!", LogCategory::Error);
-		return;
-	}
-
-	// Prepare the shader program
-	ID = glCreateProgram();
-	std::vector<unsigned int> shader_parts_ids;
-
-	// Load the individual shader parts
-	for (auto& shader_part : shaderParts)
-	{
-		// Load the individual shader part
-		unsigned int shader_part_id;
-		const bool success = loadShaderPart(shader_part.first, shader_part.second, shader_part_id);
-
-		// Handle failed loads
-		if (!success)
-		{
-			switch (shader_part.first)
-			{
-			case GL_VERTEX_SHADER:
-				Locator::getLog().LogMessage_Category("Shader: Cannot load a shader with an invalid vertex shader part!", LogCategory::Error);
-				glDeleteProgram(ID);
-				return;
-
-			case GL_FRAGMENT_SHADER:
-				Locator::getLog().LogMessage_Category("Shader: Cannot load a shader with an invalid fragment shader part!", LogCategory::Error);
-				glDeleteProgram(ID);
-				return;
-
-			default:
-				Locator::getLog().LogMessage_Category("Shader: Failed to load a non-mandatory shader part. The shader will work, but will be incomplete.", LogCategory::Warning);
-				continue;
-			}
-		}
-
-		// Add the shader part id to the vector
-		shader_parts_ids.push_back(shader_part_id);
-	}
-
-	// Attach the shader parts to the shader program and link the program
-	for (unsigned int& shader_part_id : shader_parts_ids)
-	{
-		glAttachShader(ID, shader_part_id);
-	}
-	glLinkProgram(ID);
-
-	// Delete the shader parts once they are link into the program
-	for (unsigned int& shader_part_id : shader_parts_ids)
-	{
-		glDeleteShader(shader_part_id);
-	}
-
-	// Check if the shader program linked correctly
-	int success;
-	char info_log[512];
-	glGetShaderiv(ID, GL_COMPILE_STATUS, &success);
-	if (!success)
-	{
-		glGetShaderInfoLog(ID, 512, NULL, info_log);
-		Locator::getLog().LogMessage_Category("Shader: Failed to link the shader program. | " + std::string(info_log), LogCategory::Error);
-		glDeleteProgram(ID);
-		return;
-	}
-
-	loaded = true;
-}
-
-bool Shader::loadShaderPart(const GLenum shaderPartType, const std::string& shaderPartPath, unsigned int& outShaderPartId)
+bool Shader::LoadShaderPart(const GLenum shaderPartType, const std::string& shaderPartPath, unsigned int& outShaderPartId)
 {
 	//  Step 1: Load the shader part source code from path
 	//  ==================================================
@@ -227,136 +225,93 @@ bool Shader::loadShaderPart(const GLenum shaderPartType, const std::string& shad
 }
 
 
-void Shader::use()
+void Shader::use() const
 {
-	if (!loaded) return;
-
 	glUseProgram(ID);
-}
-
-void Shader::deleteProgram()
-{
-	if (!loaded) return;
-
-	glDeleteProgram(ID);
 }
 
 
 void Shader::setBool(const std::string& name, const bool value) const
 {
-	if (!loaded) return;
-
 	glUniform1i(glGetUniformLocation(ID, name.c_str()), (int)value);
 }
 
 void Shader::setInt(const std::string& name, const int value) const
 {
-	if (!loaded) return;
-
 	glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
 }
 
 void Shader::setFloat(const std::string& name, const float value) const
 {
-	if (!loaded) return;
-
 	glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
 }
 
 void Shader::setVec2(const std::string& name, const Vector2& value) const
 {
-	//if (!loaded) return;
-
 	setVec2(name, value.x, value.y);
 }
 
 void Shader::setVec2(const std::string& name, const float xValue, const float yValue) const
 {
-	if (!loaded) return;
-
 	glUniform2f(glGetUniformLocation(ID, name.c_str()), xValue, yValue);
 }
 
 void Shader::setVec3(const std::string& name, const Vector3& value) const
 {
-	//if (!loaded) return;
-
 	setVec3(name, value.x, value.y, value.z);
 }
 
 void Shader::setVec3(const std::string& name, const float xValue, const float yValue, const float zValue) const
 {
-	if (!loaded) return;
-
 	glUniform3f(glGetUniformLocation(ID, name.c_str()), xValue, yValue, zValue);
 }
 
 void Shader::setVec4(const std::string& name, const Vector4& value) const
 {
-	//if (!loaded) return;
-
 	setVec4(name, value.x, value.y, value.z, value.w);
 }
 
 void Shader::setVec4(const std::string& name, const float xValue, const float yValue, const float zValue, const float wValue) const
 {
-	if (!loaded) return;
-
 	glUniform4f(glGetUniformLocation(ID, name.c_str()), xValue, yValue, zValue, wValue);
 }
 
 void Shader::setBoolArray(const std::string& name, const bool* firstValue, const int arraySize) const
 {
-	if (!loaded) return;
-
 	glUniform1iv(glGetUniformLocation(ID, name.c_str()), arraySize, (int*)firstValue);
 }
 
 void Shader::setIntArray(const std::string& name, const int* firstValue, const int arraySize) const
 {
-	if (!loaded) return;
-
 	glUniform1iv(glGetUniformLocation(ID, name.c_str()), arraySize, firstValue);
 }
 
 void Shader::setFloatArray(const std::string& name, const float* firstValue, const int arraySize) const
 {
-	if (!loaded) return;
-
 	glUniform1fv(glGetUniformLocation(ID, name.c_str()), arraySize, firstValue);
 }
 
 void Shader::setVec2Array(const std::string& name, const Vector2* firstValue, const int arraySize) const
 {
-	if (!loaded) return;
-
 	glUniform2fv(glGetUniformLocation(ID, name.c_str()), arraySize, firstValue->getAsFloatPtr());
 }
 
 void Shader::setVec3Array(const std::string& name, const Vector3* firstValue, const int arraySize) const
 {
-	if (!loaded) return;
-
 	glUniform3fv(glGetUniformLocation(ID, name.c_str()), arraySize, firstValue->getAsFloatPtr());
 }
 
 void Shader::setVec4Array(const std::string& name, const Vector4* firstValue, const int arraySize) const
 {
-	if (!loaded) return;
-
 	glUniform4fv(glGetUniformLocation(ID, name.c_str()), arraySize, firstValue->getAsFloatPtr());
 }
 
 void Shader::setMatrix4(const std::string& name, const float* value) const
 {
-	if (!loaded) return;
-
 	glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_TRUE, value);
 }
 
 void Shader::setMatrix4Array(const std::string& name, const float* firstValue, const int arraySize) const
 {
-	if (!loaded) return;
-
 	glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), arraySize, GL_TRUE, firstValue);
 }

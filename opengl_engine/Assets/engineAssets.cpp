@@ -1,5 +1,6 @@
 #include "engineAssets.h"
 #include <Utils/Color.h>
+#include <Utils/filesystemUtils.h>
 
 std::unordered_map<EngineAssets::VertexArrayID, std::shared_ptr<VertexArray>> EngineAssets::vertexArrays;
 std::unordered_map<EngineAssets::ShaderID, std::shared_ptr<Shader>> EngineAssets::shaders;
@@ -13,7 +14,7 @@ const VertexArray& EngineAssets::GetVertexArray(VertexArrayID id)
 	return *vertexArrays.at(id);
 }
 
-Shader& EngineAssets::GetShader(ShaderID id)
+const Shader& EngineAssets::GetShader(ShaderID id)
 {
 	return *shaders.at(id);
 }
@@ -98,17 +99,29 @@ void EngineAssets::LoadEngineAssets()
 
 	// ------------------------- Shaders -------------------------------
 
-	const std::vector<std::string> draw_debug_paths = { "Shaders/Unlit/draw_debug.vert", "Shaders/Unlit/draw_debug.frag" };
-	shaders.emplace(ShaderID::DrawDebug, std::make_shared<Shader>(draw_debug_paths, ShaderType::Unlit));
+	const Shader::LoadParams draw_debug_params = {
+		FilesystemUtils::ConvertStringsToPaths({ "Shaders/Unlit/draw_debug.vert", "Shaders/Unlit/draw_debug.frag" }),
+		ShaderType::Unlit
+	};
+	shaders.emplace(ShaderID::DrawDebug, Shader::Create(draw_debug_params));
 
-	const std::vector<std::string> text_render_paths = { "Shaders/Unlit/text_render.vert", "Shaders/Unlit/text_render.frag" };
-	shaders.emplace(ShaderID::TextRender, std::make_shared<Shader>(text_render_paths, ShaderType::Unlit));
+	const Shader::LoadParams text_render_params = {
+		FilesystemUtils::ConvertStringsToPaths({ "Shaders/Unlit/text_render.vert", "Shaders/Unlit/text_render.frag" }),
+		ShaderType::Unlit
+	};
+	shaders.emplace(ShaderID::TextRender, Shader::Create(text_render_params));
 
-	const std::vector<std::string> sprite_render_paths = { "Shaders/Unlit/sprite_render.vert", "Shaders/Unlit/sprite_render.frag" };
-	shaders.emplace(ShaderID::SpriteRender, std::make_shared<Shader>(sprite_render_paths, ShaderType::Unlit));
+	const Shader::LoadParams sprite_render_params = {
+		FilesystemUtils::ConvertStringsToPaths({ "Shaders/Unlit/sprite_render.vert", "Shaders/Unlit/sprite_render.frag" }),
+		ShaderType::Unlit
+	};
+	shaders.emplace(ShaderID::SpriteRender, Shader::Create(sprite_render_params));
 
-	const std::vector<std::string> billboard_paths = { "Shaders/Unlit/billboard.vert", "Shaders/Unlit/billboard.frag", "Shaders/Unlit/billboard.geom" };
-	shaders.emplace(ShaderID::BillboardRender, std::make_shared<Shader>(billboard_paths, ShaderType::Unlit));
+	const Shader::LoadParams billboard_params = {
+		FilesystemUtils::ConvertStringsToPaths({ "Shaders/Unlit/billboard.vert", "Shaders/Unlit/billboard.frag", "Shaders/Unlit/billboard.geom" }),
+		ShaderType::Unlit
+	};
+	shaders.emplace(ShaderID::BillboardRender, Shader::Create(billboard_params)); 
 
 
 	// ------------------------- Materials -----------------------------

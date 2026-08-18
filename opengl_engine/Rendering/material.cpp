@@ -15,7 +15,7 @@ Material::~Material()
 
 void Material::use()
 {
-	if (!shader.isLoaded()) return;
+	// TODO: Check if the shader is not nullptr?
 
 	//  assume the shader is already in use (the rendering process should have done it)
 
