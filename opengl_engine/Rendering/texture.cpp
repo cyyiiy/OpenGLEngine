@@ -49,14 +49,17 @@ std::shared_ptr<Texture> Texture::Create(const LoadParams& params)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
 
-	int nr_channels;
+	int nb_channels;
 	stbi_set_flip_vertically_on_load(params.flipVertical);
-	unsigned char* data = stbi_load(tex_path.string().c_str(), &width, &height, &nr_channels, 0);
+	unsigned char* data = stbi_load(tex_path.string().c_str(), &width, &height, &nb_channels, 0);
 
 	if (data)
 	{
-		unsigned int gl_format = GetGlFormat(nr_channels);
-		glTexImage2D(GL_TEXTURE_2D, 0, gl_format, width, height, 0, gl_format, GL_UNSIGNED_BYTE, data);
+		unsigned int src_format = GetSrcFormat(nb_channels);
+		unsigned int gl_format = GetGlFormat(nb_channels);
+
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+		glTexImage2D(GL_TEXTURE_2D, 0, gl_format, width, height, 0, src_format, GL_UNSIGNED_BYTE, data);
 
 		// Note: In some cases, the glGenerateMipmap function can cause crashes (it's related to the size of the image, but I don't know exactly what causes this problem)
 		glGenerateMipmap(GL_TEXTURE_2D);
@@ -99,20 +102,38 @@ Vector2Int Texture::getTextureSize() const
 }
 
 
-unsigned int Texture::GetGlFormat(const int nbChannels)
+unsigned int Texture::GetSrcFormat(const int nbChannels)
 {
 	switch (nbChannels)
 	{
 	case 1:
-		return GL_RGB8;
+		return GL_RED;
 
 	case 2:
-		return GL_RGB16;
+		return GL_RG;
 
 	case 3:
 		return GL_RGB;
 
 	default:
 		return GL_RGBA;
+	}
+}
+
+unsigned int Texture::GetGlFormat(const int nbChannels)
+{
+	switch (nbChannels)
+	{
+	case 1:
+		return GL_R8;
+
+	case 2:
+		return GL_RG8;
+
+	case 3:
+		return GL_RGB8;
+
+	default:
+		return GL_RGBA8;
 	}
 }

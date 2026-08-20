@@ -16,6 +16,10 @@ public:
 
 		// Note: Wrapping and Filtering Parameters can be added here later
 		// They would replace their default values being initialized in `Create`
+
+		// Note: A parameter for generating mipmaps or not could also be added
+
+		// Note: A parameter to enhance the color precision (RGB8 to RGB16) could be added but is not necessary now
 	};
 
 	Texture(unsigned int _ID, int _width, int _height);
@@ -46,5 +50,6 @@ private:
 	int width{ 0 };
 	int height{ 0 };
 
+	static unsigned int GetSrcFormat(const int nbChannels);
 	static unsigned int GetGlFormat(const int nbChannels);
 };
