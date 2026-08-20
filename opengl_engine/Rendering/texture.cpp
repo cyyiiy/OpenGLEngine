@@ -15,8 +15,8 @@
 
 
 
-Texture::Texture(unsigned int _ID, int _width, int _height) : 
-	IAsset(), ID(_ID), width(_width), height(_height)
+Texture::Texture(unsigned int _ID, int _width, int _height, int _nbChannels) :
+	IAsset(), ID(_ID), width(_width), height(_height), nbChannels(_nbChannels)
 {}
 
 Texture::~Texture()
@@ -77,7 +77,7 @@ std::shared_ptr<Texture> Texture::Create(const LoadParams& params)
 		return nullptr;
 	}
 
-	return std::make_shared<Texture>(id, width, height);
+	return std::make_shared<Texture>(id, width, height, nb_channels);
 }
 
 Texture::LoadParams Texture::ParseCyasset(const CyassetDocument& cyasset)
@@ -87,7 +87,13 @@ Texture::LoadParams Texture::ParseCyasset(const CyassetDocument& cyasset)
 
 uint64_t Texture::getAssetMemorySize() const
 {
-	return sizeof(unsigned int) + 2 * sizeof(int);
+	return sizeof(Texture);
+}
+
+uint64_t Texture::getAssetGpuSize() const
+{
+	uint64_t size = width * height * nbChannels;
+	return size + size / 3; // Mipmaps size approximation
 }
 
 

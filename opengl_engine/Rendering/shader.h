@@ -40,6 +40,7 @@ public:
 	static LoadParams ParseCyasset(const CyassetDocument& cyasset);
 
 	[[nodiscard]] uint64_t getAssetMemorySize() const override;
+	[[nodiscard]] uint64_t getAssetGpuSize() const override;
 
 
 	// Shader part

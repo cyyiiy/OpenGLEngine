@@ -21,6 +21,7 @@ public:
     IAsset& operator=(IAsset&&) = delete;
 
     [[nodiscard]] virtual uint64_t getAssetMemorySize() const = 0;
+    [[nodiscard]] virtual uint64_t getAssetGpuSize() const = 0;
 
     [[nodiscard]] const std::vector<std::filesystem::path>& getRawAssetPaths() const { return rawAssetPaths; }
     [[nodiscard]] const std::optional<std::filesystem::path>& getCyassetSourcePath() const { return cyassetSourcePath; }

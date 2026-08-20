@@ -22,7 +22,7 @@ public:
 		// Note: A parameter to enhance the color precision (RGB8 to RGB16) could be added but is not necessary now
 	};
 
-	Texture(unsigned int _ID, int _width, int _height);
+	Texture(unsigned int _ID, int _width, int _height, int _nbChannels);
 	~Texture();
 
 	Texture(const Texture&) = delete;
@@ -36,6 +36,7 @@ public:
 	static LoadParams ParseCyasset(const CyassetDocument& cyasset);
 
 	[[nodiscard]] uint64_t getAssetMemorySize() const override;
+	[[nodiscard]] uint64_t getAssetGpuSize() const override;
 
 
 	// Texture part
@@ -49,6 +50,7 @@ private:
 	unsigned int ID{ 0 };
 	int width{ 0 };
 	int height{ 0 };
+	int nbChannels{ 0 };
 
 	static unsigned int GetSrcFormat(const int nbChannels);
 	static unsigned int GetGlFormat(const int nbChannels);

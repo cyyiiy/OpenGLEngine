@@ -114,7 +114,14 @@ Shader::LoadParams Shader::ParseCyasset(const CyassetDocument& cyasset)
 
 uint64_t Shader::getAssetMemorySize() const
 {
-	return sizeof(unsigned int) + sizeof(ShaderType);
+	return sizeof(Shader);
+}
+
+uint64_t Shader::getAssetGpuSize() const
+{
+	// Note: the size of a compiled shader is so small compared to textures for example that it is basically a useless information
+	// Also there is no reliable way to know the size of a compiled shader as it vary depending on the GPU and the driver
+	return 0;
 }
 
 
