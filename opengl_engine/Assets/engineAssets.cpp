@@ -126,8 +126,9 @@ void EngineAssets::LoadEngineAssets()
 
 	// ------------------------- Materials -----------------------------
 
-	materials.emplace(MaterialID::DrawDebug, std::make_shared<Material>(*shaders.at(ShaderID::DrawDebug)));
-	materials.at(MaterialID::DrawDebug)->addParameter("color", Color::green);
+	Material::LoadParams debug_mat_params(shaders.at(ShaderID::DrawDebug));
+	debug_mat_params.vec3Parameters.emplace("color", Color::green);
+	materials.emplace(MaterialID::DrawDebug, std::make_shared<Material>(debug_mat_params));
 
 
 	// ------------------------- Textures ------------------------------

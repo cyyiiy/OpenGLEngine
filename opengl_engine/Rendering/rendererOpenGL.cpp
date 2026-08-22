@@ -668,22 +668,30 @@ const Color RendererOpenGL::GetClearColor() const
 }
 
 
-void RendererOpenGL::AddMaterial(Material* material)
+void RendererOpenGL::AddMaterial(const Material* material)
 {
-	materials[material->getShaderPtr()].push_back(material);
+	materials[material->getShader()].push_back(material);
 }
 
-void RendererOpenGL::RemoveMaterial(Material* material)
+void RendererOpenGL::RemoveMaterial(const Material* material)
 {
-	auto iter = std::find(materials[material->getShaderPtr()].begin(), materials[material->getShaderPtr()].end(), material);
-	if (iter == materials[material->getShaderPtr()].end())
+	std::shared_ptr<const Shader> shader = material->getShader();
+	std::vector<const Material*> material_vector = materials.at(shader);
+
+	auto iter = std::find(material_vector.begin(), material_vector.end(), material);
+	if (iter == material_vector.end())
 	{
-		Locator::getLog().LogMessage_Category("Renderer: Tried to remove a material that doesn't exist.", LogCategory::Error);
+		Locator::getLog().LogMessage_Category("Renderer: Tried to remove a material that isn't registered.", LogCategory::Error);
 		return;
 	}
 
-	std::iter_swap(iter, materials[material->getShaderPtr()].end() - 1);
-	materials[material->getShaderPtr()].pop_back();
+	std::iter_swap(iter, material_vector.end() - 1);
+	material_vector.pop_back();
+
+	if (material_vector.empty())
+	{
+		materials.erase(shader);
+	}
 }
 
 

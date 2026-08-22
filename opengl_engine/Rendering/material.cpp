@@ -1,116 +1,74 @@
 #include "material.h"
+#include <ServiceLocator/locator.h>
+#include <Utils/memoryUtils.h>
 #include <glad/glad.h>
-#include <Assets/assetsIDs.h>
-#include <string>
 
 
-Material::Material(Shader& shaderUsed) : shader(shaderUsed)
+Material::Material(LoadParams materialLoadParams) : IAsset(),
+	shader(materialLoadParams.shader), textures(materialLoadParams.textures),
+	boolParameters(materialLoadParams.boolParameters), intParameters(materialLoadParams.intParameters),
+	floatParameters(materialLoadParams.floatParameters), vector3Parameters(materialLoadParams.vec3Parameters)
 {
-	uniqueID = AssetsIDs::GenerateMaterialUniqueID();
+	Locator::getRenderer().AddMaterial(this);
 }
 
 Material::~Material()
 {
+	Locator::getRenderer().RemoveMaterial(this);
 }
 
-void Material::use()
-{
-	// TODO: Check if the shader is not nullptr?
 
-	//  assume the shader is already in use (the rendering process should have done it)
+std::string Material::GetTypeName()
+{
+	return "Material";
+}
+
+std::shared_ptr<Material> Material::Create(const LoadParams& params)
+{
+	return std::make_shared<Material>(params);
+}
+
+Material::LoadParams Material::ParseCyasset(const CyassetDocument& cyasset)
+{
+	throw std::exception("Cyasset is not implemented yet.");
+}
+
+uint64_t Material::getAssetMemorySize() const
+{
+	uint64_t total = sizeof(Material);
+	total += MemoryUtils::EstimateUnorderedMapHeapMemory(textures);
+	total += MemoryUtils::EstimateUnorderedMapHeapMemory(boolParameters);
+	total += MemoryUtils::EstimateUnorderedMapHeapMemory(intParameters);
+	total += MemoryUtils::EstimateUnorderedMapHeapMemory(floatParameters);
+	total += MemoryUtils::EstimateUnorderedMapHeapMemory(vector3Parameters);
+	return total;
+}
+
+uint64_t Material::getAssetGpuSize() const
+{
+	return 0;
+}
+
+
+void Material::use() const
+{
+	if (!shader) return;
 
 	unsigned int tex_activated = 0;
-	for (auto tex_type : textures)
+	for (const auto& [name, texture] : textures)
 	{
-		TextureType type = tex_type.first;
-		unsigned int number = 0;
+		glActiveTexture(GL_TEXTURE0 + tex_activated); // Activate texture unit first
 
-		for (auto texture : tex_type.second)
-		{
-			glActiveTexture(GL_TEXTURE0 + tex_activated); //  activate texture unit first
-			std::string str_number = std::to_string(++number);
+		shader->setInt("material." + name, tex_activated); // Then set the sampler to the correct texture unit
+		texture->use(); // Finally bind the texture
 
-			shader.setInt("material." + TypeToString(type) + str_number, tex_activated); //  then set the sampler to the correct texture unit
-			texture->use(); //  finally bind the texture
-
-			tex_activated++;
-		}
+		tex_activated++;
 	}
 
-	glActiveTexture(GL_TEXTURE0); //  reinitialisate the texture activation
+	glActiveTexture(GL_TEXTURE0); // Clear the texture unit activation
 
-	for (auto parameter : boolParameters) shader.setBool(parameter.first, parameter.second);
-	for (auto parameter : intParameters) shader.setInt(parameter.first, parameter.second);
-	for (auto parameter : floatParameters) shader.setFloat(parameter.first, parameter.second);
-	for (auto parameter : vector3Parameters) shader.setVec3(parameter.first, parameter.second);
-}
-
-
-void Material::addTexture(Texture* texture, TextureType type)
-{
-	textures[type].push_back(texture);
-}
-
-void Material::addParameter(std::string name, bool boolParameter)
-{
-	boolParameters[name] = boolParameter;
-}
-
-void Material::addParameter(std::string name, int intParameter)
-{
-	intParameters[name] = intParameter;
-}
-
-void Material::addParameter(std::string name, float floatParameter)
-{
-	floatParameters[name] = floatParameter;
-}
-
-void Material::addParameter(std::string name, Vector3 vec3Parameter)
-{
-	vector3Parameters[name] = vec3Parameter;
-}
-
-void Material::addParameter(std::string name, float vec3ParameterX, float vec3ParameterY, float vec3ParameterZ)
-{
-	vector3Parameters[name] = Vector3{ vec3ParameterX, vec3ParameterY, vec3ParameterZ };
-}
-
-
-
-
-
-
-
-std::string Material::TypeToString(TextureType textureType)
-{
-	switch (textureType)
-	{
-
-	case TextureType::Undefined:
-		return std::string("");
-
-	case TextureType::Diffuse:
-		return std::string("texture_diffuse");
-
-	case TextureType::Specular:
-		return std::string("texture_specular");
-
-	case TextureType::Emissive:
-		return std::string("texture_emissive");
-
-	default:
-		return std::string("");
-
-	}
-}
-
-bool Material::operator==(const Material& other) const
-{
-	return uniqueID == other.uniqueID;
-}
-
-bool Material::operator!=(const Material& other) const
-{
-	return uniqueID != other.uniqueID;
+	for (auto parameter : boolParameters) shader->setBool(parameter.first, parameter.second);
+	for (auto parameter : intParameters) shader->setInt(parameter.first, parameter.second);
+	for (auto parameter : floatParameters) shader->setFloat(parameter.first, parameter.second);
+	for (auto parameter : vector3Parameters) shader->setVec3(parameter.first, parameter.second);
 }

@@ -207,7 +207,6 @@ Material& AssetManager::CreateMaterial(const std::string& name, Shader& shaderUs
 	}
 
 	materials.emplace(name, std::make_unique<Material>(shaderUsed));
-	Locator::getRenderer().AddMaterial(materials[name].get());
 	return *materials[name];
 }
 
@@ -230,7 +229,6 @@ void AssetManager::DeleteMaterial(const std::string& name)
 		return;
 	}
 
-	Locator::getRenderer().RemoveMaterial(materials[name].get());
 	materials.erase(name);
 }
 

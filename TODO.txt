@@ -10,7 +10,7 @@
 	- Créer une classe statique pour les assets engine (shaders, vertex arrays, fonts statiques récupérables via références) - fait
 	- Modifier la classe Texture pour le nouveau format (si possible, garder le moteur compilable) - fait
 	- Modifier la classe Shader pour le nouveau format - fait
-	- Modifier la classe Material pour le nouveau format (essayer de faire un LoadParams au mieux)
+	- Modifier la classe Material pour le nouveau format (essayer de faire un LoadParams au mieux) - fait
 	- Modifier la classe Model pour le nouveau format (plus de déplacement -> les modèles gardent leurs meshes chez eux ?)
 	- Modifier la classe Font pour le nouveau format
 	- Modifier la classe AudioSound pour le nouveau format (mettre les paramètres flag en LoadParams ?)

@@ -66,13 +66,13 @@ public:
 	* Register a material to the renderer.
 	* @param	material	The material to register.
 	*/
-	virtual void AddMaterial(Material* material) = 0;
+	virtual void AddMaterial(const Material* material) = 0;
 
 	/**
 	* Unregister a material from the renderer.
 	* @param	material	The material to unregister.
 	*/
-	virtual void RemoveMaterial(Material* material) = 0;
+	virtual void RemoveMaterial(const Material* material) = 0;
 
 
 	/**

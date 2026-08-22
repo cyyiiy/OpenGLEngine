@@ -2,9 +2,9 @@
 
 struct Material
 {
-	sampler2D texture_diffuse1;
-	sampler2D texture_specular1;
-	sampler2D texture_emissive1;
+	sampler2D texture_diffuse;
+	sampler2D texture_specular;
+	sampler2D texture_emissive;
 	float shininess;
 };
 

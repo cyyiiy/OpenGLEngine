@@ -111,9 +111,6 @@
     <ClCompile Include="Assets\assetManager.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="Assets\assetsIDs.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="Assets\defaultAssets.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
@@ -335,9 +332,6 @@
     <ClInclude Include="Assets\assetManager.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="Assets\assetsIDs.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="Assets\defaultAssets.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
@@ -474,6 +468,9 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="Utils\filesystemUtils.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\memoryUtils.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>

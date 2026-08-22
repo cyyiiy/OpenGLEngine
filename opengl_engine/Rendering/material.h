@@ -1,63 +1,63 @@
 #pragma once
+#include <Assets/assetInterface.h>
+#include <Assets/cyassetDocument.h>
 
 #include "shader.h"
 #include "texture.h"
 #include <Maths/Vector3.h>
 
-#include <vector>
 #include <unordered_map>
+#include <memory>
 #include <string>
 
-typedef std::uint32_t MaterialUniqueID;
 
-
-enum class TextureType : uint8_t
+class Material : public IAsset
 {
-	Undefined = 0,
-	Diffuse = 1,
-	Specular = 2,
-	Emissive = 3
-};
+	// TODO: Create a null material that is a gray-ish albedo (could also serve as a default material?)
 
-
-class Material
-{
 public:
-	Material(Shader& shaderUsed);
+	// Asset part
+	struct LoadParams
+	{
+		std::shared_ptr<const Shader> shader;
+		std::unordered_map<std::string, std::shared_ptr<const Texture>> textures;
+
+		std::unordered_map<std::string, bool> boolParameters;
+		std::unordered_map<std::string, int> intParameters;
+		std::unordered_map<std::string, float> floatParameters;
+		std::unordered_map<std::string, Vector3> vec3Parameters;
+
+		LoadParams(std::shared_ptr<const Shader> _shader) : shader(_shader) {}
+
+		// Note: For now, it is not possible to ensure a material have the correct textures and parameters to fill its shader.
+		// It could be possible in the future with a custom shader builder that explicitly output its parameters.
+	};
+
+	Material(LoadParams materialLoadParams);
 	~Material();
 
-	Material() = delete;
 	Material(const Material&) = delete;
+	Material(Material&&) = delete;
 	Material& operator=(const Material&) = delete;
-
-	void use();
-
-	Shader& getShader() { return shader; }
-	Shader* getShaderPtr() { return &shader; } 
-
-	void addTexture(Texture* texture, TextureType type);
-
-	void addParameter(std::string name, bool boolParameter);
-	void addParameter(std::string name, int intParameter);
-	void addParameter(std::string name, float floatParameter);
-	void addParameter(std::string name, Vector3 vec3Parameter);
-	void addParameter(std::string name, float vec3ParameterX, float vec3ParameterY, float vec3ParameterZ);
+	Material& operator=(Material&&) = delete;
 
 
-	static std::string TypeToString(TextureType textureType);
+	static std::string GetTypeName();
+	static std::shared_ptr<Material> Create(const LoadParams& params);
+	static LoadParams ParseCyasset(const CyassetDocument& cyasset);
+
+	[[nodiscard]] uint64_t getAssetMemorySize() const override;
+	[[nodiscard]] uint64_t getAssetGpuSize() const override;
 
 
-	bool operator==(const Material& other) const;
-	bool operator!=(const Material& other) const;
-
-	MaterialUniqueID getUniqueID() const { return uniqueID; }
+	// Material part
+	void use() const;
+	const std::shared_ptr<const Shader> getShader() const { return shader; }
 
 
 private:
-	MaterialUniqueID uniqueID{ 0 };
-
-	Shader& shader;
-	std::unordered_map<TextureType, std::vector<Texture*>> textures;
+	std::shared_ptr<const Shader> shader;
+	std::unordered_map<std::string, std::shared_ptr<const Texture>> textures;
 
 	std::unordered_map<std::string, bool> boolParameters;
 	std::unordered_map<std::string, int> intParameters;
