@@ -177,10 +177,7 @@
     <ClCompile Include="ECS\Gameplay\gameplayComponentsManager.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="Assets\MeshModel\modelLoader.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Assets\MeshModel\meshLoader.cpp">
+    <ClCompile Include="Assets\Loaders\modelLoader.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="Rendering\modelRendererComponent.cpp">
@@ -446,10 +443,7 @@
     <ClInclude Include="ECS\Gameplay\gameplayComponentsManager.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="Assets\MeshModel\modelLoader.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="Assets\MeshModel\meshLoader.h">
+    <ClInclude Include="Assets\Loaders\modelLoader.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="Utils\hashUtils.h">

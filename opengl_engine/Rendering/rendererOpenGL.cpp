@@ -15,6 +15,7 @@
 #include <PhysicsAABB/raycastRendererComponent.h>
 #include <algorithm>
 #include <stdexcept>
+#include <glad/glad.h>
 
 
 
@@ -226,7 +227,7 @@ void RendererOpenGL::Draw()
 }
 
 
-void RendererOpenGL::drawModelComponent(const ModelRendererComponent& modelComponent, Material& materialInUsage)
+void RendererOpenGL::drawModelComponent(const ModelRendererComponent& modelComponent, const std::shared_ptr<Material>& materialInUsage)
 {
 	// 1. Check if the model component is valid and uses the currently processed material
 	if (!modelComponent.isValid()) return;
@@ -248,18 +249,17 @@ void RendererOpenGL::drawModelComponent(const ModelRendererComponent& modelCompo
 	normal_matrix.transpose();
 
 	// 3. Set the matrices in the shader
-	Shader& shader_used = materialInUsage.getShader();
+	const Shader& shader_used = *materialInUsage->getShader();
 
 	shader_used.setMatrix4("model", model_matrix.getAsFloatPtr());
 	shader_used.setMatrix4("normalMatrix", normal_matrix.getAsFloatPtr());
 	shader_used.setVec3("scale", model_scale);
 
 	// 4. Draw the meshes of the model component that uses the current material
-	const std::vector<std::shared_ptr<Mesh>> meshes_of_material = modelComponent.retrieveMeshesOfMaterial(materialInUsage);
-	for (const std::shared_ptr<Mesh> mesh : meshes_of_material)
+	modelComponent.ForEachMeshOfMaterial(materialInUsage, [this](const Mesh& mesh)
 	{
-		drawVertexArray(mesh->getVertexArray(), false);
-	}
+		drawVertexArray(mesh.getVertexArray(), false);
+	});
 }
 
 void RendererOpenGL::drawVertexArray(const VertexArray& vertexArray, bool drawAsLines)

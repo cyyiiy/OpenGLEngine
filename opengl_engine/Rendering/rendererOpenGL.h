@@ -67,7 +67,7 @@ private:
 	CameraComponent& selectCurrentCam();
 	bool isCurrentCamValid();
 
-	void drawModelComponent(const class ModelRendererComponent& modelComponent, Material& materialInUsage);
+	void drawModelComponent(const class ModelRendererComponent& modelComponent, const std::shared_ptr<Material>& materialInUsage);
 	void drawVertexArray(const class VertexArray& vertexArray, bool drawAsLines);
 
 	void useDirectionalLight(const class DirectionalLightComponent& dirLightComponent, const Shader& shaderInUsage);

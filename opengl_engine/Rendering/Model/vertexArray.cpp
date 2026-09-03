@@ -1,4 +1,5 @@
 #include "vertexArray.h"
+#include <glad/glad.h>
 
 void VertexArray::LoadVAMesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices)
 {
@@ -131,19 +132,46 @@ void VertexArray::setActive() const
 	glBindVertexArray(VAO);
 }
 
-void VertexArray::deleteObjects()
+uint64_t VertexArray::getVertexArrayGPUMemory() const
 {
-	glDeleteVertexArrays(1, &VAO);
-	glDeleteBuffers(1, &VBO);
+	return nbVertices * sizeof(Vertex) + nbIndices * sizeof(unsigned int);
 }
 
 
-VertexArray::VertexArray()
-{
-}
-
-VertexArray::VertexArray(const VertexArray& other) :
+VertexArray::VertexArray(VertexArray&& other) noexcept :
 	nbVertices(other.nbVertices), nbIndices(other.nbIndices),
 	useEBO(other.useEBO), VAO(other.VAO), VBO(other.VBO), EBO(other.EBO)
 {
+	other.VAO = 0;
+	other.VBO = 0;
+	other.EBO = 0;
+}
+
+VertexArray& VertexArray::operator=(VertexArray&& other) noexcept
+{
+	if (this != &other)
+	{
+		releaseVertexArray();
+
+		nbVertices = other.nbVertices;
+		nbIndices = other.nbIndices;
+		useEBO = other.useEBO;
+		VAO = other.VAO;
+		VBO = other.VBO;
+		EBO = other.EBO;
+
+		other.VAO = 0;
+		other.VBO = 0;
+		other.EBO = 0;
+	}
+
+	return *this;
+}
+
+
+void VertexArray::releaseVertexArray()
+{
+	if (VAO) glDeleteVertexArrays(1, &VAO);
+	if (VBO) glDeleteBuffers(1, &VBO);
+	if (EBO) glDeleteBuffers(1, &EBO);
 }

@@ -1,48 +1,77 @@
 #include "model.h"
-#include <ServiceLocator/locator.h>
+#include <Assets/Loaders/modelLoader.h>
+#include <Utils/memoryUtils.h>
 
 
-Model::Model(std::vector<LoadMeshData> loadDatas, Material* fillMaterial)
+Model::Model(std::vector<Mesh> _meshes, std::vector<std::shared_ptr<Material>> _defaultMaterials) :
+	meshes(std::move(_meshes)), defaultMaterials(std::move(_defaultMaterials))
 {
-	for (auto& mesh_data : loadDatas)
+	meshIdsByMaterial.resize(defaultMaterials.size());
+
+	for (size_t id = 0; id < meshes.size(); id++)
 	{
-		meshes[mesh_data.matId].emplace_back(std::make_shared<Mesh>(mesh_data));
-		defaultMaterials[mesh_data.matId] = fillMaterial;
+		const size_t mat_id = static_cast<size_t>(meshes[id].getMaterialIndex());
+		if (mat_id >= meshIdsByMaterial.size())
+		{
+			throw std::exception("Out of bound MaterialID on a Mesh while constructing a Model.");
+		}
+
+		meshIdsByMaterial[mat_id].push_back(id);
 	}
 }
 
-Model::Model(const Model& other) : meshes(other.meshes), defaultMaterials(other.defaultMaterials)
+Model::~Model()
 {
+	meshes.clear();
+	defaultMaterials.clear();
+	meshIdsByMaterial.clear();
 }
 
-void Model::changeDefaultMaterial(int materialId, Material* newMaterial)
+std::string Model::GetTypeName()
 {
-	if (!doesMaterialIndexExists(materialId))
+	return "Model";
+}
+
+std::shared_ptr<Model> Model::Create(const LoadParams& params)
+{
+	if (const auto* file_params = std::get_if<FileImportParams>(&params))
 	{
-		Locator::getLog().LogMessage_Category("Model: Tried to change the default material of a material index that doesn't exist on this model.", LogCategory::Warning);
-		return;
+		return ModelLoader::LoadModel(file_params->modelPath, file_params->materials);
 	}
 
-	defaultMaterials[materialId] = newMaterial;
-}
-
-const std::vector<std::shared_ptr<Mesh>> Model::getMeshesOfMaterialId(int materialId) const
-{
-	if (!doesMaterialIndexExists(materialId))
+	if (const auto* raw_params = std::get_if<RawVerticesParams>(&params))
 	{
-		Locator::getLog().LogMessage_Category("Model: Tried to get the meshes of a material index that doesn't exist on this model.", LogCategory::Warning);
-		return {};
+		std::vector<Mesh> mesh = { Mesh(raw_params->meshVerticesData) };
+		std::vector<std::shared_ptr<Material>> material = { raw_params->material };
+		return std::make_shared<Model>(mesh, material);
 	}
-
-	return meshes.at(materialId);
 }
 
-const std::unordered_map<int, Material*>& Model::getDefaultMaterials() const
+Model::LoadParams Model::ParseCyasset(const CyassetDocument& cyasset)
 {
-	return defaultMaterials;
+	throw std::exception("Cyasset is not implemented yet.");
 }
 
-bool Model::doesMaterialIndexExists(int materialId) const
+uint64_t Model::getAssetMemorySize() const
 {
-	return meshes.find(materialId) != meshes.end();
+	uint64_t total = sizeof(Model);
+	total += MemoryUtils::EstimateVectorHeapMemory(meshes);
+	total += MemoryUtils::EstimateVectorHeapMemory(defaultMaterials);
+	total += MemoryUtils::EstimateVectorHeapMemory(meshIdsByMaterial);
+	return total;
+}
+
+uint64_t Model::getAssetGpuSize() const
+{
+	uint64_t total = 0;
+	for (const Mesh& mesh : meshes)
+	{
+		total += mesh.getVertexArray().getVertexArrayGPUMemory();
+	}
+	return total;
+}
+
+const std::vector<size_t>& Model::getMeshIdsForMaterialId(MaterialID id) const
+{
+	return meshIdsByMaterial[static_cast<size_t>(id)];
 }

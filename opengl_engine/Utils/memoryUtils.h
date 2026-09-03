@@ -53,5 +53,37 @@ namespace MemoryUtils
 
 		return total;
 	}
+
+
+	/** Get an estimation of the memory used on the heap by a vector. */
+	template <typename T>
+	uint64_t EstimateVectorHeapMemory(const std::vector<T>& vec)
+	{
+		return vec.capacity() * sizeof(T);
+	}
+
+	/** Get an estimation of the memory used on the heap by a vector. Specialisation for intricated vectors. */
+	template <typename U>
+	uint64_t EstimateVectorHeapMemory(const std::vector<std::vector<U>>& vec)
+	{
+		size_t total = vec.capacity() * sizeof(std::vector<U>);
+		for (const auto& intricate : vec)
+		{
+			total += EstimateVectorHeapMemory(intricate);
+		}
+		return total;
+	}
+
+	/** Get an estimation of the memory used on the heap by a vector. Specialisation for string values. */
+	uint64_t EstimateVectorHeapMemory(const std::vector<std::string>& vec)
+	{
+		uint64_t total = vec.capacity() * sizeof(std::string);
+		
+		for (const std::string& str : vec)
+		{
+			total += GetStringHeapMemory(str);
+		}
+		return total;
+	}
 };
 

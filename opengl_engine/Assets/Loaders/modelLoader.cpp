@@ -1,15 +1,19 @@
-#include "meshLoader.h"
+#include "modelLoader.h"
 #include <ServiceLocator/locator.h>
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+#include <Utils/defines.h>
 
 
-std::vector<LoadMeshData> MeshLoader::LoadMeshes(const std::string& meshesPath)
+std::vector<MeshVerticesData> LoadMeshes(const std::filesystem::path& meshesPath)
 {
     // 1. Prepare the return vector
-    std::vector<LoadMeshData> meshes_datas;
+    std::vector<MeshVerticesData> meshes_datas;
 
     // 2. Import the meshes file
     Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile(meshesPath, aiProcess_Triangulate | aiProcess_FlipUVs);
+    const aiScene* scene = importer.ReadFile(meshesPath.string(), aiProcess_Triangulate | aiProcess_FlipUVs);
 
     // 3. Handle errors while importing the file
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
@@ -23,7 +27,7 @@ std::vector<LoadMeshData> MeshLoader::LoadMeshes(const std::string& meshesPath)
     return meshes_datas;
 }
 
-void MeshLoader::ProcessAssimpNode(aiNode* node, const aiScene* scene, std::vector<LoadMeshData>& meshesDatas)
+void ProcessAssimpNode(aiNode* node, const aiScene* scene, std::vector<MeshVerticesData>& meshesDatas)
 {
     // 1. Process all the meshes of the current node
     for (unsigned int i = 0; i < node->mNumMeshes; i++)
@@ -39,7 +43,7 @@ void MeshLoader::ProcessAssimpNode(aiNode* node, const aiScene* scene, std::vect
     }
 }
 
-LoadMeshData MeshLoader::ProcessAssimpMesh(aiMesh* mesh, aiNode* node, const aiScene* scene)
+MeshVerticesData ProcessAssimpMesh(aiMesh* mesh, aiNode* node, const aiScene* scene)
 {
     // 1. Compute the transformation and normal matrix of the node
     aiMatrix4x4 node_matrix = RetrieveAssimpParentTransform(node);
@@ -50,7 +54,7 @@ LoadMeshData MeshLoader::ProcessAssimpMesh(aiMesh* mesh, aiNode* node, const aiS
     // 2. Prepare the elements of the 'LoadMeshData' struct
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
-    int material = mesh->mMaterialIndex;
+    MaterialID material = static_cast<MaterialID>(mesh->mMaterialIndex);
 
     // 3. Process the vertices of the mesh
     vertices.reserve(mesh->mNumVertices);
@@ -107,14 +111,57 @@ LoadMeshData MeshLoader::ProcessAssimpMesh(aiMesh* mesh, aiNode* node, const aiS
     }
 
     // 5. Return the processed mesh data
-    return LoadMeshData{ vertices, indices, material };
+    return MeshVerticesData{ vertices, indices, material };
 }
 
-aiMatrix4x4 MeshLoader::RetrieveAssimpParentTransform(aiNode* node)
+aiMatrix4x4 RetrieveAssimpParentTransform(aiNode* node)
 {
     // Recursively multiply the node parent's transformation matrix until the root node
     aiNode* parent = node->mParent;
     if (parent == nullptr) return node->mTransformation;
 
     return RetrieveAssimpParentTransform(node->mParent) * node->mTransformation;
+}
+
+bool AssertMaterialIdsSanity(const std::vector<MeshVerticesData>& meshesDatas, const std::vector<std::shared_ptr<Material>>& materials)
+{
+    // Check if the material ids of the meshes datas are in range of the materials list
+    const MaterialID max_mat_id = static_cast<MaterialID>(materials.size());
+
+    for (const MeshVerticesData& mesh_data : meshesDatas)
+    {
+        if (mesh_data.matId >= max_mat_id) return false;
+    }
+
+    return true;
+}
+
+
+std::shared_ptr<Model> ModelLoader::LoadModel(const std::filesystem::path& modelPath, const std::vector<std::shared_ptr<Material>>& defaultMaterials)
+{
+    // 1. Resolve the model path from the resource folder
+    std::filesystem::path path = RESOURCES_PATH;
+    path += modelPath;
+
+    // 2. Load the mesh vertices of the model
+    std::vector<MeshVerticesData> meshes_datas = LoadMeshes(path);
+
+    // 3. Ensure the default materials list works with the generated material ids of the meshes 
+    if (!AssertMaterialIdsSanity(meshes_datas, defaultMaterials))
+    {
+        Locator::getLog().LogMessage_Category("Model Loader: Given default materials list does not have the Material IDs corresponding to the loaded model.", LogCategory::Error);
+        return nullptr;
+    }
+
+    // 4. Construct the meshes list
+    std::vector<Mesh> meshes;
+    meshes.reserve(meshes_datas.size());
+
+    for (MeshVerticesData& mesh_data : meshes_datas)
+    {
+        meshes.emplace_back(Mesh(mesh_data));
+    }
+
+    // 5. Construct the model object and return it
+    return std::make_shared<Model>(meshes, defaultMaterials);
 }

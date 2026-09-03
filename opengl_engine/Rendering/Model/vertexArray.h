@@ -1,9 +1,6 @@
 #pragma once
-
 #include <Maths/vector2.h>
 #include <Maths/vector3.h>
-
-#include <glad/glad.h>
 #include <vector>
 
 
@@ -18,18 +15,28 @@ struct Vertex
 class VertexArray
 {
 public:
-	VertexArray();
-	VertexArray(const VertexArray& other);
-	VertexArray& operator=(const VertexArray&) = delete;
-	~VertexArray() {}
+	// ----- Constructors -----
+	VertexArray() {}
+	~VertexArray() { releaseVertexArray(); }
 
+	// Remove copy constructors
+	VertexArray(const VertexArray&) = delete;
+	VertexArray& operator=(const VertexArray&) = delete;
+
+	// Define move constructors
+	VertexArray(VertexArray&& other) noexcept;
+	VertexArray& operator=(VertexArray&& other) noexcept;
+
+
+	// ----- Vertex Array Loaders (could be moved elsewhere in theory) -----
 	void LoadVAMesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices);
 	void LoadVAQuadHUD();
 	void LoadVALine();
 	void LoadVABillboard();
 
+
+	// ----- Vertex Array usage functions -----
 	void setActive() const;
-	void deleteObjects();
 
 	unsigned int getNBVertices() const { return nbVertices; }
 	unsigned int getNBIndices() const { return nbIndices; }
@@ -41,6 +48,9 @@ public:
 	bool getUseEBO() const { return useEBO; }
 
 
+	uint64_t getVertexArrayGPUMemory() const;
+
+
 private:
 	unsigned int nbVertices{ 0 };
 	unsigned int nbIndices{ 0 };
@@ -50,4 +60,6 @@ private:
 	unsigned int VAO{ 0 }; // OpenGL ID
 	unsigned int VBO{ 0 }; // OpenGL ID
 	unsigned int EBO{ 0 }; // OpenGL ID
+
+	void releaseVertexArray();
 };

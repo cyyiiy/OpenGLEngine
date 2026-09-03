@@ -1,32 +1,60 @@
 #pragma once
-#include "mesh.h"
+#include <Assets/assetInterface.h>
+#include <Rendering/Model/mesh.h>
 #include <Rendering/material.h>
 #include <unordered_map>
+#include <variant>
 #include <vector>
 #include <memory>
 
 
-class Model
+class Model : public IAsset
 {
 public:
-	Model(std::vector<LoadMeshData> loadDatas, Material* fillMaterial);
-	Model(const Model& other);
+	// Asset part
+	struct FileImportParams
+	{
+		std::filesystem::path modelPath;
+		std::vector<std::shared_ptr<Material>> materials;
+	};
+
+	struct RawVerticesParams
+	{
+		MeshVerticesData meshVerticesData;
+		std::shared_ptr<Material> material;
+	};
+
+	using LoadParams = std::variant<FileImportParams, RawVerticesParams>;
+
+
+	Model(std::vector<Mesh> _meshes, std::vector<std::shared_ptr<Material>> _defaultMaterials);
+	~Model();
+
+	Model(const Model&) = delete;
+	Model(Model&&) = delete;
 	Model& operator=(const Model&) = delete;
-	~Model() {}
+	Model& operator=(Model&&) = delete;
 
-	/** Change a default material of the model. Note: This doesn't affect the components that already use this model. */
-	void changeDefaultMaterial(int materialId, Material* newMaterial);
 
-	/** Get all the meshes of the model that uses the given material id. */
-	const std::vector<std::shared_ptr<Mesh>> getMeshesOfMaterialId(int materialId) const;
+	static std::string GetTypeName();
+	static std::shared_ptr<Model> Create(const LoadParams& params);
+	static LoadParams ParseCyasset(const CyassetDocument& cyasset);
 
-	/** Return the default materials of the model. */
-	const std::unordered_map<int, Material*>& getDefaultMaterials() const;
+	[[nodiscard]] uint64_t getAssetMemorySize() const override;
+	[[nodiscard]] uint64_t getAssetGpuSize() const override;
 
-	/** Check if the given material index exists on this model. */
-	bool doesMaterialIndexExists(int materialId) const;
+
+	// Model part
+	const std::vector<size_t>& getMeshIdsForMaterialId(MaterialID id) const;
+
+	const Mesh& getMesh(size_t id) const { return meshes[id]; }
+	const std::vector<Mesh>& getMeshes() const { return meshes; }
+
+	const std::vector<std::shared_ptr<Material>>& getDefaultMaterials() const { return defaultMaterials; }
+	size_t getMaterialCount() const { return defaultMaterials.size(); }
 
 private:
-	std::unordered_map<int, std::vector<std::shared_ptr<Mesh>>> meshes;
-	std::unordered_map<int, Material*> defaultMaterials;
+	std::vector<Mesh> meshes;
+	std::vector<std::shared_ptr<Material>> defaultMaterials;
+	std::vector<std::vector<size_t>> meshIdsByMaterial;
 };
