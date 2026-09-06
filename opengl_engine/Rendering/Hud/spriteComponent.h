@@ -2,6 +2,7 @@
 #include <ECS/component.h>
 #include <Rendering/Hud/hudElement.h>
 #include <Rendering/texture.h>
+#include <memory>
 
 
 /** Sprite Component
@@ -12,7 +13,7 @@ class SpriteComponent : public Component, public HudElement
 {
 public:
 	/** The sprite texture to render. */
-	Texture* texture{ nullptr };
+	std::shared_ptr<Texture> texture{ nullptr };
 };
 
 

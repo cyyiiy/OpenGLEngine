@@ -17,7 +17,7 @@ public:
 	* Draw the point shape. Don't call outsiude the rendering pipeline.
 	* @param	shader		The shader to draw the shape with.
 	*/
-	void draw(Shader& shader) const override;
+	void draw(const Shader& shader) const override;
 
 	/** The position of the point to draw. */
 	Vector3 pointPosition;

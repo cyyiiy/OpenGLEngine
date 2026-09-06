@@ -2,12 +2,13 @@
 #include <Maths/Matrix4.h>
 #include <Rendering/Model/mesh.h>
 #include <Assets/engineAssets.h>
+#include <glad/glad.h>
 
 
 ShapePoint::ShapePoint(const Vector3& position, const Color& color) : ShapeBase(color), pointPosition(position)
 {}
 
-void ShapePoint::draw(Shader& shader) const
+void ShapePoint::draw(const Shader& shader) const
 {
 	// 1. Compute the point model matrix
 	const Matrix4 point_model_matrix =

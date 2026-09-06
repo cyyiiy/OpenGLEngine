@@ -4,6 +4,7 @@
 #include <Utils/Color.h>
 #include <Maths/Vector2.h>
 #include <Maths/Vector3.h>
+#include <memory>
 
 
 /** Billboard Renderer Component
@@ -13,7 +14,7 @@ class BillboardRendererComponent : public Component
 {
 public:
 	/** The billboard texture to render. */
-	Texture* billboardTexture{ nullptr };
+	std::shared_ptr<Texture> billboardTexture{ nullptr };
 
 	/** The scale of the billboard on scene. Default is a one scene-unit square. */
 	Vector2 billboardScale{ Vector2::one };
@@ -26,4 +27,12 @@ public:
 
 	/** The position offset of this Billboard Renderer Component. */
 	Vector3 positionOffset{ Vector3::zero };
+};
+
+
+// Specify sublist size for 'BillboardRendererComponent'
+template<>
+struct ComponentSublistSize<BillboardRendererComponent>
+{
+	static constexpr size_t value = 16;
 };

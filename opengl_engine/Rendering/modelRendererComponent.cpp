@@ -37,9 +37,10 @@ void ModelRendererComponent::resetToDefaultMaterials()
 	materials = model->getDefaultMaterials();
 }
 
-bool ModelRendererComponent::usesMaterial(const std::shared_ptr<Material>& material) const
+bool ModelRendererComponent::usesMaterial(const Material* material) const
 {
-	return std::find(materials.begin(), materials.end(), material) != materials.end();
+	return std::any_of(materials.begin(), materials.end(),
+		[material](const std::shared_ptr<Material>& mat) { return mat.get() == material; });
 }
 
 bool ModelRendererComponent::isValid() const

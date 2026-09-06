@@ -50,8 +50,8 @@ public:
 	void SetClearColor(Color clearColor_) override;
 	const Color GetClearColor() const override;
 
-	void AddMaterial(const Material* material) override;
-	void RemoveMaterial(const Material* material) override;
+	void AddMaterial(Material* material) override;
+	void RemoveMaterial(Material* material) override;
 
 
 	void InitializeRenderer(Color clearColor_, Vector2Int windowSize_, ComponentHandle<CameraComponent> defaultCamera_) override;
@@ -67,7 +67,7 @@ private:
 	CameraComponent& selectCurrentCam();
 	bool isCurrentCamValid();
 
-	void drawModelComponent(const class ModelRendererComponent& modelComponent, const std::shared_ptr<Material>& materialInUsage);
+	void drawModelComponent(const class ModelRendererComponent& modelComponent, const Material* materialInUsage);
 	void drawVertexArray(const class VertexArray& vertexArray, bool drawAsLines);
 
 	void useDirectionalLight(const class DirectionalLightComponent& dirLightComponent, const Shader& shaderInUsage);
@@ -84,7 +84,7 @@ private:
 	void drawSpriteComponent(const class SpriteComponent& spriteComponent, const Shader& shaderInUsage);
 
 
-	std::unordered_map<std::shared_ptr<const Shader>, std::vector<const Material*>> materials;
+	std::unordered_map<Shader*, std::vector<Material*>> materials;
 	std::unordered_map<LightType, int> lights_count;
 
 	Color clearColor{ Color::black };

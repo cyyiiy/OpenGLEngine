@@ -91,7 +91,7 @@ void RendererOpenGL::Draw()
 		}
 		
 		// Loop through all materials that use the shader
-		for (auto& material : materials_by_shaders.second)
+		for (Material* material : materials_by_shaders.second)
 		{
 			shader->setBool("beta_prevent_tex_scaling", false); // Should do a better thing for all beta parameters
 			shader->setFloat("beta_tex_scaling_factor", 1.0f); // Should do a better thing for all beta parameters
@@ -101,25 +101,24 @@ void RendererOpenGL::Draw()
 			// Loop through all model renderer components to draw all meshes that uses the active material
 			model_renderers_manager.ForEach([this, material](const ModelRendererComponent& model_component)
 			{
-				this->drawModelComponent(model_component, *material);
+				this->drawModelComponent(model_component, material);
 			});
 		}
 	}
 
 	// Draw debug part
-	Material& debug_draw_mat = EngineAssets::GetMaterial(EngineAssets::MaterialID::DrawDebug);
-	Shader& debug_draw_shader = debug_draw_mat.getShader();
-	debug_draw_shader.use();
-	debug_draw_shader.setMatrix4("view", view.getAsFloatPtr());
-	debug_draw_shader.setMatrix4("projection", projection.getAsFloatPtr());
+	const Material& debug_draw_mat = EngineAssets::GetMaterial(EngineAssets::MaterialID::DrawDebug);
+	const Shader* debug_draw_shader = debug_draw_mat.getShader().get();
+	debug_draw_shader->use();
+	debug_draw_shader->setMatrix4("view", view.getAsFloatPtr());
+	debug_draw_shader->setMatrix4("projection", projection.getAsFloatPtr());
 	
 	debug_draw_mat.use();
-	Shader* debug_shader_ptr = debug_draw_mat.getShaderPtr();
 
 	auto& shape_renderers_manager = ECS::Manager<ShapeRendererComponent>();
-	shape_renderers_manager.ForEach([debug_shader_ptr](const ShapeRendererComponent& shape_renderer_component)
+	shape_renderers_manager.ForEach([debug_draw_shader](const ShapeRendererComponent& shape_renderer_component)
 	{
-		shape_renderer_component.shape->draw(*debug_shader_ptr);
+		shape_renderer_component.shape->draw(*debug_draw_shader);
 	});
 
 
@@ -127,18 +126,18 @@ void RendererOpenGL::Draw()
 	{
 		// Draw collisions components
 		auto& box_col_renderers_manager = ECS::Manager<BoxCollisionComponent>();
-		box_col_renderers_manager.ForEach([this, debug_shader_ptr](const BoxCollisionComponent& box_col_component)
+		box_col_renderers_manager.ForEach([this, debug_draw_shader](const BoxCollisionComponent& box_col_component)
 		{
-			this->drawBoxCollision(box_col_component, *debug_shader_ptr);
+			this->drawBoxCollision(box_col_component, *debug_draw_shader);
 		});
 
 		// Draw raycasts
 		auto& raycast_renderers_manager = ECS::Manager<RaycastRendererComponent>();
-		raycast_renderers_manager.ForEach([debug_shader_ptr](const RaycastRendererComponent& raycast_renderer_component)
+		raycast_renderers_manager.ForEach([debug_draw_shader](const RaycastRendererComponent& raycast_renderer_component)
 		{
 			for (auto& shape : raycast_renderer_component.shapes)
 			{
-				shape->draw(*debug_shader_ptr);
+				shape->draw(*debug_draw_shader);
 			}
 		});
 	}
@@ -227,7 +226,7 @@ void RendererOpenGL::Draw()
 }
 
 
-void RendererOpenGL::drawModelComponent(const ModelRendererComponent& modelComponent, const std::shared_ptr<Material>& materialInUsage)
+void RendererOpenGL::drawModelComponent(const ModelRendererComponent& modelComponent, const Material* materialInUsage)
 {
 	// 1. Check if the model component is valid and uses the currently processed material
 	if (!modelComponent.isValid()) return;
@@ -380,7 +379,7 @@ void RendererOpenGL::useSpotLight(const SpotLightComponent& spotLightComponent, 
 void RendererOpenGL::drawBillboardComponent(const BillboardRendererComponent& billboardComponent, const Shader& shaderInUsage)
 {
 	// 1. Check if the billboard texture is valid
-	Texture* billboard_tex = billboardComponent.billboardTexture;
+	Texture* billboard_tex = billboardComponent.billboardTexture.get();
 	if (billboard_tex == nullptr) return;
 
 	// 2. Compute the billboard transform
@@ -594,7 +593,7 @@ void RendererOpenGL::drawSpriteComponent(const SpriteComponent& spriteComponent,
 	// 1. Check if the sprite renderer component is valid
 	if (!spriteComponent.active) return;
 
-	Texture* sprite_texture = spriteComponent.texture;
+	Texture* sprite_texture = spriteComponent.texture.get();
 	if (sprite_texture == nullptr) return;
 
 	// 2. Compute the hud matrix
@@ -668,15 +667,15 @@ const Color RendererOpenGL::GetClearColor() const
 }
 
 
-void RendererOpenGL::AddMaterial(const Material* material)
+void RendererOpenGL::AddMaterial(Material* material)
 {
-	materials[material->getShader()].push_back(material);
+	materials[material->getShader().get()].push_back(material);
 }
 
-void RendererOpenGL::RemoveMaterial(const Material* material)
+void RendererOpenGL::RemoveMaterial(Material* material)
 {
-	std::shared_ptr<const Shader> shader = material->getShader();
-	std::vector<const Material*> material_vector = materials.at(shader);
+	Shader* shader = material->getShader().get();
+	std::vector<Material*>& material_vector = materials.at(shader);
 
 	auto iter = std::find(material_vector.begin(), material_vector.end(), material);
 	if (iter == material_vector.end())

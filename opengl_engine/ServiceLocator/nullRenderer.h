@@ -23,8 +23,8 @@ public:
 	void SetClearColor(Color clearColor) override {}
 	const Color GetClearColor() const override { return Color::black; }
 
-	void AddMaterial(const Material* material) override {}
-	void RemoveMaterial(const Material* material) override {}
+	void AddMaterial(Material* material) override {}
+	void RemoveMaterial(Material* material) override {}
 
 
 	void InitializeRenderer(Color clearColor_, Vector2Int windowSize_, ComponentHandle<CameraComponent> defaultCamera_) override {}

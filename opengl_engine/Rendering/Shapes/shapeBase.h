@@ -16,7 +16,7 @@ public:
 	* Draw the shape. Don't call outside the rendering pipeline.
 	* @param	shader		The shader to draw the shape with.
 	*/
-	virtual void draw(Shader& shader) const = 0;
+	virtual void draw(const Shader& shader) const = 0;
 
 	/** The color to draw the shape with. */
 	Color shapeColor;

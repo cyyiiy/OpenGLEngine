@@ -19,15 +19,15 @@ public:
 	// Asset part
 	struct LoadParams
 	{
-		std::shared_ptr<const Shader> shader;
-		std::unordered_map<std::string, std::shared_ptr<const Texture>> textures;
+		std::shared_ptr<Shader> shader;
+		std::unordered_map<std::string, std::shared_ptr<Texture>> textures;
 
 		std::unordered_map<std::string, bool> boolParameters;
 		std::unordered_map<std::string, int> intParameters;
 		std::unordered_map<std::string, float> floatParameters;
 		std::unordered_map<std::string, Vector3> vec3Parameters;
 
-		LoadParams(std::shared_ptr<const Shader> _shader) : shader(_shader) {}
+		LoadParams(std::shared_ptr<Shader> _shader) : shader(_shader) {}
 
 		// Note: For now, it is not possible to ensure a material have the correct textures and parameters to fill its shader.
 		// It could be possible in the future with a custom shader builder that explicitly output its parameters.
@@ -52,12 +52,12 @@ public:
 
 	// Material part
 	void use() const;
-	const std::shared_ptr<const Shader> getShader() const { return shader; }
+	const std::shared_ptr<Shader> getShader() const { return shader; }
 
 
 private:
-	std::shared_ptr<const Shader> shader;
-	std::unordered_map<std::string, std::shared_ptr<const Texture>> textures;
+	std::shared_ptr<Shader> shader;
+	std::unordered_map<std::string, std::shared_ptr<Texture>> textures;
 
 	std::unordered_map<std::string, bool> boolParameters;
 	std::unordered_map<std::string, int> intParameters;

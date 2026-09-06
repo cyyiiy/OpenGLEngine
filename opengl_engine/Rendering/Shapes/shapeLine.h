@@ -14,7 +14,7 @@ public:
 	* Draw the line shape. Don't call outside the rendering pipeline.
 	* @param	shader		The shader to draw the shape with.
 	*/
-	void draw(Shader& shader) const override;
+	void draw(const Shader& shader) const override;
 
 	Vector3 linePointA;
 

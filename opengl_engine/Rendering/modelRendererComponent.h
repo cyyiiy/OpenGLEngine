@@ -25,7 +25,7 @@ public:
 
 
 	/** Check if this component uses the given material. */
-	bool usesMaterial(const std::shared_ptr<Material>& material) const;
+	bool usesMaterial(const Material* material) const;
 
 	/** Return true if this component has a valid model. */
 	bool isValid() const;
@@ -41,11 +41,11 @@ public:
 	* @param	func		The lambda to execute for each mesh.
 	*/
 	template <typename Func>
-	void ForEachMeshOfMaterial(const std::shared_ptr<Material>& material, Func&& func) const
+	void ForEachMeshOfMaterial(const Material* material, Func&& func) const
 	{
 		for (size_t mat_id = 0; mat_id < materials.size(); ++mat_id)
 		{
-			if (materials[mat_id] != mat) continue;
+			if (materials[mat_id].get() != material) continue;
 			for (uint32_t mesh_id : model->getMeshIdsForMaterialId(static_cast<MaterialID>(mat_id)))
 				func(model->getMesh(mesh_id));
 		}

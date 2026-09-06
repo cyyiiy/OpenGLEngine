@@ -15,7 +15,7 @@ public:
 	* Draw the cube shape. Don't call outside the rendering pipeline.
 	* @param	shader		The shader to draw the shape with.
 	*/
-	void draw(Shader& shader) const override;
+	void draw(const Shader& shader) const override;
 
 	/** The box informations to draw the cube. */
 	Box cubeBox;

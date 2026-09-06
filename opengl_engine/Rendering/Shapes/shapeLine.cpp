@@ -2,12 +2,13 @@
 #include <Maths/Matrix4.h>
 #include <Rendering/Model/vertexArray.h>
 #include <Assets/engineAssets.h>
+#include <glad/glad.h>
 
 
 ShapeLine::ShapeLine(const Vector3& pointA, const Vector3& pointB, const Color& color) : ShapeBase(color), linePointA(pointA), linePointB(pointB)
 {}
 
-void ShapeLine::draw(Shader& shader) const
+void ShapeLine::draw(const Shader& shader) const
 {
 	// 1. Compute the origin (point A) model matrix
 	const Matrix4 origin_model_matrix = Matrix4::createTranslation(linePointA);
