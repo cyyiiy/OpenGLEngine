@@ -4,7 +4,7 @@
 
 
 Model::Model(std::vector<Mesh> _meshes, std::vector<std::shared_ptr<Material>> _defaultMaterials) :
-	meshes(std::move(_meshes)), defaultMaterials(std::move(_defaultMaterials))
+	IAsset(), meshes(std::move(_meshes)), defaultMaterials(std::move(_defaultMaterials))
 {
 	meshIdsByMaterial.resize(defaultMaterials.size());
 

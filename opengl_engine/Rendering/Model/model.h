@@ -1,5 +1,6 @@
 #pragma once
 #include <Assets/assetInterface.h>
+#include <Assets/cyassetDocument.h>
 #include <Rendering/Model/mesh.h>
 #include <Rendering/material.h>
 #include <unordered_map>
