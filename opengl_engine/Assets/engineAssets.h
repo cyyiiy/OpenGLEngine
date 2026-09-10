@@ -41,7 +41,6 @@ public:
 	enum class FontID : uint8_t
 	{
 		Arial24,
-		Arial64,
 	};
 
 

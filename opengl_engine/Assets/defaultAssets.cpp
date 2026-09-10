@@ -88,6 +88,8 @@ void DefaultAssets::LoadDefaultAssets()
 	white_emissive_mat.addParameter("emissive", Color::white);
 	renderer.AddMaterial(&white_emissive_mat);
 
+	// TODO: Add arial 64 as a default font
+
 
 	// Default audio collision
 	AssetManager::RegisterAudioCollisionType("default_audio_collision", AudioCollisionOcclusion{ 1.0f, 0.5f });

@@ -12,9 +12,10 @@
 	- Modifier la classe Shader pour le nouveau format - fait
 	- Modifier la classe Material pour le nouveau format (essayer de faire un LoadParams au mieux) - fait
 	- Modifier la classe Model pour le nouveau format (plus de déplacement -> les modèles gardent leurs meshes chez eux ?) - fait
-	- Modifier la classe Font pour le nouveau format
+	- Modifier la classe Font pour le nouveau format - fait
 	- Modifier la classe AudioSound pour le nouveau format (mettre les paramètres flag en LoadParams ?)
 	- Intégrer le reste de l'Asset Manager (AssetManager, AssetManagerType, AssetTraits)
+	- Ajouter les assets "nulls" (en réutilisant la classe EngineAssets ?)
 	- Mettre à jour le code qui utilise l'ancien Asset Manager dans les projets pour le nouveau
 	- Nettoyer le moteur si nécessaire
 

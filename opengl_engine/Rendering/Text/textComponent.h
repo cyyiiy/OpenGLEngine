@@ -11,20 +11,23 @@
 class TextComponent : public Component, public HudElement
 {
 public:
-	void setTextDatas(const std::string& text_, const Font& font_);
+	void setTextDatas(const std::string& text_, std::shared_ptr<Font> font_);
 
 	void setText(const std::string& text_);
 	const std::string getText() const;
 
-	void setFont(const Font& font_);
-	const Font* getFont() const;
+	void setFont(std::shared_ptr<Font> font_);
+	const Font& getFont() const;
 
 	const Vector2 getTextSize() const;
+
+	/** Return true if this component has a valid font and a non null text. */
+	bool isValid() const;
 
 // Note: text and font aren't public because 'textSize' need to be re-computed each time they are changed.
 private:
 	std::string text{ "" };
-	const Font* font{ nullptr };
+	std::shared_ptr<Font> font{ nullptr };
 	Vector2 textSize{ Vector2::zero };
 
 	void recomputeTextSize();

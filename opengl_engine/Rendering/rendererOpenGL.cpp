@@ -476,12 +476,10 @@ void RendererOpenGL::drawTextComponent(const TextComponent& textComponent, const
 {
 	// 1. Check if the text renderer component is valid
 	if (!textComponent.active) return;
+	if (!textComponent.isValid()) return;
 
 	const std::string text = textComponent.getText();
-	if (text.empty()) return;
-
-	const Font* text_font = textComponent.getFont();
-	if (text_font == nullptr) return;
+	const Font& text_font = textComponent.getFont();
 
 	// 2. Prepare char rotation angle values
 	const bool compute_angle = textComponent.rotAngle != 0.0f;
@@ -496,7 +494,7 @@ void RendererOpenGL::drawTextComponent(const TextComponent& textComponent, const
 	// 4. Create local const for easy access to size and scale values
 	const Vector2 text_scale = textComponent.scale;
 	const Vector2 text_size = textComponent.getTextSize();
-	const int font_size = text_font->getFontSize();
+	const int font_size = text_font.getFontSize();
 
 	// 5. Prepare data for char iteration (const text chars limit is the max number of chars the shader can treat as one)
 	int char_map_ids[TEXT_CHARS_LIMIT]{ 0 };
@@ -508,7 +506,7 @@ void RendererOpenGL::drawTextComponent(const TextComponent& textComponent, const
 
 	// 6. Set text tint color in the shader and bind font texture array
 	shaderInUsage.setVec3("textColor", textComponent.tintColor.toVector());
-	text_font->use();
+	text_font.use();
 
 	// 7. Iterate through every character of the text
 	std::string::const_iterator c;
@@ -522,7 +520,7 @@ void RendererOpenGL::drawTextComponent(const TextComponent& textComponent, const
 		}
 
 		// b. Get the font character
-		FontCharacter ch = text_font->getCharacter(*c);
+		FontCharacter ch = text_font.getCharacter(*c);
 
 		// c. Process line breaks and spaces separatly
 		if (*c == '\n')

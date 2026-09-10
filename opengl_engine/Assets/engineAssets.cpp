@@ -148,11 +148,12 @@ void EngineAssets::LoadEngineAssets()
 
 	// ------------------------- Fonts ---------------------------------
 
-	const std::string arial_24_path = "arial_font/arial.ttf";
-	fonts.emplace(FontID::Arial24, std::make_shared<Font>(arial_24_path, 24, CharacterLoading::ASCII_128));
-
-	const std::string arial_64_path = "arial_font/arial.ttf";
-	fonts.emplace(FontID::Arial64, std::make_shared<Font>(arial_64_path, 64, CharacterLoading::ASCII_128));
+	const Font::LoadParams arial_24_params = {
+		"arial_font/arial.ttf",
+		24,
+		CharacterLoading::ASCII_128
+	};
+	fonts.emplace(FontID::Arial24, Font::Create(arial_24_params));
 }
 
 void EngineAssets::UnloadEngineAssets()

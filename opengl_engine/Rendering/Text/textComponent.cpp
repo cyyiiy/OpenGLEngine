@@ -1,10 +1,10 @@
 #include "textComponent.h"
 
 
-void TextComponent::setTextDatas(const std::string& text_, const Font& font_)
+void TextComponent::setTextDatas(const std::string& text_, std::shared_ptr<Font> font_)
 {
 	text = text_;
-	font = &font_;
+	font = font_;
 	recomputeTextSize();
 }
 
@@ -19,20 +19,25 @@ const std::string TextComponent::getText() const
 	return text;
 }
 
-void TextComponent::setFont(const Font& font_)
+void TextComponent::setFont(std::shared_ptr<Font> font_)
 {
-	font = &font_;
+	font = font_;
 	recomputeTextSize();
 }
 
-const Font* TextComponent::getFont() const
+const Font& TextComponent::getFont() const
 {
-	return font;
+	return *font;
 }
 
 const Vector2 TextComponent::getTextSize() const
 {
 	return textSize * scale;
+}
+
+bool TextComponent::isValid() const
+{
+	return font && !text.empty();
 }
 
 
