@@ -179,43 +179,6 @@ public:
 
 
 // -----------------------------------------------------------------------------
-//                 Collisions (Geometry)
-// -----------------------------------------------------------------------------
-
-	/**
-	* Create Geometry for a Collision component.
-	* @param	maxPolygons		The maximum number of polygons the geometry of this collision can have.
-	* @param	maxVertices		The maximum number of vertices the geometry of this collision can have.
-	* @return					The index of the created Geometry.
-	*/
-	virtual std::uint32_t CreateCollision(const int maxPolygons, const int maxVertices) = 0;
-
-	/**
-	* Release a Geometry for a Collision component destruction.
-	* @param	index		The index of the Geometry of the Collision component.
-	*/
-	virtual void ReleaseCollision(const std::uint32_t index) = 0;
-
-
-	/**
-	* Add a polygon to the Geometry of a Collision component.
-	* @param	index					The index of the Geometry of the Collision component.
-	* @param	audioCollisionType		The type of surface this polygon must have. Will determine the occlusion of the sound by this polygon.
-	* @param	doubleSided				Does this polygon occlude sound from both sides or not.
-	* @param	vertices				The vertices of the polygon. In the local space of the Geometry.
-	*/
-	virtual void AddPolygonToCollision(const std::uint32_t index, const AudioCollisionOcclusion& audioCollisionType, const bool doubleSided, const std::vector<Vector3> vertices) = 0;
-
-	/**
-	* Set the transform in world space of the Geometry of a Collision component.
-	* @param	index		The index of the Geometry of the Collision component.
-	* @param	transform	The transform to set. Will apply position and scale, but not rotation. (This may change later and is due to this engine collisions being only AABB for the moment.)
-	*/
-	virtual void SetCollisionTransform(const std::uint32_t index, const Transform& transform) = 0;
-
-
-
-// -----------------------------------------------------------------------------
 //                 Audio Management
 // -----------------------------------------------------------------------------
 

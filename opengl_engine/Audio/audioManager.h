@@ -70,17 +70,6 @@ public:
 
 
 
-	// ----------------------------------------------------------
-	//  Collisions (available from audio interface)
-	// ----------------------------------------------------------
-	std::uint32_t CreateCollision(const int maxPolygons, const int maxVertices) override;
-	void ReleaseCollision(const std::uint32_t index) override;
-
-	void AddPolygonToCollision(const std::uint32_t index, const AudioCollisionOcclusion& audioCollisionType, const bool doubleSided, const std::vector<Vector3> vertices) override;
-	void SetCollisionTransform(const std::uint32_t index, const Transform& transform) override;
-
-
-
 
 	// ----------------------------------------------------------
 	//  Audio Management
@@ -100,9 +89,6 @@ private:
 
 	std::unordered_map<std::uint32_t, FMOD::ChannelGroup*> audioSourcesGroups;
 	std::uint32_t audioSourcesGroupsID{ 0 };
-
-	std::unordered_map<std::uint32_t, FMOD::Geometry*> collisions;
-	std::uint32_t collisionsID{ 0 };
 
 
 	// ----------------------------------------------------------

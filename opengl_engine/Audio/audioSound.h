@@ -1,33 +1,45 @@
 #pragma once
+#include <Assets/assetInterface.h>
+#include <Assets/cyassetDocument.h>
 #include "audioUtils.h"
-#include <stdint.h>
 
-namespace FMOD // Avoid including "fmod.hpp"
-{
-	class Sound;
-}
 
-class AudioSound
+class AudioSound : public IAsset
 {
 public:
-	AudioSound(FMOD::Sound* fmodSound_, const SoundSettings soundSettings);
+	// Asset part
+	struct LoadParams
+	{
+		std::filesystem::path soundFilePath;
+		SoundSettings soundSettings;
+		float fadingMinDistance;
+		float fadingMaxDistance;
+	};
+
+	AudioSound(AudioSoundPtr _soundPtr, uint64_t _soundPtrMemory, SoundSettings _soundSettings);
 	~AudioSound();
 
-	AudioSound() = delete;
-	AudioSound(const AudioSound& other) = delete;
-	AudioSound& operator=(const AudioSound& other) = delete;
+	AudioSound(const AudioSound&) = delete;
+	AudioSound(AudioSound&&) = delete;
+	AudioSound& operator=(const AudioSound&) = delete;
+	AudioSound& operator=(AudioSound&&) = delete;
 
+
+	static std::string GetTypeName();
+	static std::shared_ptr<AudioSound> Create(const LoadParams& params);
+	static LoadParams ParseCyasset(const CyassetDocument& cyasset);
+
+	[[nodiscard]] uint64_t getAssetMemorySize() const override;
+	[[nodiscard]] uint64_t getAssetGpuSize() const override;
+
+
+	// Audio Sound part
 	bool isValid() const;
-	FMOD::Sound* getFMod() const;
-	void releaseFMod();
-
+	AudioSoundPtr getSoundPtr() const;
 	bool hasSetting(SoundSettings setting) const;
 
-	// Distances for sound fading
-	void setMinMaxDistance(float min, float max) const;
-
 private:
-	FMOD::Sound* FModSound{ nullptr };
-	SoundSettings Settings{ 0 };
+	AudioSoundPtr soundPtr;
+	uint64_t soundPtrMemory;
+	SoundSettings soundSettings;
 };
-
