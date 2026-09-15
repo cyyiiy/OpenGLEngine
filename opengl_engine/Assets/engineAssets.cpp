@@ -9,29 +9,29 @@ std::unordered_map<EngineAssets::TextureID, std::shared_ptr<Texture>> EngineAsse
 std::unordered_map<EngineAssets::FontID, std::shared_ptr<Font>> EngineAssets::fonts;
 
 
-const VertexArray& EngineAssets::GetVertexArray(VertexArrayID id)
+std::shared_ptr<VertexArray> EngineAssets::GetVertexArray(VertexArrayID id)
 {
-	return *vertexArrays.at(id);
+	return vertexArrays.at(id);
 }
 
-const Shader& EngineAssets::GetShader(ShaderID id)
+std::shared_ptr<Shader> EngineAssets::GetShader(ShaderID id)
 {
-	return *shaders.at(id);
+	return shaders.at(id);
 }
 
-Material& EngineAssets::GetMaterial(MaterialID id)
+std::shared_ptr<Material> EngineAssets::GetMaterial(MaterialID id)
 {
-	return *materials.at(id);
+	return materials.at(id);
 }
 
-const Texture& EngineAssets::GetTexture(TextureID id)
+std::shared_ptr<Texture> EngineAssets::GetTexture(TextureID id)
 {
-	return *textures.at(id);
+	return textures.at(id);
 }
 
-Font& EngineAssets::GetFont(FontID id)
+std::shared_ptr<Font> EngineAssets::GetFont(FontID id)
 {
-	return *fonts.at(id);
+	return fonts.at(id);
 }
 
 
@@ -126,7 +126,7 @@ void EngineAssets::LoadEngineAssets()
 
 	// ------------------------- Materials -----------------------------
 
-	Material::LoadParams debug_mat_params(shaders.at(ShaderID::DrawDebug));
+	Material::LoadParams debug_mat_params(GetShader(ShaderID::DrawDebug));
 	debug_mat_params.vec3Parameters.emplace("color", Color::green);
 	materials.emplace(MaterialID::DrawDebug, std::make_shared<Material>(debug_mat_params));
 

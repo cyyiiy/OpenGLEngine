@@ -6,41 +6,13 @@
 #include <Utils/defines.h>
 
 
-std::vector<MeshVerticesData> LoadMeshes(const std::filesystem::path& meshesPath)
+aiMatrix4x4 RetrieveAssimpParentTransform(aiNode* node)
 {
-    // 1. Prepare the return vector
-    std::vector<MeshVerticesData> meshes_datas;
+    // Recursively multiply the node parent's transformation matrix until the root node
+    aiNode* parent = node->mParent;
+    if (parent == nullptr) return node->mTransformation;
 
-    // 2. Import the meshes file
-    Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile(meshesPath.string(), aiProcess_Triangulate | aiProcess_FlipUVs);
-
-    // 3. Handle errors while importing the file
-    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
-    {
-        Locator::getLog().LogMessage_Category("Assimp_Import: " + std::string(importer.GetErrorString()), LogCategory::Error);
-        return {};
-    }
-
-    // 4. Recursively process all the meshes, starting from the root node
-    ProcessAssimpNode(scene->mRootNode, scene, meshes_datas);
-    return meshes_datas;
-}
-
-void ProcessAssimpNode(aiNode* node, const aiScene* scene, std::vector<MeshVerticesData>& meshesDatas)
-{
-    // 1. Process all the meshes of the current node
-    for (unsigned int i = 0; i < node->mNumMeshes; i++)
-    {
-        aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-        meshesDatas.push_back(ProcessAssimpMesh(mesh, node, scene));
-    }
-
-    // 2. Call this function on each of the node's children to recursively process all the nodes
-    for (unsigned int i = 0; i < node->mNumChildren; i++)
-    {
-        ProcessAssimpNode(node->mChildren[i], scene, meshesDatas);
-    }
+    return RetrieveAssimpParentTransform(node->mParent) * node->mTransformation;
 }
 
 MeshVerticesData ProcessAssimpMesh(aiMesh* mesh, aiNode* node, const aiScene* scene)
@@ -114,13 +86,41 @@ MeshVerticesData ProcessAssimpMesh(aiMesh* mesh, aiNode* node, const aiScene* sc
     return MeshVerticesData{ vertices, indices, material };
 }
 
-aiMatrix4x4 RetrieveAssimpParentTransform(aiNode* node)
+void ProcessAssimpNode(aiNode* node, const aiScene* scene, std::vector<MeshVerticesData>& meshesDatas)
 {
-    // Recursively multiply the node parent's transformation matrix until the root node
-    aiNode* parent = node->mParent;
-    if (parent == nullptr) return node->mTransformation;
+    // 1. Process all the meshes of the current node
+    for (unsigned int i = 0; i < node->mNumMeshes; i++)
+    {
+        aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
+        meshesDatas.push_back(ProcessAssimpMesh(mesh, node, scene));
+    }
 
-    return RetrieveAssimpParentTransform(node->mParent) * node->mTransformation;
+    // 2. Call this function on each of the node's children to recursively process all the nodes
+    for (unsigned int i = 0; i < node->mNumChildren; i++)
+    {
+        ProcessAssimpNode(node->mChildren[i], scene, meshesDatas);
+    }
+}
+
+std::vector<MeshVerticesData> LoadMeshes(const std::filesystem::path& meshesPath)
+{
+    // 1. Prepare the return vector
+    std::vector<MeshVerticesData> meshes_datas;
+
+    // 2. Import the meshes file
+    Assimp::Importer importer;
+    const aiScene* scene = importer.ReadFile(meshesPath.string(), aiProcess_Triangulate | aiProcess_FlipUVs);
+
+    // 3. Handle errors while importing the file
+    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
+    {
+        Locator::getLog().LogMessage_Category("Assimp_Import: " + std::string(importer.GetErrorString()), LogCategory::Error);
+        return {};
+    }
+
+    // 4. Recursively process all the meshes, starting from the root node
+    ProcessAssimpNode(scene->mRootNode, scene, meshes_datas);
+    return meshes_datas;
 }
 
 bool AssertMaterialIdsSanity(const std::vector<MeshVerticesData>& meshesDatas, const std::vector<std::shared_ptr<Material>>& materials)
@@ -159,9 +159,9 @@ std::shared_ptr<Model> ModelLoader::LoadModel(const std::filesystem::path& model
 
     for (MeshVerticesData& mesh_data : meshes_datas)
     {
-        meshes.emplace_back(Mesh(mesh_data));
+        meshes.emplace_back(mesh_data);
     }
 
     // 5. Construct the model object and return it
-    return std::make_shared<Model>(meshes, defaultMaterials);
+    return std::make_shared<Model>(std::move(meshes), defaultMaterials);
 }

@@ -206,6 +206,8 @@
   <ItemGroup>
     <ClInclude Include="Assets\assetInterface.h" />
     <ClInclude Include="Assets\assetManager.h" />
+    <ClInclude Include="Assets\assetManagerType.h" />
+    <ClInclude Include="Assets\assetTraits.h" />
     <ClInclude Include="Assets\cyassetDocument.h" />
     <ClInclude Include="Assets\defaultAssets.h" />
     <ClInclude Include="Assets\engineAssets.h" />

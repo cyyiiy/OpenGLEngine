@@ -46,7 +46,7 @@ public:
 		for (size_t mat_id = 0; mat_id < materials.size(); ++mat_id)
 		{
 			if (materials[mat_id].get() != material) continue;
-			for (uint32_t mesh_id : model->getMeshIdsForMaterialId(static_cast<MaterialID>(mat_id)))
+			for (size_t mesh_id : model->getMeshIdsForMaterialId(static_cast<MaterialID>(mat_id)))
 				func(model->getMesh(mesh_id));
 		}
 	}

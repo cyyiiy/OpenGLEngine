@@ -41,10 +41,14 @@ std::shared_ptr<Model> Model::Create(const LoadParams& params)
 
 	if (const auto* raw_params = std::get_if<RawVerticesParams>(&params))
 	{
-		std::vector<Mesh> mesh = { Mesh(raw_params->meshVerticesData) };
+		std::vector<Mesh> mesh;
+		mesh.reserve(1);
+		mesh.emplace_back(raw_params->meshVerticesData);
 		std::vector<std::shared_ptr<Material>> material = { raw_params->material };
-		return std::make_shared<Model>(mesh, material);
+		return std::make_shared<Model>(std::move(mesh), material);
 	}
+
+	return nullptr;
 }
 
 Model::LoadParams Model::ParseCyasset(const CyassetDocument& cyasset)

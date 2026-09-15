@@ -131,7 +131,7 @@ bool Engine::initialize(int wndw_width, int wndw_height, std::string wndw_name, 
 
 	// Initialize asset manager
 	std::cout << "Initializing asset manager...";
-	AssetManager::LoadNullAssets();
+	//AssetManager::LoadNullAssets(); // TODO: replace by EngineAssets::LoadNullAssets();
 	EngineAssets::LoadEngineAssets();
 	std::cout << " Done.\n";
 

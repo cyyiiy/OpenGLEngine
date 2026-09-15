@@ -20,7 +20,7 @@ void ShapeLine::draw(const Shader& shader) const
 	shader.setVec3("linePointOffset", linePointB - linePointA);
 
 	// 3. Draw the line vertex array
-	const VertexArray& line_va = EngineAssets::GetVertexArray(EngineAssets::VertexArrayID::Line);
+	const VertexArray& line_va = *EngineAssets::GetVertexArray(EngineAssets::VertexArrayID::Line);
 	line_va.setActive();
 	glDrawArrays(GL_LINE_STRIP, 0, 2);
 

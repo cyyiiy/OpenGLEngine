@@ -44,11 +44,11 @@ public:
 	};
 
 
-	[[nodiscard]] static const VertexArray& GetVertexArray(VertexArrayID id);
-	[[nodiscard]] static const Shader& GetShader(ShaderID id);
-	[[nodiscard]] static Material& GetMaterial(MaterialID id);
-	[[nodiscard]] static const Texture& GetTexture(TextureID id);
-	[[nodiscard]] static Font& GetFont(FontID id);
+	[[nodiscard]] static std::shared_ptr<VertexArray> GetVertexArray(VertexArrayID id);
+	[[nodiscard]] static std::shared_ptr<Shader> GetShader(ShaderID id);
+	[[nodiscard]] static std::shared_ptr<Material> GetMaterial(MaterialID id);
+	[[nodiscard]] static std::shared_ptr<Texture> GetTexture(TextureID id);
+	[[nodiscard]] static std::shared_ptr<Font> GetFont(FontID id);
 
 
 private:

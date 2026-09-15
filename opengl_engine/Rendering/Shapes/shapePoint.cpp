@@ -20,7 +20,7 @@ void ShapePoint::draw(const Shader& shader) const
 	shader.setVec3("color", shapeColor);
 
 	// 3. Draw the point vertex array (it's a cube)
-	const VertexArray& cube_va = EngineAssets::GetVertexArray(EngineAssets::VertexArrayID::Cube);
+	const VertexArray& cube_va = *EngineAssets::GetVertexArray(EngineAssets::VertexArrayID::Cube);
 	cube_va.setActive();
 
 	if (cube_va.getUseEBO())
