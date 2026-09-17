@@ -13,8 +13,6 @@
 
 class Material : public IAsset
 {
-	// TODO: Create a null material that is a gray-ish albedo (could also serve as a default material?)
-
 public:
 	// Asset part
 	struct LoadParams

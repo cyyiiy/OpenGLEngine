@@ -127,6 +127,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="Lit\flat_lit.frag" />
+    <None Include="Lit\flat_lit.vert" />
     <None Include="Unlit\billboard.frag" />
     <None Include="Unlit\billboard.geom" />
     <None Include="Unlit\billboard.vert" />

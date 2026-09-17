@@ -107,7 +107,7 @@ public:
         }
         
         TypedManager<T>().defaultAsset = asset;
-        return asset;
+        return true;
     }
 
     /**

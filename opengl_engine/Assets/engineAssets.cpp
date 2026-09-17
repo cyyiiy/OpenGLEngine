@@ -1,4 +1,5 @@
 #include "engineAssets.h"
+#include <Assets/assetManager.h>
 #include <Utils/Color.h>
 #include <Utils/filesystemUtils.h>
 
@@ -32,6 +33,23 @@ std::shared_ptr<Texture> EngineAssets::GetTexture(TextureID id)
 std::shared_ptr<Font> EngineAssets::GetFont(FontID id)
 {
 	return fonts.at(id);
+}
+
+
+void EngineAssets::LoadNullAssets()
+{
+	const Texture::LoadParams null_texture_params = {
+		"Default/notexture.png",
+		false
+	};
+	AssetManager::LoadDefaultAsset<Texture>(null_texture_params);
+
+	const Font::LoadParams null_font_params = {
+		"arial_font/arial.ttf",
+		24,
+		CharacterLoading::ASCII_128
+	};
+	AssetManager::LoadDefaultAsset<Font>(null_font_params);
 }
 
 

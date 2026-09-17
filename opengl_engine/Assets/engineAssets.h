@@ -54,6 +54,8 @@ public:
 private:
 	friend class Engine;
 
+	static void LoadNullAssets();
+
 	static void LoadEngineAssets();
 	static void UnloadEngineAssets();
 

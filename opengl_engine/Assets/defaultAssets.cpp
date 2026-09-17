@@ -82,7 +82,7 @@ void DefaultAssets::LoadDefaultAssets()
 	AssetManager::LoadAsset<Model>("default_plane", model_plane_params);
 
 
-	// Default shaders (flat emissive & object lit)
+	// Default shaders (flat emissive, object lit & flat lit)
 	const Shader::LoadParams shader_flat_emissive_params = {
 		FilesystemUtils::ConvertStringsToPaths({ "Shaders/Unlit/flat_emissive.vert", "Shaders/Unlit/flat_emissive.frag" }),
 		ShaderType::Unlit
@@ -95,7 +95,13 @@ void DefaultAssets::LoadDefaultAssets()
 	};
 	AssetManager::LoadAsset<Shader>("lit_object", shader_lit_object_params);
 
-	// Default materials (black & white emissive)
+	const Shader::LoadParams shader_lit_flat_color_params = {
+		FilesystemUtils::ConvertStringsToPaths({ "Shaders/Lit/flat_lit.vert", "Shaders/Lit/flat_lit.frag" }),
+		ShaderType::Lit
+	};
+	AssetManager::LoadAsset<Shader>("lit_flat_color", shader_lit_flat_color_params);
+
+	// Default materials (black & white emissive, grey lit)
 	Material::LoadParams material_black_emissive_params(AssetManager::GetAsset<Shader>("flat_emissive"));
 	material_black_emissive_params.vec3Parameters.emplace("emissive", Color::black);
 	AssetManager::LoadAsset<Material>("default_black_emissive", material_black_emissive_params);
@@ -103,6 +109,11 @@ void DefaultAssets::LoadDefaultAssets()
 	Material::LoadParams material_white_emissive_params(AssetManager::GetAsset<Shader>("flat_emissive"));
 	material_white_emissive_params.vec3Parameters.emplace("emissive", Color::white);
 	AssetManager::LoadAsset<Material>("default_white_emissive", material_white_emissive_params);
+
+	Material::LoadParams material_grey_lit_params(AssetManager::GetAsset<Shader>("lit_flat_color"));
+	material_grey_lit_params.vec3Parameters.emplace("flatColor", Color::grey);
+	material_grey_lit_params.floatParameters.emplace("specularStrength", 0.2f);
+	AssetManager::LoadAsset<Material>("default_grey_lit", material_grey_lit_params);
 
 	// Default fonts (arial 64)
 	Font::LoadParams font_arial_64_params = { "arial_font/arial.ttf", 64, CharacterLoading::ASCII_128 };

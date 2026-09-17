@@ -15,7 +15,7 @@
 	- Modifier la classe Font pour le nouveau format - fait
 	- Modifier la classe AudioSound pour le nouveau format (mettre les paramètres flag en LoadParams ?) - fait
 	- Intégrer le reste de l'Asset Manager (AssetManager, AssetManagerType, AssetTraits) - fait
-	- Ajouter les assets "nulls" (en réutilisant la classe EngineAssets ?)
+	- Ajouter les assets "nulls" (en réutilisant la classe EngineAssets ?) - fait
 	- Mettre à jour le code qui utilise l'ancien Asset Manager dans les projets pour le nouveau
 	- Nettoyer le moteur si nécessaire
 

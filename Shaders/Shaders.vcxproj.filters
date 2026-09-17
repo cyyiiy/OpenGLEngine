@@ -28,5 +28,7 @@
     <None Include="Unlit\billboard.frag" />
     <None Include="Unlit\billboard.geom" />
     <None Include="Unlit\billboard.vert" />
+    <None Include="Lit\flat_lit.frag" />
+    <None Include="Lit\flat_lit.vert" />
   </ItemGroup>
 </Project>
