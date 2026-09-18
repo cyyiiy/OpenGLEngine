@@ -78,7 +78,7 @@ public:
         asset = LoadAssetPartTwo<T>(name, loadParams);
         if (!asset)
         {
-            Locator::getLog().LogMessage_Category("Asset Manager: Failed to create the asset \"" + name + "\" of class '" + T::GetTypeName() + "'.", LogCategory::Error);
+            // Note: An error has already been logged by 'LoadAssetPartTwo'
             return nullptr;
         }
         
@@ -153,7 +153,7 @@ public:
         asset = LoadAssetPartTwo<T>(name, load_params);
         if (!asset)
         {
-            Locator::getLog().LogMessage_Category("Asset Manager: Failed to create asset of class '" + T::GetTypeName() + "'. ", LogCategory::Error);
+            // Note: An error has already been logged by 'LoadAssetPartTwo'
             return nullptr;
         }
         
@@ -404,13 +404,13 @@ private:
         }
         catch (std::exception& e)
         {
-            Locator::getLog().LogMessage_Category("Asset Manager: Failed to create asset \"" + name + "\" of class '" + T::GetTypeName() + "'. | " + e.what(), LogCategory::Error);
+            Locator::getLog().LogMessage_Category("Asset Manager: Failed to create the asset \"" + name + "\" of class '" + T::GetTypeName() + "'. | " + e.what(), LogCategory::Error);
             return nullptr;
         }
         
         if (!asset)
         {
-            Locator::getLog().LogMessage_Category("Asset Manager: Failed to create asset \"" + name + "\" of class '" + T::GetTypeName() + "'.", LogCategory::Error);
+            Locator::getLog().LogMessage_Category("Asset Manager: Failed to create the asset \"" + name + "\" of class '" + T::GetTypeName() + "'.", LogCategory::Error);
             return nullptr;
         }
         
