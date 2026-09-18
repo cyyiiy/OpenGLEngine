@@ -59,7 +59,7 @@ void Material::use() const
 	{
 		glActiveTexture(GL_TEXTURE0 + tex_activated); // Activate texture unit first
 
-		shader->setInt("material." + name, tex_activated); // Then set the sampler to the correct texture unit
+		shader->setInt("material.texture_" + name, tex_activated); // Then set the sampler to the correct texture unit
 		texture->use(); // Finally bind the texture
 
 		tex_activated++;
