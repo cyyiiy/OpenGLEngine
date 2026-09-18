@@ -1,5 +1,7 @@
 #pragma once
 #include <string>
+#include <vector>
+#include <cstdint>
 #include <unordered_map>
 
 
@@ -28,7 +30,7 @@ namespace MemoryUtils
 		total += map.bucket_count() * sizeof(void*);
 
 		// 2. Compute the size of each node of the map
-		total += map.size() * sizeof(std::string) + sizeof(V) + mapNodeOverhead;
+		total += map.size() * (sizeof(K) + sizeof(V) + mapNodeOverhead);
 
 		return total;
 	}
@@ -43,7 +45,7 @@ namespace MemoryUtils
 		total += map.bucket_count() * sizeof(void*);
 
 		// 2. Compute the size of each node of the map
-		total += map.size() * sizeof(std::string) + sizeof(V) + mapNodeOverhead;
+		total += map.size() * (sizeof(std::string) + sizeof(V) + mapNodeOverhead);
 
 		// 3. Add the heap memory used by the string keys
 		for (const auto& [key, value] : map)
@@ -75,7 +77,7 @@ namespace MemoryUtils
 	}
 
 	/** Get an estimation of the memory used on the heap by a vector. Specialisation for string values. */
-	uint64_t EstimateVectorHeapMemory(const std::vector<std::string>& vec)
+	inline uint64_t EstimateVectorHeapMemory(const std::vector<std::string>& vec)
 	{
 		uint64_t total = vec.capacity() * sizeof(std::string);
 		
@@ -85,5 +87,4 @@ namespace MemoryUtils
 		}
 		return total;
 	}
-};
-
+}

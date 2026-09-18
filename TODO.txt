@@ -16,7 +16,9 @@
 	- Modifier la classe AudioSound pour le nouveau format (mettre les paramètres flag en LoadParams ?) - fait
 	- Intégrer le reste de l'Asset Manager (AssetManager, AssetManagerType, AssetTraits) - fait
 	- Ajouter les assets "nulls" (en réutilisant la classe EngineAssets ?) - fait
-	- Mettre à jour le code qui utilise l'ancien Asset Manager dans les projets pour le nouveau
+	- Mettre à jour le code du projet Sandbox pour compiler et corriger les bugs - en cours
+	- Modifier le code du Game System pour intégrer l'utilisation des loading groups
+	- Mettre à jour le code des projets Benchmark et Doomlike
 	- Nettoyer le moteur si nécessaire
 
 ~ Faire le début de l'éditeur de projet (utiliser ImGUI pour l'interface)
