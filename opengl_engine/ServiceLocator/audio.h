@@ -4,10 +4,6 @@
 #include <string>
 #include <vector>
 
-class AudioSound;
-class Transform;
-struct AudioCollisionOcclusion;
-
 
 /**
 * The Audio Service class (the virtual class provided by the Locator).
@@ -85,7 +81,7 @@ public:
 	* @param	sound		The sound to play. It must've been loaded with the same spatialization than the Audio Source ChannelGroup.
 	* @param	loop		The number of time the sound will loop. -1 = infinite loop. 0 = play only once (defaut). The sound must've been loaded with the loop settings.
 	*/
-	virtual void PlaySoundOnAudioSource(const std::uint32_t index, const AudioSound& sound, const int loop = 0) = 0;
+	virtual void PlaySoundOnAudioSource(const std::uint32_t index, const class AudioSound& sound, const int loop = 0) = 0;
 
 	/**
 	* Stop every sound playing on an Audio Source component.
@@ -165,7 +161,7 @@ public:
 	* @param	volume		The volume value to play the sound with. Between 0 and 1.
 	* @param	loop		The number of time the sound will loop. -1 = infinite loop. 0 = play only once (defaut). The sound must've been loaded with the loop settings.
 	*/
-	virtual void InstantPlaySound2D(const AudioSound& sound, const float volume = 1.0f, const int loop = 0) = 0;
+	virtual void InstantPlaySound2D(const class AudioSound& sound, const float volume = 1.0f, const int loop = 0) = 0;
 
 	/**
 	* Play a 3D sound without an Audio Source component.
@@ -174,7 +170,7 @@ public:
 	* @param	volume			The volume value to play the sound with. Between 0 and 1.
 	* @param	loop			The number of time the sound will loop. -1 = infinite loop. 0 = play only once (defaut). The sound must've been loaded with the loop settings.
 	*/
-	virtual void InstantPlaySound3D(const AudioSound& sound, const Vector3 playPosition, const float volume = 1.0f, const int loop = 0) = 0;
+	virtual void InstantPlaySound3D(const class AudioSound& sound, const Vector3 playPosition, const float volume = 1.0f, const int loop = 0) = 0;
 
 
 

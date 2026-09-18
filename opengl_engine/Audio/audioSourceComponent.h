@@ -1,10 +1,8 @@
 #pragma once
 #include <ECS/behaviorComponent.h>
 #include <Events/observer.h>
-#include <Audio/audioUtils.h>
+#include <Audio/audioSound.h>
 #include <Maths/Vector3.h>
-
-class AudioSound;
 
 
 /** Audio Source Component
