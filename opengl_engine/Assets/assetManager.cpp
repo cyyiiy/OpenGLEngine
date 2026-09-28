@@ -198,7 +198,7 @@ void AssetManager::PrintMemoriesUsage()
         const std::string memory_percent_str = StringUtils::SanitizeString(StringUtils::FormatFloat(memory_percent, 2), 5, true);
         const std::string gpu_usage_str = StringUtils::SanitizeString(StringUtils::FormatOctet(memories_usage.gpu_usage), 9, true);
         
-        std::cout << " > Assets " << type_name_str << ": "
+        std::cout << " > Assets " << type_name_str
                   << "Memory: " << memory_usage_str << " (" << memory_percent_str << "% of total) | "
                   << "GPU: " << gpu_usage_str << " (" << StringUtils::FormatFloat(gpu_percent, 2) << "% of total)\n";
     }

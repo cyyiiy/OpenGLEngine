@@ -19,6 +19,23 @@
 #include <ECS/Gameplay/lifetimeComponent.h>
 
 
+void ExpositionScene::loadSceneAssets()
+{
+	// Load backpack
+	AssetManager::LoadAsset<Texture>("backpack_diffuse", { "backpack/backpack_basecolor.jpg", false });
+	AssetManager::LoadAsset<Texture>("backpack_specular", { "backpack/backpack_specular.jpg", false });
+
+	Material::LoadParams backpack_mat(AssetManager::GetAsset<Shader>("lit_object"));
+	backpack_mat.textures.emplace("diffuse", AssetManager::GetAsset<Texture>("backpack_diffuse"));
+	backpack_mat.textures.emplace("specular", AssetManager::GetAsset<Texture>("backpack_specular"));
+	backpack_mat.textures.emplace("emissive", AssetManager::GetAsset<Texture>("default_black"));
+	backpack_mat.floatParameters.emplace("material.shininess", 32.0f);
+	AssetManager::LoadAsset<Material>("backpack", backpack_mat);
+
+	AssetManager::LoadAsset<Model>("backpack", Model::FileImportParams{ "backpack/backpack.fbx", { AssetManager::GetAsset<Material>("backpack") } });
+}
+
+
 void ExpositionScene::loadScene()
 {
 	Renderer& renderer = Locator::getRenderer();

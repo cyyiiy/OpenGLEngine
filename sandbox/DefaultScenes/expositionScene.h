@@ -4,6 +4,10 @@
 
 class ExpositionScene : public Scene
 {
+public:
+	std::string getSceneName() override { return "ExpositionScene"; }
+	void loadSceneAssets() override;
+
 protected:
 	void loadScene() override;
 	void unloadScene() override;

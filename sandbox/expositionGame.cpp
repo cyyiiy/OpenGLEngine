@@ -29,9 +29,6 @@ void ExpositionGame::loadGameAssets()
 	AssetManager::LoadAsset<Texture>("container_specular", { "container2_specular.png", false });
 	AssetManager::LoadAsset<Texture>("matrix_emissive", { "matrix.jpg", false });
 
-	AssetManager::LoadAsset<Texture>("backpack_diffuse", { "backpack/backpack_basecolor.jpg", false });
-	AssetManager::LoadAsset<Texture>("backpack_specular", { "backpack/backpack_specular.jpg", false });
-
 	AssetManager::LoadAsset<Texture>("floor_wood_diffuse", { "doomlike/textures/wood_floor_basecolor.jpg", false });
 	AssetManager::LoadAsset<Texture>("floor_wood_specular", { "doomlike/textures/wood_floor_specular.jpg", false });
 
@@ -51,13 +48,6 @@ void ExpositionGame::loadGameAssets()
 	container_matrix_mat.floatParameters.emplace("material.shininess", 32.0f);
 	AssetManager::LoadAsset<Material>("container_matrix", container_matrix_mat);
 
-	Material::LoadParams backpack_mat(AssetManager::GetAsset<Shader>("lit_object"));
-	backpack_mat.textures.emplace("diffuse", AssetManager::GetAsset<Texture>("backpack_diffuse"));
-	backpack_mat.textures.emplace("specular", AssetManager::GetAsset<Texture>("backpack_specular"));
-	backpack_mat.textures.emplace("emissive", AssetManager::GetAsset<Texture>("default_black"));
-	backpack_mat.floatParameters.emplace("material.shininess", 32.0f);
-	AssetManager::LoadAsset<Material>("backpack", backpack_mat);
-
 	Material::LoadParams floor_mat(AssetManager::GetAsset<Shader>("lit_object"));
 	floor_mat.textures.emplace("diffuse", AssetManager::GetAsset<Texture>("floor_wood_diffuse"));
 	floor_mat.textures.emplace("specular", AssetManager::GetAsset<Texture>("floor_wood_specular"));
@@ -74,10 +64,6 @@ void ExpositionGame::loadGameAssets()
 	Material::LoadParams flat_emissive_cyan(AssetManager::GetAsset<Shader>("flat_emissive"));
 	flat_emissive_cyan.vec3Parameters.emplace("emissive", Color::cyan.toVector());
 	AssetManager::LoadAsset<Material>("flat_emissive_cyan", flat_emissive_cyan);
-
-
-	// Load models 
-	AssetManager::LoadAsset<Model>("backpack", Model::FileImportParams{ "backpack/backpack.fbx", { AssetManager::GetAsset<Material>("backpack") } });
 
 
 	// Load font
