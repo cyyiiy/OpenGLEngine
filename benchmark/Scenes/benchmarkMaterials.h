@@ -4,6 +4,10 @@
 
 class BenchmarkMaterials : public Scene
 {
+public:
+	std::string getSceneName() override { return "BenchmarkMaterialsScene"; }
+	void loadSceneAssets() override;
+
 protected:
 	void loadScene() override;
 	void unloadScene() override;

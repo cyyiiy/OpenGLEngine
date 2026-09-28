@@ -5,9 +5,16 @@
 #include <Assets/defaultAssets.h>
 #include <GameplayStatics/gameplayStatics.h>
 
+#include <Rendering/texture.h>
+#include <Rendering/material.h>
+#include <Rendering/Model/model.h>
+#include <Rendering/Text/font.h>
+
 #include <GLFW/glfw3.h>
 #include <sstream>
 #include <numeric>
+
+const std::string BENCHMARK_GLOBAL_GROUP = "BenchmarkGlobalAssets";
 
 
 void BenchmarkGame::loadGameAssets()
@@ -24,21 +31,27 @@ void BenchmarkGame::loadGameAssets()
 	log.LogMessage_Category("Benchmark: Load default assets time: " + std::to_string(glfwGetTime() - load_time) + " seconds.", LogCategory::Info);
 	load_time = glfwGetTime();
 
+	AssetManager::OpenLoadingGroup(BENCHMARK_GLOBAL_GROUP);
+
 	// Load benchmark floor
-	AssetManager::LoadTexture("floor_diffuse", "benchmark/textures/stonefloor/stonefloor_basecolor.jpg", false);
-	AssetManager::LoadTexture("floor_specular", "benchmark/textures/stonefloor/stonefloor_specular.jpg", false);
-	Material& floor_mat = AssetManager::CreateMaterial("floor", AssetManager::GetShader("lit_object"));
-	floor_mat.addTexture(&AssetManager::GetTexture("floor_diffuse"), TextureType::Diffuse);
-	floor_mat.addTexture(&AssetManager::GetTexture("floor_specular"), TextureType::Specular);
-	floor_mat.addTexture(&AssetManager::GetTexture("default_black"), TextureType::Emissive);
-	floor_mat.addParameter("material.shininess", 32.0f);
-	floor_mat.addParameter("beta_prevent_tex_scaling", true);
-	floor_mat.addParameter("beta_tex_scaling_factor", 2.0f);
-	log.LogMessage_Category("Benchmark: Loaded floor texture in " + std::to_string(glfwGetTime() - load_time) + " seconds.", LogCategory::Info);
+	AssetManager::LoadAsset<Texture>("floor_diffuse", { "benchmark/textures/stonefloor/stonefloor_basecolor.jpg", false });
+	AssetManager::LoadAsset<Texture>("floor_specular", { "benchmark/textures/stonefloor/stonefloor_specular.jpg", false });
+	Material::LoadParams floor_mat(AssetManager::GetAsset<Shader>("lit_object"));
+	floor_mat.textures.emplace("diffuse", AssetManager::GetAsset<Texture>("floor_diffuse"));
+	floor_mat.textures.emplace("specular", AssetManager::GetAsset<Texture>("floor_specular"));
+	floor_mat.textures.emplace("emissive", AssetManager::GetAsset<Texture>("default_black"));
+	floor_mat.floatParameters.emplace("material.shininess", 32.0f);
+	floor_mat.boolParameters.emplace("beta_prevent_tex_scaling", true);
+	floor_mat.floatParameters.emplace("beta_tex_scaling_factor", 1.0f);
+	AssetManager::LoadAsset<Material>("floor", floor_mat);
+	log.LogMessage_Category("Benchmark: Loaded floor material in " + std::to_string(glfwGetTime() - load_time) + " seconds.", LogCategory::Info);
 	load_time = glfwGetTime();
 
 	// Load benchmark sprites
-	AssetManager::LoadTexture("sprite_matrix", "benchmark/sprites/matrix.jpg", false);
+	AssetManager::LoadAsset<Texture>("sprite_matrix", { "benchmark/sprites/matrix.jpg", false });
+
+	// Load benchmark fonts
+	AssetManager::LoadAsset<Font>("arial_24", { "arial_font/arial.ttf", 24, CharacterLoading::ASCII_128 });
 
 	// Load benchmark props
 	loadProp("woodenchest");
@@ -47,6 +60,7 @@ void BenchmarkGame::loadGameAssets()
 	log.LogMessage_Category("Benchmark: Load props time: " + std::to_string(glfwGetTime() - load_time) + " seconds.", LogCategory::Info);
 	load_time = glfwGetTime();
 
+	AssetManager::CloseLoadingGroup();
 	log.LogMessage_Category("Benchmark: Finished loading assets in " + std::to_string(glfwGetTime() - load_start_time) + " seconds.", LogCategory::Info);
 }
 
@@ -57,15 +71,7 @@ void BenchmarkGame::loadGame()
 
 void BenchmarkGame::unloadGame()
 {
-	AssetManager::DeleteMaterial("floor");
-	AssetManager::DeleteTexture("floor_diffuse");
-	AssetManager::DeleteTexture("floor_specular");
-
-	AssetManager::DeleteTexture("sprite_matrix");
-
-	unloadProp("woodenchest");
-	unloadProp("romanstatue");
-	unloadProp("orangebrick");
+	AssetManager::TryUnloadAssetsOfGroup(BENCHMARK_GLOBAL_GROUP);
 }
 
 void BenchmarkGame::updateGame(float dt)
@@ -170,30 +176,23 @@ void BenchmarkGame::loadProp(const std::string& name)
 	const std::string prop_path = "benchmark/props/" + name + "/" + name;
 
 	// Load prop textures
-	AssetManager::LoadTexture(name + "_diffuse", prop_path + "_basecolor.jpg");
-	AssetManager::LoadTexture(name + "_specular", prop_path + "_specular.jpg");
+	AssetManager::LoadAsset<Texture>(name + "_diffuse", { prop_path + "_basecolor.jpg", false });
+	AssetManager::LoadAsset<Texture>(name + "_specular", { prop_path + "_specular.jpg", false });
 
 	// Create prop material
-	Material& prop_mat = AssetManager::CreateMaterial(name, AssetManager::GetShader("lit_object"));
-	prop_mat.addTexture(&AssetManager::GetTexture(name + "_diffuse"), TextureType::Diffuse);
-	prop_mat.addTexture(&AssetManager::GetTexture(name + "_specular"), TextureType::Specular);
-	prop_mat.addTexture(&AssetManager::GetTexture("default_black"), TextureType::Emissive);
-	prop_mat.addParameter("material.shininess", 32.0f);
+	Material::LoadParams prop_mat(AssetManager::GetAsset<Shader>("lit_object"));
+	prop_mat.textures.emplace("diffuse", AssetManager::GetAsset<Texture>(name + "_diffuse"));
+	prop_mat.textures.emplace("specular", AssetManager::GetAsset<Texture>(name + "_specular"));
+	prop_mat.textures.emplace("emissive", AssetManager::GetAsset<Texture>("default_black"));
+	prop_mat.floatParameters.emplace("material.shininess", 32.0f);
+	AssetManager::LoadAsset<Material>(name, prop_mat);
 
 	// Load prop model
-	AssetManager::LoadModel(name, prop_path + ".fbx", &AssetManager::GetMaterial(name));
+	AssetManager::LoadAsset<Model>(name, Model::FileImportParams{ prop_path + ".fbx", { AssetManager::GetAsset<Material>(name) } });
 
 	Locator::getLog().LogMessage_Category(
 		"Benchmark: Loaded prop \"" + name + "\" in " + std::to_string(glfwGetTime() - load_prop_time) + " seconds.", 
 		LogCategory::Info);
-}
-
-void BenchmarkGame::unloadProp(const std::string& name)
-{
-	AssetManager::DeleteModel(name);
-	AssetManager::DeleteMaterial(name);
-	AssetManager::DeleteTexture(name + "_diffuse");
-	AssetManager::DeleteTexture(name + "_specular");
 }
 
 void BenchmarkGame::startBenchmarkState(BenchmarkState state)
@@ -242,7 +241,7 @@ void BenchmarkGame::startBenchmarkState(BenchmarkState state)
 	default:
 		log.LogMessage_Category("Benchmark: Tried to start unimplemented benchmark state.", LogCategory::Error);
 		return;
-	}
+	} 
 
 	log.LogMessage_Category("Benchmark: Analyzing performances... (wait 5 seconds)", LogCategory::Info);
 	currentStateFirstFrame = false;

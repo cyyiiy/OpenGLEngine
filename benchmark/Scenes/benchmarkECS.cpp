@@ -14,7 +14,7 @@ void BenchmarkECS::loadScene()
 	Entity* text = createEntity();
 
 	TextComponent& text_comp_1 = ECS::GetComponent(text->addComponentByClass<TextComponent>());
-	text_comp_1.setTextDatas("ECS Benchmark", AssetManager::GetFont("arial_64"));
+	text_comp_1.setTextDatas("ECS Benchmark", AssetManager::GetAsset<Font>("arial_64"));
 	text_comp_1.position = HudPosition{ Vector2{ 0.5f, 1.0f }, Vector2{ 0.5f, 1.0f }, Vector2{ 0.0f, -40.0f } };
 
 	TextComponent& text_comp_2 = ECS::GetComponent(text->addComponentByClass<TextComponent>());
@@ -22,13 +22,13 @@ void BenchmarkECS::loadScene()
 		"Test ECS functions 'Create', 'Get', 'Delete' and 'Update'\n"
 		"There are 1000 components. Each frame, they create another component, get it,\n"
 		"make it add a random number to a shared counter then finally delete the component.",
-		AssetManager::GetFont("arial_64"));
+		AssetManager::GetAsset<Font>("arial_64"));
 	text_comp_2.position = HudPosition{ Vector2{ 0.5f, 1.0f }, Vector2{ 0.0f, 1.0f }, Vector2{ 25.0f, -200.0f } };
 
 	// Create text to show the shared counter
 	counterText = text->addComponentByClass<TextComponent>();
 	TextComponent& counter_text_comp = ECS::GetComponent(counterText);
-	counter_text_comp.setTextDatas("Shared counter value for this frame: 0", AssetManager::GetFont("arial_24"));
+	counter_text_comp.setTextDatas("Shared counter value for this frame: 0", AssetManager::GetAsset<Font>("arial_24"));
 	counter_text_comp.position = HudPosition{ Vector2{ 0.0f, 1.0f }, Vector2{ 0.0f, 1.0f }, Vector2{ 25.0f, -400.0f } };
 	counter_text_comp.tintColor = Color::cyan;
 

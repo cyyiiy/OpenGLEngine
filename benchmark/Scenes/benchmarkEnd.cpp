@@ -11,7 +11,7 @@ void BenchmarkEnd::loadScene()
 
 	Entity* text = createEntity();
 	TextComponent& text_comp = ECS::GetComponent(text->addComponentByClass<TextComponent>());
-	text_comp.setTextDatas("Benchmark is finished.\nRead log to see results and press escape to close.", AssetManager::GetFont("arial_64"));
+	text_comp.setTextDatas("Benchmark is finished.\nRead log to see results and press escape to close.", AssetManager::GetAsset<Font>("arial_64"));
 }
 
 void BenchmarkEnd::unloadScene()

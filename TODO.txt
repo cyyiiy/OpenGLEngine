@@ -18,7 +18,7 @@
 	- Ajouter les assets "nulls" (en réutilisant la classe EngineAssets ?) - fait
 	- Mettre à jour le code du projet Sandbox pour compiler et corriger les bugs - fait
 	- Modifier le code du Game System pour intégrer l'utilisation des loading groups - fait
-	- Mettre à jour le code des projets Benchmark et Doomlike
+	- Mettre à jour le code des projets Benchmark et Doomlike - en cours
 	- Nettoyer le moteur si nécessaire
 
 ~ Faire le début de l'éditeur de projet (utiliser ImGUI pour l'interface)
