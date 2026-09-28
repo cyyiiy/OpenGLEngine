@@ -16,7 +16,7 @@ public:
 
 	//  Overridable functions for user-created scenes
 	// -----------------------------------------------
-	virtual std::string getSceneName() = 0;
+	virtual std::string getSceneName() { return ""; };
 	virtual void loadSceneAssets() {}
 
 protected:

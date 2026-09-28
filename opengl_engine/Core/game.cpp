@@ -46,12 +46,9 @@ void Game::loadScene(Scene* scene)
 
 	// Load new scene assets
 	const std::string new_scene_name = scene->getSceneName();
-	if (new_scene_name != "")
-	{
-		AssetManager::OpenLoadingGroup(new_scene_name);
-		scene->loadSceneAssets();
-		AssetManager::CloseLoadingGroup();
-	}
+	if (new_scene_name != "") AssetManager::OpenLoadingGroup(new_scene_name);
+	scene->loadSceneAssets();
+	if (new_scene_name != "") AssetManager::CloseLoadingGroup();
 
 	// Load new scene objects
 	activeScene = scene;
@@ -59,10 +56,7 @@ void Game::loadScene(Scene* scene)
 	activeScene->load();
 
 	// Unload old scene assets
-	if (old_scene_name != "")
-	{
-		AssetManager::TryUnloadAssetsOfGroup(old_scene_name);
-	}
+	if (old_scene_name != "") AssetManager::TryUnloadAssetsOfGroup(old_scene_name);
 }
 
 void Game::unloadActiveScene(bool loadNewScene)
@@ -71,7 +65,8 @@ void Game::unloadActiveScene(bool loadNewScene)
 
 	if (!loadNewScene)
 	{
-		AssetManager::TryUnloadAssetsOfGroup(activeScene->getSceneName());
+		const std::string old_scene_name = activeScene ? activeScene->getSceneName() : "";
+		if (old_scene_name != "") AssetManager::TryUnloadAssetsOfGroup(old_scene_name);
 		GameplayStatics::SetCurrentScene(nullptr);
 	}
 }
