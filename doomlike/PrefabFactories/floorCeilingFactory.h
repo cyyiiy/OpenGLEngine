@@ -11,5 +11,4 @@ namespace FloorCeilingFactory
 	Entity* CreateCeiling(EntityContainer* entityContainer, const Vector3& position, const Vector2& scale, bool createCollision = true);
 
 	void SetupFloorCeilingAssets();
-	void ReleaseFloorCeilingAssets();
 };

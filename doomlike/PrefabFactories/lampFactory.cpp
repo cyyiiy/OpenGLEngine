@@ -45,7 +45,7 @@ Entity* LampFactory::CreateLamp(EntityContainer* entityContainer, const Vector3&
 
 	ComponentHandle<ModelRendererComponent> lamp_model_handle = lamp_entity->addComponentByClass<ModelRendererComponent>();
 	ModelRendererComponent& lamp_model_comp = ECS::GetComponent(lamp_model_handle);
-	lamp_model_comp.setModel(&AssetManager::GetModel(model_name));
+	lamp_model_comp.setModel(AssetManager::GetAsset<Model>(model_name));
 
 	ComponentHandle<PointLightComponent> lamp_light_handle = lamp_entity->addComponentByClass<PointLightComponent>();
 	PointLightComponent& lamp_light_comp = ECS::GetComponent(lamp_light_handle);
@@ -70,60 +70,64 @@ Entity* LampFactory::CreateLamp(EntityContainer* entityContainer, const Vector3&
 
 void LampFactory::SetupLampAssets()
 {
-	AssetManager::LoadTexture("lamp_diffuse", "doomlike/lamp/lamp_basecolor.png", false);
-	AssetManager::LoadTexture("lamp_specular", "doomlike/lamp/lamp_roughness.png", false);
+	AssetManager::LoadAsset<Texture>("lamp_diffuse", { "doomlike/lamp/lamp_basecolor.png", false });
+	AssetManager::LoadAsset<Texture>("lamp_specular", { "doomlike/lamp/lamp_roughness.png", false });
 
-	AssetManager::LoadTexture("chandelier_candle_diffuse", "doomlike/chandelier/ch_candles_basecolor.jpeg", false);
-	AssetManager::LoadTexture("chandelier_base_diffuse", "doomlike/chandelier/ch_chandelier_basecolor.jpeg", false);
-	AssetManager::LoadTexture("chandelier_base_specular", "doomlike/chandelier/ch_chandelier_roughness.jpeg", false);
-	AssetManager::LoadTexture("chandelier_leather_diffuse", "doomlike/chandelier/ch_leather_basecolor.jpeg", false);
-	AssetManager::LoadTexture("chandelier_leather_specular", "doomlike/chandelier/ch_leather_roughness.jpeg", false);
+	AssetManager::LoadAsset<Texture>("chandelier_candle_diffuse", { "doomlike/chandelier/ch_candles_basecolor.jpeg", false });
+	AssetManager::LoadAsset<Texture>("chandelier_base_diffuse", { "doomlike/chandelier/ch_chandelier_basecolor.jpeg", false });
+	AssetManager::LoadAsset<Texture>("chandelier_base_specular", { "doomlike/chandelier/ch_chandelier_roughness.jpeg", false });
+	AssetManager::LoadAsset<Texture>("chandelier_leather_diffuse", { "doomlike/chandelier/ch_leather_basecolor.jpeg", false });
+	AssetManager::LoadAsset<Texture>("chandelier_leather_specular", { "doomlike/chandelier/ch_leather_roughness.jpeg", false });
 
-	Material& lamp_mat = AssetManager::CreateMaterial("lamp", AssetManager::GetShader("lit_object"));
-	lamp_mat.addTexture(&AssetManager::GetTexture("lamp_diffuse"), TextureType::Diffuse);
-	lamp_mat.addTexture(&AssetManager::GetTexture("lamp_specular"), TextureType::Specular);
-	lamp_mat.addTexture(&AssetManager::GetTexture("default_black"), TextureType::Emissive);
-	lamp_mat.addParameter("material.shininess", 32.0f);
 
-	Material& chandelier_candle = AssetManager::CreateMaterial("chandelier_candle", AssetManager::GetShader("lit_object"));
-	chandelier_candle.addTexture(&AssetManager::GetTexture("chandelier_candle_diffuse"), TextureType::Diffuse);
-	chandelier_candle.addTexture(&AssetManager::GetTexture("default_black"), TextureType::Specular);
-	chandelier_candle.addTexture(&AssetManager::GetTexture("default_black"), TextureType::Emissive);
-	chandelier_candle.addParameter("material.shininess", 32.0f);
-	Material& chandelier_base = AssetManager::CreateMaterial("chandelier_base", AssetManager::GetShader("lit_object"));
-	chandelier_base.addTexture(&AssetManager::GetTexture("chandelier_base_diffuse"), TextureType::Diffuse);
-	chandelier_base.addTexture(&AssetManager::GetTexture("chandelier_base_specular"), TextureType::Specular);
-	chandelier_base.addTexture(&AssetManager::GetTexture("default_black"), TextureType::Emissive);
-	chandelier_base.addParameter("material.shininess", 32.0f);
-	Material& chandelier_leather = AssetManager::CreateMaterial("chandelier_leather", AssetManager::GetShader("lit_object"));
-	chandelier_leather.addTexture(&AssetManager::GetTexture("chandelier_leather_diffuse"), TextureType::Diffuse);
-	chandelier_leather.addTexture(&AssetManager::GetTexture("chandelier_leather_specular"), TextureType::Specular);
-	chandelier_leather.addTexture(&AssetManager::GetTexture("default_black"), TextureType::Emissive);
-	chandelier_leather.addParameter("material.shininess", 32.0f);
+	Material::LoadParams lamp_mat(AssetManager::GetAsset<Shader>("lit_object"));
+	lamp_mat.textures.emplace("diffuse", AssetManager::GetAsset<Texture>("lamp_diffuse"));
+	lamp_mat.textures.emplace("specular", AssetManager::GetAsset<Texture>("lamp_specular"));
+	lamp_mat.textures.emplace("emissive", AssetManager::GetAsset<Texture>("default_black"));
+	lamp_mat.floatParameters.emplace("material.shininess", 32.0f);
+	AssetManager::LoadAsset<Material>("lamp", lamp_mat);
 
-	Material& flame = AssetManager::CreateMaterial("flame", AssetManager::GetShader("flat_emissive"));
-	flame.addParameter("emissive", Color{ 209, 155, 67, 255 });
+	Material::LoadParams chandelier_candle(AssetManager::GetAsset<Shader>("lit_object"));
+	chandelier_candle.textures.emplace("diffuse", AssetManager::GetAsset<Texture>("chandelier_candle_diffuse"));
+	chandelier_candle.textures.emplace("specular", AssetManager::GetAsset<Texture>("default_black"));
+	chandelier_candle.textures.emplace("emissive", AssetManager::GetAsset<Texture>("default_black"));
+	chandelier_candle.floatParameters.emplace("material.shininess", 32.0f);
+	AssetManager::LoadAsset<Material>("chandelier_candle", chandelier_candle);
 
-	Material& flame_off = AssetManager::CreateMaterial("flame_off", AssetManager::GetShader("flat_emissive"));
-	flame_off.addParameter("emissive", Color{ 20, 14 ,3, 255 });
+	Material::LoadParams chandelier_base(AssetManager::GetAsset<Shader>("lit_object"));
+	chandelier_base.textures.emplace("diffuse", AssetManager::GetAsset<Texture>("chandelier_base_diffuse"));
+	chandelier_base.textures.emplace("specular", AssetManager::GetAsset<Texture>("chandelier_base_specular"));
+	chandelier_base.textures.emplace("emissive", AssetManager::GetAsset<Texture>("default_black"));
+	chandelier_base.floatParameters.emplace("material.shininess", 32.0f);
+	AssetManager::LoadAsset<Material>("chandelier_base", chandelier_base);
 
-	Model& lamp = AssetManager::LoadModel("lamp", "doomlike/lamp/lamp.fbx", nullptr);
-	lamp.changeDefaultMaterial(0, &AssetManager::GetMaterial("lamp"));
-	lamp.changeDefaultMaterial(1, &AssetManager::GetMaterial("flame"));
+	Material::LoadParams chandelier_leather(AssetManager::GetAsset<Shader>("lit_object"));
+	chandelier_leather.textures.emplace("diffuse", AssetManager::GetAsset<Texture>("chandelier_leather_diffuse"));
+	chandelier_leather.textures.emplace("specular", AssetManager::GetAsset<Texture>("lamp_specular"));
+	chandelier_leather.textures.emplace("emissive", AssetManager::GetAsset<Texture>("chandelier_leather_specular"));
+	chandelier_leather.floatParameters.emplace("material.shininess", 32.0f);
+	AssetManager::LoadAsset<Material>("chandelier_leather", chandelier_leather);
 
-	Model& chandelier = AssetManager::LoadModel("chandelier", "doomlike/chandelier/chandelier.fbx", nullptr);
-	chandelier.changeDefaultMaterial(0, &AssetManager::GetMaterial("chandelier_base"));
-	chandelier.changeDefaultMaterial(1, &AssetManager::GetMaterial("chandelier_leather"));
-	chandelier.changeDefaultMaterial(2, &AssetManager::GetMaterial("flame")); // Could be "chandelier_candle" but "flame" allows a better visibility
-	chandelier.changeDefaultMaterial(3, &AssetManager::GetMaterial("flame"));
-}
+	Material::LoadParams flame(AssetManager::GetAsset<Shader>("flat_emissive"));
+	flame.vec3Parameters.emplace("emissive", Color{ 209, 155, 67, 255 });
+	AssetManager::LoadAsset<Material>("flame", flame);
 
-void LampFactory::ReleaseLampAssets()
-{
-	AssetManager::DeleteMaterial("lamp");
-	AssetManager::DeleteMaterial("chandelier_candle");
-	AssetManager::DeleteMaterial("chandelier_base");
-	AssetManager::DeleteMaterial("chandelier_leather");
-	AssetManager::DeleteMaterial("flame");
-	AssetManager::DeleteMaterial("flame_off");
+	Material::LoadParams flame_off(AssetManager::GetAsset<Shader>("flat_emissive"));
+	flame_off.vec3Parameters.emplace("emissive", Color{ 20, 14 ,3, 255 });
+	AssetManager::LoadAsset<Material>("flame_off", flame_off);
+
+
+	Model::FileImportParams lamp_model;
+	lamp_model.modelPath = "doomlike/lamp/lamp.fbx";
+	lamp_model.materials.push_back(AssetManager::GetAsset<Material>("lamp"));
+	lamp_model.materials.push_back(AssetManager::GetAsset<Material>("flame"));
+	AssetManager::LoadAsset<Model>("lamp", lamp_model);
+
+	Model::FileImportParams chandelier_model;
+	chandelier_model.modelPath = "doomlike/chandelier/chandelier.fbx";
+	chandelier_model.materials.push_back(AssetManager::GetAsset<Material>("chandelier_base"));
+	chandelier_model.materials.push_back(AssetManager::GetAsset<Material>("chandelier_leather"));
+	chandelier_model.materials.push_back(AssetManager::GetAsset<Material>("flame")); // Could be "chandelier_candle" but "flame" allows a better visibility
+	chandelier_model.materials.push_back(AssetManager::GetAsset<Material>("flame"));
+	AssetManager::LoadAsset<Model>("lamp", chandelier_model);
 }

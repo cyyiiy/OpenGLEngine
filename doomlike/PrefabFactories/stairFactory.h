@@ -17,5 +17,4 @@ namespace StairFactory
 	Entity* CreateStair(EntityContainer* entityContainer, StairFacingDirection facingDirection, const Vector3& position);
 
 	void SetupStairAssets();
-	void ReleaseStairAssets();
 }

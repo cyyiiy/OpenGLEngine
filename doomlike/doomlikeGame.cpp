@@ -224,9 +224,4 @@ void DoomlikeGame::unloadGame()
 	AssetManager::DeleteMaterial("gun");
 	AssetManager::DeleteMaterial("enemy");
 	AssetManager::DeleteMaterial("bullet");
-
-	WallFactory::ReleaseWallAssets();
-	FloorCeilingFactory::ReleaseFloorCeilingAssets();
-	StairFactory::ReleaseStairAssets();
-	LampFactory::ReleaseLampAssets();
 }

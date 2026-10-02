@@ -3,6 +3,9 @@
 #include <ECS/entityContainer.h>
 #include <Rendering/modelRendererComponent.h>
 #include <PhysicsAABB/boxCollisionComponent.h>
+#include <Rendering/Model/model.h>
+#include <Rendering/texture.h>
+#include <Rendering/material.h>
 #include <vector>
 
 
@@ -59,7 +62,7 @@ Entity* StairFactory::CreateStair(EntityContainer* entityContainer, StairFacingD
 	}
 
 	ModelRendererComponent& stair_model_comp = ECS::GetComponent(stair_entity->addComponentByClass<ModelRendererComponent>());
-	stair_model_comp.setModel(&AssetManager::GetModel("stairs"));
+	stair_model_comp.setModel(AssetManager::GetAsset<Model>("stairs"));
 	stair_model_comp.offset.setScale(0.0044f);
 	stair_model_comp.offset.setPosition(Vector3{ -1.03f, -1.11f, 0.93f });
 	
@@ -78,20 +81,15 @@ Entity* StairFactory::CreateStair(EntityContainer* entityContainer, StairFacingD
 
 void StairFactory::SetupStairAssets()
 {
-	AssetManager::LoadTexture("stairs_diffuse", "doomlike/stairs/stairs_basecolor.png", false);
-	AssetManager::LoadTexture("stairs_specular", "doomlike/stairs/stairs_fakespecular.jpg", false);
+	AssetManager::LoadAsset<Texture>("stairs_diffuse", { "doomlike/stairs/stairs_basecolor.png", false });
+	AssetManager::LoadAsset<Texture>("stairs_specular", { "doomlike/stairs/stairs_fakespecular.jpg", false });
 
-	Material& stairs_mat = AssetManager::CreateMaterial("stairs", AssetManager::GetShader("lit_object"));
-	stairs_mat.addTexture(&AssetManager::GetTexture("stairs_diffuse"), TextureType::Diffuse);
-	stairs_mat.addTexture(&AssetManager::GetTexture("stairs_specular"), TextureType::Specular);
-	stairs_mat.addTexture(&AssetManager::GetTexture("default_black"), TextureType::Emissive);
-	stairs_mat.addParameter("material.shininess", 32.0f);
-	//stairs_mat.addParameter("beta_prevent_tex_scaling", false);
+	Material::LoadParams stairs_mat(AssetManager::GetAsset<Shader>("lit_object"));
+	stairs_mat.textures.emplace("diffuse", AssetManager::GetAsset<Texture>("stairs_diffuse"));
+	stairs_mat.textures.emplace("specular", AssetManager::GetAsset<Texture>("stairs_specular"));
+	stairs_mat.textures.emplace("emissive", AssetManager::GetAsset<Texture>("default_black"));
+	stairs_mat.floatParameters.emplace("material.shininess", 32.0f);
+	AssetManager::LoadAsset<Material>("stairs", stairs_mat);
 
-	AssetManager::LoadModel("stairs", "doomlike/stairs/stairs.fbx", &AssetManager::GetMaterial("stairs"));
-}
-
-void StairFactory::ReleaseStairAssets()
-{
-	AssetManager::DeleteMaterial("stairs");
+	AssetManager::LoadAsset<Model>("stairs", Model::FileImportParams{ "doomlike/stairs/stairs.fbx", { AssetManager::GetAsset<Material>("stairs") } });
 }
