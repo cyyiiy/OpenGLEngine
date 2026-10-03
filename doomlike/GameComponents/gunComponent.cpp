@@ -4,6 +4,7 @@
 #include <Assets/assetManager.h>
 #include <GameplayStatics/gameplayStatics.h>
 #include <Inputs/Input.h>
+#include <Audio/audioSound.h>
 
 #include <GameComponents/playerComponent.h>
 #include <Rendering/cameraComponent.h>
@@ -44,20 +45,20 @@ void GunComponent::init()
 
 	gunModel = entity->addComponentByClass<ModelRendererComponent>();
 	ModelRendererComponent& gun_model_comp = ECS::GetComponent(gunModel);
-	gun_model_comp.setModel(&AssetManager::GetModel("gun"));
+	gun_model_comp.setModel(AssetManager::GetAsset<Model>("gun"));
 	gun_model_comp.ignoreOwnerTransform = true;
 	gun_model_comp.offset.setScale(0.1f);
 
 	ammoText = entity->addComponentByClass<TextComponent>();
 	TextComponent& ammo_text_comp = ECS::GetComponent(ammoText);
-	ammo_text_comp.setTextDatas("", AssetManager::GetFont("arial_64"));
+	ammo_text_comp.setTextDatas("", AssetManager::GetAsset<Font>("arial_64"));
 	ammo_text_comp.position = HudPosition{ Vector2::zero, Vector2::zero, Vector2{ 50.0f, 50.0f } }; // Bottom left with an offset
 	ammo_text_comp.scale = Vector2{ 0.6f };
 	writeAmmoText();
 
 	crosshairSprite = entity->addComponentByClass<SpriteComponent>();
 	SpriteComponent& crosshair_sprite_comp = ECS::GetComponent(crosshairSprite);
-	crosshair_sprite_comp.texture = &AssetManager::GetTexture("hud_crosshair");
+	crosshair_sprite_comp.texture = AssetManager::GetAsset<Texture>("hud_crosshair");
 	crosshair_sprite_comp.position = HudPosition{ Vector2::halfUnit, Vector2::halfUnit, Vector2::zero }; // Center with no offset
 	crosshair_sprite_comp.scale = Vector2{ 0.5f };
 }
@@ -96,7 +97,7 @@ void GunComponent::update(float deltaTime)
 		bullet_comp.setupBullet(gun_model_comp.offset.getPosition(), bullet_rotation, bullet_direction, SHOOT_VELOCITY, BULLET_LIFETIME);
 
 		// Play shoot sound
-		Locator::getAudio().InstantPlaySound2D(AssetManager::GetSound("shoot"), 0.15f);
+		Locator::getAudio().InstantPlaySound2D(*AssetManager::GetAsset<AudioSound>("shoot"), 0.15f);
 
 		ammoCount--;
 		writeAmmoText();
