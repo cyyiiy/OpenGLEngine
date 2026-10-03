@@ -89,5 +89,5 @@ void FloorCeilingFactory::SetupFloorCeilingAssets()
 	ceiling_mat.floatParameters.emplace("material.shininess", 32.0f);
 	ceiling_mat.boolParameters.emplace("beta_prevent_tex_scaling", true);
 	ceiling_mat.floatParameters.emplace("beta_tex_scaling_factor", 2.0f);
-	AssetManager::LoadAsset<Material>("floor", ceiling_mat);
+	AssetManager::LoadAsset<Material>("ceiling", ceiling_mat);
 }

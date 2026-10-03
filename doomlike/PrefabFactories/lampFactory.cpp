@@ -103,8 +103,8 @@ void LampFactory::SetupLampAssets()
 
 	Material::LoadParams chandelier_leather(AssetManager::GetAsset<Shader>("lit_object"));
 	chandelier_leather.textures.emplace("diffuse", AssetManager::GetAsset<Texture>("chandelier_leather_diffuse"));
-	chandelier_leather.textures.emplace("specular", AssetManager::GetAsset<Texture>("lamp_specular"));
-	chandelier_leather.textures.emplace("emissive", AssetManager::GetAsset<Texture>("chandelier_leather_specular"));
+	chandelier_leather.textures.emplace("specular", AssetManager::GetAsset<Texture>("chandelier_leather_specular"));
+	chandelier_leather.textures.emplace("emissive", AssetManager::GetAsset<Texture>("default_black"));
 	chandelier_leather.floatParameters.emplace("material.shininess", 32.0f);
 	AssetManager::LoadAsset<Material>("chandelier_leather", chandelier_leather);
 
@@ -129,5 +129,5 @@ void LampFactory::SetupLampAssets()
 	chandelier_model.materials.push_back(AssetManager::GetAsset<Material>("chandelier_leather"));
 	chandelier_model.materials.push_back(AssetManager::GetAsset<Material>("flame")); // Could be "chandelier_candle" but "flame" allows a better visibility
 	chandelier_model.materials.push_back(AssetManager::GetAsset<Material>("flame"));
-	AssetManager::LoadAsset<Model>("lamp", chandelier_model);
+	AssetManager::LoadAsset<Model>("chandelier", chandelier_model);
 }

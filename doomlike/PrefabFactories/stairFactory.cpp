@@ -91,5 +91,5 @@ void StairFactory::SetupStairAssets()
 	stairs_mat.floatParameters.emplace("material.shininess", 32.0f);
 	AssetManager::LoadAsset<Material>("stairs", stairs_mat);
 
-	AssetManager::LoadAsset<Model>("stairs", Model::FileImportParams{ "doomlike/stairs/stairs.fbx", { AssetManager::GetAsset<Material>("stairs") } });
+	AssetManager::LoadAsset<Model>("stairs", Model::FileImportParams{ "doomlike/stairs/stairs.fbx", { AssetManager::GetAsset<Material>("stairs"), AssetManager::GetAsset<Material>("stairs"), AssetManager::GetAsset<Material>("stairs"), AssetManager::GetAsset<Material>("stairs"), AssetManager::GetAsset<Material>("stairs") } });
 }
