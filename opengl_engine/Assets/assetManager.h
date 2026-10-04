@@ -254,11 +254,11 @@ public:
         // 3. The asset doesn't exist, try to return the default asset
         if (typed_manager.defaultAsset)
         {
-            Locator::getLog().LogMessage_Category("Asset Manager: Couldn't find an asset of class '" + std::string(typeid(T).name()) + "' with the name \"" + name + "\". Returning the default asset of this class instead.", LogCategory::Warning);
+            Locator::getLog().LogMessage_Category("Asset Manager: Couldn't find an asset of class '" + T::GetTypeName() + "' with the name \"" + name + "\". Returning the default asset of this class instead.", LogCategory::Warning);
             return typed_manager.defaultAsset;
         }
 
-        Locator::getLog().LogMessage_Category("Asset Manager: Couldn't find an asset of class '" + std::string(typeid(T).name()) + "' with the name \"" + name + "\".", LogCategory::Error);
+        Locator::getLog().LogMessage_Category("Asset Manager: Couldn't find an asset of class '" + T::GetTypeName() + "' with the name \"" + name + "\".", LogCategory::Error);
         return nullptr;
     }
 

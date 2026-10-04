@@ -19,7 +19,7 @@
 	- Mettre à jour le code du projet Sandbox pour compiler et corriger les bugs - fait
 	- Modifier le code du Game System pour intégrer l'utilisation des loading groups - fait
 	- Mettre à jour le code des projets Benchmark et Doomlike - fait
-	- Nettoyer le moteur si nécessaire
+	- Nettoyer le moteur si nécessaire - en cours
 
 ~ Faire le début de l'éditeur de projet (utiliser ImGUI pour l'interface)
 	- Note: Avoir un chemin de projet qui se renseigne à l'asset manager (notamment)
