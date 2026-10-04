@@ -14,6 +14,11 @@
 #include <GameComponents/playerComponent.h>
 #include <GameComponents/gunComponent.h>
 
+#include <Rendering/texture.h>
+#include <Rendering/material.h>
+#include <Rendering/Model/model.h>
+#include <Audio/audioSound.h>
+
 
 #ifdef NDEBUG
 	const bool DEBUG = false;
@@ -38,68 +43,62 @@ void DoomlikeGame::loadGameAssets()
 	// Load textures and materials
 	load_time = glfwGetTime();
 
-	AssetManager::LoadTexture("crate_diffuse", "container2.png", false);
-	AssetManager::LoadTexture("crate_specular", "container2_specular.png", false);
+	AssetManager::LoadAsset<Texture>("crate_diffuse", { "container2.png", false });
+	AssetManager::LoadAsset<Texture>("crate_specular", { "container2_specular.png", false });
 
-	AssetManager::LoadTexture("taxi_diffuse", "taxi/taxi_basecolor.png", false);
-	AssetManager::LoadTexture("taxi_emissive", "taxi/taxi_emissive.png", false);
+	AssetManager::LoadAsset<Texture>("enemy_diffuse", { "doomlike/enemy/enemy_basecolor.jpeg", false });
+	AssetManager::LoadAsset<Texture>("enemy_specular", { "doomlike/enemy/enemy_roughness.jpeg", false });
+	AssetManager::LoadAsset<Texture>("enemy_emissive", { "doomlike/enemy/enemy_emissive.jpeg", false });
 
-	AssetManager::LoadTexture("enemy_diffuse", "doomlike/enemy/enemy_basecolor.jpeg", false);
-	AssetManager::LoadTexture("enemy_specular", "doomlike/enemy/enemy_roughness.jpeg", false);
-	AssetManager::LoadTexture("enemy_emissive", "doomlike/enemy/enemy_emissive.jpeg", false);
+	AssetManager::LoadAsset<Texture>("bullet_diffuse", { "doomlike/bullet/bullet_basecolor.png", false });
+	AssetManager::LoadAsset<Texture>("bullet_specular", { "doomlike/bullet/bullet_roughness.png", false });
+	AssetManager::LoadAsset<Texture>("bullet_emissive", { "doomlike/bullet/bullet_emissive.png", false });
 
-	AssetManager::LoadTexture("bullet_diffuse", "doomlike/bullet/bullet_basecolor.png", false);
-	AssetManager::LoadTexture("bullet_specular", "doomlike/bullet/bullet_roughness.png", false);
-	AssetManager::LoadTexture("bullet_emissive", "doomlike/bullet/bullet_emissive.png", false);
+	AssetManager::LoadAsset<Texture>("gun_diffuse", { "doomlike/gun/gun_basecolor.png", false });
+	AssetManager::LoadAsset<Texture>("gun_specular", { "doomlike/gun/gun_roughness.png", false });
+	AssetManager::LoadAsset<Texture>("gun_emissive", { "doomlike/gun/gun_emissive.png", false });
 
-	AssetManager::LoadTexture("gun_diffuse", "doomlike/gun/gun_basecolor.png", false);
-	AssetManager::LoadTexture("gun_specular", "doomlike/gun/gun_roughness.png", false);
-	AssetManager::LoadTexture("gun_emissive", "doomlike/gun/gun_emissive.png", false);
-
-	AssetManager::LoadTexture("hud_crosshair", "doomlike/hud/crosshair.png", false);
+	AssetManager::LoadAsset<Texture>("hud_crosshair", { "doomlike/hud/crosshair.png", false });
 
 	if (DEBUG) log.LogMessage_Category("Doomlike: Load textures time: " + std::to_string(glfwGetTime() - load_time), LogCategory::Info);
 	load_time = glfwGetTime();
 
-	Material& crate_mat = AssetManager::CreateMaterial("crate", AssetManager::GetShader("lit_object"));
-	crate_mat.addTexture(&AssetManager::GetTexture("crate_diffuse"), TextureType::Diffuse);
-	crate_mat.addTexture(&AssetManager::GetTexture("crate_specular"), TextureType::Specular);
-	crate_mat.addTexture(&AssetManager::GetTexture("default_black"), TextureType::Emissive);
-	crate_mat.addParameter("material.shininess", 32.0f);
+	Material::LoadParams crate_mat(AssetManager::GetAsset<Shader>("lit_object"));
+	crate_mat.textures.emplace("diffuse", AssetManager::GetAsset<Texture>("crate_diffuse"));
+	crate_mat.textures.emplace("specular", AssetManager::GetAsset<Texture>("crate_specular"));
+	crate_mat.textures.emplace("emissive", AssetManager::GetAsset<Texture>("default_black"));
+	crate_mat.floatParameters.emplace("material.shininess", 32.0f);
+	AssetManager::LoadAsset<Material>("crate", crate_mat);
 
-	Material& taxi_mat = AssetManager::CreateMaterial("taxi", AssetManager::GetShader("lit_object"));
-	taxi_mat.addTexture(&AssetManager::GetTexture("taxi_diffuse"), TextureType::Diffuse);
-	taxi_mat.addTexture(&AssetManager::GetTexture("default_black"), TextureType::Specular);
-	taxi_mat.addTexture(&AssetManager::GetTexture("taxi_emissive"), TextureType::Emissive);
-	taxi_mat.addParameter("material.shininess", 32.0f);
+	Material::LoadParams enemy_mat(AssetManager::GetAsset<Shader>("lit_object"));
+	enemy_mat.textures.emplace("diffuse", AssetManager::GetAsset<Texture>("enemy_diffuse"));
+	enemy_mat.textures.emplace("specular", AssetManager::GetAsset<Texture>("enemy_specular"));
+	enemy_mat.textures.emplace("emissive", AssetManager::GetAsset<Texture>("enemy_emissive"));
+	enemy_mat.floatParameters.emplace("material.shininess", 32.0f);
+	AssetManager::LoadAsset<Material>("enemy", enemy_mat);
 
-	Material& enemy_mat = AssetManager::CreateMaterial("enemy", AssetManager::GetShader("lit_object"));
-	enemy_mat.addTexture(&AssetManager::GetTexture("enemy_diffuse"), TextureType::Diffuse);
-	enemy_mat.addTexture(&AssetManager::GetTexture("enemy_specular"), TextureType::Specular);
-	enemy_mat.addTexture(&AssetManager::GetTexture("enemy_emissive"), TextureType::Emissive);
-	enemy_mat.addParameter("material.shininess", 32.0f);
+	Material::LoadParams bullet_mat(AssetManager::GetAsset<Shader>("lit_object"));
+	bullet_mat.textures.emplace("diffuse", AssetManager::GetAsset<Texture>("bullet_diffuse"));
+	bullet_mat.textures.emplace("specular", AssetManager::GetAsset<Texture>("bullet_specular"));
+	bullet_mat.textures.emplace("emissive", AssetManager::GetAsset<Texture>("bullet_emissive"));
+	bullet_mat.floatParameters.emplace("material.shininess", 32.0f);
+	AssetManager::LoadAsset<Material>("bullet", bullet_mat);
 
-	Material& bullet_mat = AssetManager::CreateMaterial("bullet", AssetManager::GetShader("lit_object"));
-	bullet_mat.addTexture(&AssetManager::GetTexture("bullet_diffuse"), TextureType::Diffuse);
-	bullet_mat.addTexture(&AssetManager::GetTexture("bullet_specular"), TextureType::Specular);
-	bullet_mat.addTexture(&AssetManager::GetTexture("bullet_emissive"), TextureType::Emissive);
-	bullet_mat.addParameter("material.shininess", 32.0f);
-
-	Material& gun_mat = AssetManager::CreateMaterial("gun", AssetManager::GetShader("lit_object"));
-	gun_mat.addTexture(&AssetManager::GetTexture("gun_diffuse"), TextureType::Diffuse);
-	gun_mat.addTexture(&AssetManager::GetTexture("gun_specular"), TextureType::Specular);
-	gun_mat.addTexture(&AssetManager::GetTexture("gun_emissive"), TextureType::Emissive);
-	gun_mat.addParameter("material.shininess", 32.0f);
+	Material::LoadParams gun_mat(AssetManager::GetAsset<Shader>("lit_object"));
+	gun_mat.textures.emplace("diffuse", AssetManager::GetAsset<Texture>("gun_diffuse"));
+	gun_mat.textures.emplace("specular", AssetManager::GetAsset<Texture>("gun_specular"));
+	gun_mat.textures.emplace("emissive", AssetManager::GetAsset<Texture>("gun_emissive"));
+	gun_mat.floatParameters.emplace("material.shininess", 32.0f);
+	AssetManager::LoadAsset<Material>("gun", gun_mat);
 
 	if (DEBUG) log.LogMessage_Category("Doomlike: Load materials time: " + std::to_string(glfwGetTime() - load_time), LogCategory::Info);
 	load_time = glfwGetTime();
 
 
 	// Load models
-	AssetManager::LoadModel("taxi", "taxi/taxi.fbx", &AssetManager::GetMaterial("taxi"));
-	AssetManager::LoadModel("enemy", "doomlike/enemy/enemy.obj", &AssetManager::GetMaterial("enemy"));
-	AssetManager::LoadModel("bullet", "doomlike/bullet/bullet.fbx", &AssetManager::GetMaterial("bullet"));
-	AssetManager::LoadModel("gun", "doomlike/gun/gun.obj", &AssetManager::GetMaterial("gun"));
+	AssetManager::LoadAsset<Model>("enemy", Model::FileImportParams{ "doomlike/enemy/enemy.obj", { AssetManager::GetAsset<Material>("enemy"), AssetManager::GetAsset<Material>("enemy") } });
+	AssetManager::LoadAsset<Model>("bullet", Model::FileImportParams{ "doomlike/bullet/bullet.fbx", { AssetManager::GetAsset<Material>("bullet") } });
+	AssetManager::LoadAsset<Model>("gun", Model::FileImportParams{ "doomlike/gun/gun.obj", { AssetManager::GetAsset<Material>("gun"), AssetManager::GetAsset<Material>("gun") } });
 
 	if (DEBUG) log.LogMessage_Category("Doomlike: Load models time: " + std::to_string(glfwGetTime() - load_time), LogCategory::Info);
 	load_time = glfwGetTime();
@@ -116,14 +115,12 @@ void DoomlikeGame::loadGameAssets()
 
 
 	// Load sounds
-	AssetManager::CreateSound("feet1", "doomlike/sounds/foot_1.mp3", ACTIVATE_3D);
-	AssetManager::CreateSound("feet2", "doomlike/sounds/foot_2.mp3", ACTIVATE_3D);
-	AssetManager::CreateSound("shoot", "doomlike/sounds/shoot.mp3", 0);
-	AudioSound& enemydeath_sound = AssetManager::CreateSound("enemydeath", "doomlike/sounds/enemy_death.mp3", ACTIVATE_3D);
-	enemydeath_sound.setMinMaxDistance(1.0f, 20.0f);
-	AssetManager::CreateSound("playerdeath", "doomlike/sounds/player_death.mp3", 0);
-	AudioSound& elevator_sound = AssetManager::CreateSound("elevator", "doomlike/sounds/elevator.mp3", ACTIVATE_3D | ACTIVATE_LOOP);
-	elevator_sound.setMinMaxDistance(1.0f, 10.0f);
+	AssetManager::LoadAsset<AudioSound>("feet1", { "doomlike/sounds/foot_1.mp3", ACTIVATE_3D });
+	AssetManager::LoadAsset<AudioSound>("feet2", { "doomlike/sounds/foot_2.mp3", ACTIVATE_3D });
+	AssetManager::LoadAsset<AudioSound>("shoot", { "doomlike/sounds/shoot.mp3" });
+	AssetManager::LoadAsset<AudioSound>("enemydeath", { "doomlike/sounds/enemy_death.mp3", ACTIVATE_3D, 1.0f, 20.0f });
+	AssetManager::LoadAsset<AudioSound>("playerdeath", { "doomlike/sounds/player_death.mp3", 0 });
+	AssetManager::LoadAsset<AudioSound>("elevator", { "doomlike/sounds/elevator.mp3", ACTIVATE_3D | ACTIVATE_LOOP, 1.0f, 10.0f });
 
 	if (DEBUG) log.LogMessage_Category("Doomlike: Load sounds time: " + std::to_string(glfwGetTime() - load_time), LogCategory::Info);
 	load_time = glfwGetTime();
@@ -219,9 +216,4 @@ void DoomlikeGame::loadLevel(int index)
 
 void DoomlikeGame::unloadGame()
 {
-	AssetManager::DeleteMaterial("crate");
-	AssetManager::DeleteMaterial("taxi");
-	AssetManager::DeleteMaterial("gun");
-	AssetManager::DeleteMaterial("enemy");
-	AssetManager::DeleteMaterial("bullet");
 }
