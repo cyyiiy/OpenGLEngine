@@ -136,7 +136,7 @@ vec3 ComputeDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir, 
 	//  specular
 	vec3 reflectDir = reflect(-lightDir, normal);
 	float spec = pow(max(dot(viewDir, reflectDir), 0.0f), material.shininess);
-	vec3 specular = light.specular * spec * vec3(texture(material.texture_specular, texCoord));
+	vec3 specular = light.specular * spec * vec3(texture(material.texture_specular, texCoord).r);
 
 	//  result
 	vec3 result = ambient + diffuse + specular;
@@ -156,7 +156,7 @@ vec3 ComputePointLight(PointLight light, vec3 normal, vec3 viewDir, vec3 fragPos
 	//  specular
 	vec3 reflectDir = reflect(-lightDir, normal);
 	float spec = pow(max(dot(viewDir, reflectDir), 0.0f), material.shininess);
-	vec3 specular = light.specular * spec * vec3(texture(material.texture_specular, texCoord));
+	vec3 specular = light.specular * spec * vec3(texture(material.texture_specular, texCoord).r);
 
 	//  attenuation
 	float lightDist = length(light.position - tFragPos);
@@ -183,7 +183,7 @@ vec3 ComputeSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 fragPos, 
 	//  specular
 	vec3 reflectDir = reflect(-lightDir, normal);
 	float spec = pow(max(dot(viewDir, reflectDir), 0.0f), material.shininess);
-	vec3 specular = light.specular * spec * vec3(texture(material.texture_specular, texCoord));
+	vec3 specular = light.specular * spec * vec3(texture(material.texture_specular, texCoord).r);
     
     //  spotlight (soft edges)
     float theta = dot(lightDir, normalize(-light.direction)); 
