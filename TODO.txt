@@ -5,7 +5,7 @@
 	- Une option pour retourner un élément par défaut (comme la texture noire et violette) au lieu de nullptr si disponible - fait
 	- Une option pour un constructeur alternatif (comme les models à partir de données brutes) - fait
 
-~ Implémenter l'Asset Manager V2 : - en cours
+~ Implémenter l'Asset Manager V2 : - fait
 	- Intégrer les éléments de l'Asset Manager qui ne font pas de conflits (utils, IAsset, json & CyassetDocument) - fait
 	- Créer une classe statique pour les assets engine (shaders, vertex arrays, fonts statiques récupérables via références) - fait
 	- Modifier la classe Texture pour le nouveau format (si possible, garder le moteur compilable) - fait
@@ -19,7 +19,7 @@
 	- Mettre à jour le code du projet Sandbox pour compiler et corriger les bugs - fait
 	- Modifier le code du Game System pour intégrer l'utilisation des loading groups - fait
 	- Mettre à jour le code des projets Benchmark et Doomlike - fait
-	- Nettoyer le moteur si nécessaire - en cours
+	- Nettoyer le moteur si nécessaire - fait
 
 ~ Faire le début de l'éditeur de projet (utiliser ImGUI pour l'interface)
 	- Note: Avoir un chemin de projet qui se renseigne à l'asset manager (notamment)

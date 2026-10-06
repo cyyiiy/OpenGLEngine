@@ -3,6 +3,7 @@
 #include <Inputs/Input.h>
 #include <ECS/entityContainer.h>
 #include <Assets/engineAssets.h>
+#include <Assets/assetManager.h>
 #include <ServiceLocator/locator.h>
 #include <Rendering/cameraComponent.h>
 #include <Rendering/Text/textComponent.h>
@@ -26,6 +27,8 @@ int DebugManager::fpsCounter;
 float DebugManager::fpsTimeCounter;
 std::string DebugManager::currentFpsText;
 
+float DebugManager::assetPrintDoublePress;
+
 class Entity* DebugManager::freeCameraEntity;
 ComponentHandle<class CameraComponent> DebugManager::freeCamera;
 ComponentHandle<class TextComponent> DebugManager::debugInfoText;
@@ -42,6 +45,7 @@ void DebugManager::InitializeDebugManager(EntityContainer& entityOwner)
 	fpsCounter = 0;
 	fpsTimeCounter = 0.0f;
 	currentFpsText = "FPS : 0 - (0.00 ms)";
+	assetPrintDoublePress = 0.0f;
 
 	// Create the free camera
 	freeCameraEntity = entityOwner.createEntity();
@@ -71,6 +75,9 @@ void DebugManager::UpdateDebugManager(float dt)
 
 	// Update the debug shapes (shapes don't expire if engine is paused)
 	if (!pause) UpdateDebugShapes(dt);
+
+	// Update the asset double press timer
+	if (assetPrintDoublePress > 0.0f) assetPrintDoublePress -= dt;
 }
 
 void DebugManager::ProcessDebugInputs()
@@ -100,6 +107,23 @@ void DebugManager::ProcessDebugInputs()
 	{
 		if (!debugView) EnableDebugView();
 		else DisableDebugView();
+	}
+
+	// 'L' key (azerty) -> asset manager prints
+	if (Input::IsKeyPressed(GLFW_KEY_L))
+	{
+		if (assetPrintDoublePress <= 0.0f)
+		{
+			AssetManager::PrintAssetsNumber();
+			AssetManager::PrintAssetGroups();
+			AssetManager::PrintMemoriesUsage();
+			assetPrintDoublePress = DebugConsts::ASSET_PRINT_DOUBLE_PRESS_DELAY;
+		}
+		else
+		{
+			AssetManager::PrintAllAssets();
+			assetPrintDoublePress = 0.0f;
+		}
 	}
 }
 
