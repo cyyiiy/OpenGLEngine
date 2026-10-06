@@ -1,6 +1,6 @@
 #include "logManager.h"
 #include <ServiceLocator/locator.h>
-#include <Assets/assetManager.h>
+#include <Assets/engineAssets.h>
 #include <ECS/entity.h>
 #include <iostream>
 #include <algorithm>
@@ -128,7 +128,7 @@ void LogManager::displayLogToScreen(const std::string& logText, LogCategory logC
 	);
 
 	TextComponent& text_comp = ECS::GetComponent(logMessagesOnScreen.at(logMessagesOnScreen.size() - 1).text);
-	text_comp.setTextDatas(logText, AssetManager::GetFont("arial_24"));
+	text_comp.setTextDatas(logText, EngineAssets::GetFont(EngineAssets::FontID::Arial24));
 	text_comp.position = HudPosition{ Vector2{ 0.0f, 1.0f }, Vector2{ 0.0f, 1.0f }, SCREEN_LOG_BASE_OFFSET + Vector2{ 0.0f, y_offset } };
 	text_comp.scale = Vector2{ 0.6f };
 	text_comp.tintColor = logColor;

@@ -10,6 +10,22 @@
 #include <PrefabFactories/floorCeilingFactory.h>
 
 
+void TestFpsScene::loadSceneAssets()
+{
+	// Load the taxi model and textures
+	AssetManager::LoadAsset<Texture>("taxi_diffuse", { "taxi/taxi_basecolor.png", false });
+	AssetManager::LoadAsset<Texture>("taxi_emissive", { "taxi/taxi_emissive.png", false });
+
+	Material::LoadParams taxi_mat(AssetManager::GetAsset<Shader>("lit_object"));
+	taxi_mat.textures.emplace("diffuse", AssetManager::GetAsset<Texture>("taxi_diffuse"));
+	taxi_mat.textures.emplace("specular", AssetManager::GetAsset<Texture>("default_black"));
+	taxi_mat.textures.emplace("emissive", AssetManager::GetAsset<Texture>("taxi_emissive"));
+	taxi_mat.floatParameters.emplace("material.shininess", 32.0f);
+	AssetManager::LoadAsset<Material>("taxi", taxi_mat);
+
+	AssetManager::LoadAsset<Model>("taxi", Model::FileImportParams{ "taxi/taxi.fbx", { AssetManager::GetAsset<Material>("taxi"), AssetManager::GetAsset<Material>("taxi"), AssetManager::GetAsset<Material>("taxi"), AssetManager::GetAsset<Material>("taxi"), AssetManager::GetAsset<Material>("taxi") } });
+}
+
 void TestFpsScene::loadScene()
 {
 	Renderer& renderer = Locator::getRenderer();
@@ -37,18 +53,18 @@ void TestFpsScene::loadScene()
 
 	// Model components
 	ModelRendererComponent& crate1_model = ECS::GetComponent(crate1->addComponentByClass<ModelRendererComponent>());
-	crate1_model.setModel(&AssetManager::GetModel("default_cube"));
-	crate1_model.setMaterial(&AssetManager::GetMaterial("crate"), 0);
+	crate1_model.setModel(AssetManager::GetAsset<Model>("default_cube"));
+	crate1_model.setMaterial(AssetManager::GetAsset<Material>("crate"), 0);
 	ModelRendererComponent& crate2_model = ECS::GetComponent(crate2->addComponentByClass<ModelRendererComponent>());
-	crate2_model.setModel(&AssetManager::GetModel("default_cube"));
-	crate2_model.setMaterial(&AssetManager::GetMaterial("crate"), 0);
+	crate2_model.setModel(AssetManager::GetAsset<Model>("default_cube"));
+	crate2_model.setMaterial(AssetManager::GetAsset<Material>("crate"), 0);
 	ModelRendererComponent& crate3_model = ECS::GetComponent(crate3->addComponentByClass<ModelRendererComponent>());
-	crate3_model.setModel(&AssetManager::GetModel("default_cube"));
-	crate3_model.setMaterial(&AssetManager::GetMaterial("crate"), 0);
+	crate3_model.setModel(AssetManager::GetAsset<Model>("default_cube"));
+	crate3_model.setMaterial(AssetManager::GetAsset<Material>("crate"), 0);
 	ModelRendererComponent& target_model = ECS::GetComponent(target->addComponentByClass<ModelRendererComponent>());
-	target_model.setModel(&AssetManager::GetModel("default_cube"));
-	target_model.setMaterial(&AssetManager::GetMaterial("crate"), 0);
-	ECS::GetComponent(taxi->addComponentByClass<ModelRendererComponent>()).setModel(&AssetManager::GetModel("taxi"));
+	target_model.setModel(AssetManager::GetAsset<Model>("default_cube"));
+	target_model.setMaterial(AssetManager::GetAsset<Material>("crate"), 0);
+	ECS::GetComponent(taxi->addComponentByClass<ModelRendererComponent>()).setModel(AssetManager::GetAsset<Model>("taxi"));
 
 	// Collision components
 	ECS::GetComponent(crate1->addComponentByClass<BoxCollisionComponent>()).collisionChannel = "solid";

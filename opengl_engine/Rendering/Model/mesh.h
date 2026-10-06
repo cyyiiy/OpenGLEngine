@@ -1,27 +1,32 @@
 #pragma once
 #include "vertexArray.h"
+#include <vector>
+
+using MaterialID = uint16_t;
 
 
-struct LoadMeshData
+struct MeshVerticesData
 {
 	std::vector<Vertex> vertices{};
 	std::vector<unsigned int> indices{};
-	int matId{ 0 };
+	MaterialID matId{ 0 };
 };
 
 
 class Mesh
 {
 public:
-	Mesh(LoadMeshData meshData);
-	Mesh(const Mesh& other);
-	Mesh& operator=(const Mesh&) = delete;
-	~Mesh() {}
+	Mesh(MeshVerticesData meshData);
 
-	int getMaterialIndex() const { return materialIndex; }
+	Mesh(const Mesh&) = delete;
+	Mesh& operator=(const Mesh&) = delete;
+	Mesh(Mesh&&) noexcept = default;
+	Mesh& operator=(Mesh&&) noexcept = default;
+
+	MaterialID getMaterialIndex() const { return materialIndex; }
 	const VertexArray& getVertexArray() const { return vertexArray; }
 
 private:
 	VertexArray vertexArray;
-	int materialIndex;
+	MaterialID materialIndex;
 };

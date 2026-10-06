@@ -8,6 +8,8 @@ namespace DebugConsts
 	const float FREECAM_SLOW_SPEED = 4.0f;
 	const float FREECAM_FAST_SPEED = 10.0f;
 	const float FREECAM_MOUSE_SENSITIVITY = 0.1f;
+
+	const float ASSET_PRINT_DOUBLE_PRESS_DELAY = 2.0f;
 }
 
 
@@ -107,6 +109,8 @@ private:
 	static int fpsCounter;
 	static float fpsTimeCounter;
 	static std::string currentFpsText;
+
+	static float assetPrintDoublePress;
 
 	static class Entity* freeCameraEntity;
 	static ComponentHandle<class CameraComponent> freeCamera;

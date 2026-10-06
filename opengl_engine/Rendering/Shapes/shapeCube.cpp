@@ -1,13 +1,14 @@
 #include "shapeCube.h"
 #include <Maths/Matrix4.h>
 #include <Rendering/Model/mesh.h>
-#include <Assets/assetManager.h>
+#include <Assets/engineAssets.h>
+#include <glad/glad.h>
 
 
 ShapeCube::ShapeCube(const Box& box, const Color& color) : ShapeBase(color), cubeBox(box)
 {}
 
-void ShapeCube::draw(Shader& shader) const
+void ShapeCube::draw(const Shader& shader) const
 {
 	// 1. Compute the box model matrix
 	const Matrix4 box_model_matrix =
@@ -19,7 +20,7 @@ void ShapeCube::draw(Shader& shader) const
 	shader.setVec3("color", shapeColor);
 
 	// 3. Draw the cube vertex array
-	VertexArray& cube_va = AssetManager::GetVertexArray("debug_cube");
+	const VertexArray& cube_va = *EngineAssets::GetVertexArray(EngineAssets::VertexArrayID::Cube);
 	cube_va.setActive();
 
 	if (cube_va.getUseEBO())

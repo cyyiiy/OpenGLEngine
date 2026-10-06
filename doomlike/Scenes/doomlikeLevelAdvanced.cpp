@@ -63,8 +63,8 @@ void DoomlikeLevelAdvanced::loadScene()
 	elevator->setPosition(Vector3{ 2.5f, 0.1f, 0.0f });
 	elevator->setScale(Vector3{ 2.0f, 0.2f, 2.0f });
 	ModelRendererComponent& elevator_model = ECS::GetComponent(elevator->addComponentByClass<ModelRendererComponent>());
-	elevator_model.setModel(&AssetManager::GetModel("default_cube"));
-	elevator_model.setMaterial(&AssetManager::GetMaterial("crate"), 0);
+	elevator_model.setModel(AssetManager::GetAsset<Model>("default_cube"));
+	elevator_model.setMaterial(AssetManager::GetAsset<Material>("crate"), 0);
 	MovingPlatformComponent& elevator_comp = ECS::GetComponent(elevator->addComponentByClass<MovingPlatformComponent>());
 	elevator_comp.setupMovingPlatform(Vector3{ 2.5f, 0.1f, 0.0f }, Vector3{ 2.5f, 6.9f, 0.0f }, 2.5f, 2.0f);
 	elevator_comp.pauseMovement();

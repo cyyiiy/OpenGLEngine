@@ -2,6 +2,7 @@
 #include <ECS/entity.h>
 #include <ServiceLocator/locator.h>
 #include <Assets/assetManager.h>
+#include <Audio/audioSound.h>
 
 #include <GameplayStatics/gameplayStatics.h>
 #include <doomlikeGame.h>
@@ -25,7 +26,7 @@ void EnemyComponent::init()
 	BoxCollisionComponent& collision_comp = ECS::GetComponent(collision);
 	RigidbodyComponent& rigidbody_comp = ECS::GetComponent(rigidbody);
 
-	enemy_model_comp.setModel(&AssetManager::GetModel("enemy"));
+	enemy_model_comp.setModel(AssetManager::GetAsset<Model>("enemy"));
 	enemy_model_comp.offset.setScale(0.7f);
 
 	collision_comp.collisionBox = Box{ Vector3::zero, Vector3{ 0.5f, 0.5f, 0.5f } };
@@ -78,7 +79,7 @@ void EnemyComponent::onBodyIntersection(const RigidbodyComponent& body, const Ve
 		onDie.broadcast(entity);
 
 		// Play death sound
-		Locator::getAudio().InstantPlaySound3D(AssetManager::GetSound("enemydeath"), entity->getPosition(), 0.15f);
+		Locator::getAudio().InstantPlaySound3D(*AssetManager::GetAsset<AudioSound>("enemydeath"), entity->getPosition(), 0.15f);
 
 		entity->destroyEntity();
 	}
@@ -88,7 +89,7 @@ void EnemyComponent::onBodyIntersection(const RigidbodyComponent& body, const Ve
 		dead = true; // It allows to avoid this being called twice
 
 		// Play player death sound
-		Locator::getAudio().InstantPlaySound2D(AssetManager::GetSound("playerdeath"), 0.4f);
+		Locator::getAudio().InstantPlaySound2D(*AssetManager::GetAsset<AudioSound>("playerdeath"), 0.4f);
 
 		static_cast<DoomlikeGame*>(GameplayStatics::GetGame())->restartLevel();
 	}

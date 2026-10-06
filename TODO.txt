@@ -1,19 +1,25 @@
 == COURT TERME == (engine v0.3 - pre-alpha)
 
 ~ Designer l'Asset Manager V2 (sur un projet à part) - fait
+	À rajouter :
+	- Une option pour retourner un élément par défaut (comme la texture noire et violette) au lieu de nullptr si disponible - fait
+	- Une option pour un constructeur alternatif (comme les models à partir de données brutes) - fait
 
-~ Implémenter l'Asset Manager V2 :
-	- Intégrer les éléments de l'Asset Manager qui ne font pas de conflits (utils, IAsset, json & CyassetDocument)
-	- Créer une classe statique pour les assets engine (shaders, vertex arrays, fonts statiques récupérables via références)
-	- Modifier la classe Texture pour le nouveau format (si possible, garder le moteur compilable)
-	- Modifier la classe Shader pour le nouveau format
-	- Modifier la classe Material pour le nouveau format (essayer de faire un LoadParams au mieux)
-	- Modifier la classe Model pour le nouveau format (plus de déplacement -> les modèles gardent leurs meshes chez eux ?)
-	- Modifier la classe Font pour le nouveau format
-	- Modifier la classe AudioSound pour le nouveau format (mettre les paramètres flag en LoadParams ?)
-	- Intégrer le reste de l'Asset Manager (AssetManager, AssetManagerType, AssetTraits)
-	- Mettre à jour le code qui utilise l'ancien Asset Manager dans les projets pour le nouveau
-	- Nettoyer le moteur si nécessaire
+~ Implémenter l'Asset Manager V2 : - fait
+	- Intégrer les éléments de l'Asset Manager qui ne font pas de conflits (utils, IAsset, json & CyassetDocument) - fait
+	- Créer une classe statique pour les assets engine (shaders, vertex arrays, fonts statiques récupérables via références) - fait
+	- Modifier la classe Texture pour le nouveau format (si possible, garder le moteur compilable) - fait
+	- Modifier la classe Shader pour le nouveau format - fait
+	- Modifier la classe Material pour le nouveau format (essayer de faire un LoadParams au mieux) - fait
+	- Modifier la classe Model pour le nouveau format (plus de déplacement -> les modèles gardent leurs meshes chez eux ?) - fait
+	- Modifier la classe Font pour le nouveau format - fait
+	- Modifier la classe AudioSound pour le nouveau format (mettre les paramètres flag en LoadParams ?) - fait
+	- Intégrer le reste de l'Asset Manager (AssetManager, AssetManagerType, AssetTraits) - fait
+	- Ajouter les assets "nulls" (en réutilisant la classe EngineAssets ?) - fait
+	- Mettre à jour le code du projet Sandbox pour compiler et corriger les bugs - fait
+	- Modifier le code du Game System pour intégrer l'utilisation des loading groups - fait
+	- Mettre à jour le code des projets Benchmark et Doomlike - fait
+	- Nettoyer le moteur si nécessaire - fait
 
 ~ Faire le début de l'éditeur de projet (utiliser ImGUI pour l'interface)
 	- Note: Avoir un chemin de projet qui se renseigne à l'asset manager (notamment)
@@ -31,6 +37,10 @@
 ~ Etendre l'éditeur d'assets pour faire un éditeur de préfab
 
 ~ Améliorer l'éditeur de projet (et l'éditeur en général) ?
+
+~ Refaire complètement le système audio
+	- Réussir à intégrer les occlusions cette fois-ci
+	- Si possible d'avoir aucune ref à FMod en dehors de AudioManager ça serait trop bien
 
 ~ Améliorer le doomlike avec l'éditeur de préfab
 
@@ -85,5 +95,4 @@
 
 ~ Ajouter des outils de debug/benchmark en realtime, qui permettraient d'avoir des stats sur le nombre de chaque type d'asset actuellement chargés, des infos sur l'ECS, le nombre de materials actifs, etc...
 
-~ Surveiller les performances du rendering des models. Devoir regarder les clés d'une unordered_map pour savoir si un model renderer component utilise un material n'est pas très optimisé (le benchmark "materials" lag énormément mais surtout en debug).
-Les potentielles solutions seraient de stocker les matériaux et les IDs différemment dans le composant (s'inspirer de la struct hybride de l'ancien système qui laggait moins ?), ou de carrément changer la manière dont le rendering des model est fait (créer des "draw calls" de mesh ordonnés par matériaux ?)
+~ Le système de draw par material n'est pas optimal, je pense qu'il serait plus simple de garder la même logique mais avec les shaders, ce qui serait un bon compromis entre l'idée générale de ce système et quelque chose de plus viable pour un jeu avec beaucoup de material différents

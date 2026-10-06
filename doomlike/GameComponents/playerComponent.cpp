@@ -161,7 +161,7 @@ void PlayerComponent::update(float deltaTime)
 		{
 			if (feetSoundTimer <= 0.0f)
 			{
-				feet_sound_source_comp.playSound(AssetManager::GetSound(feetSoundAlternance ? "feet1" : "feet2"));
+				feet_sound_source_comp.playSound(*AssetManager::GetAsset<AudioSound>(feetSoundAlternance ? "feet1" : "feet2"));
 
 				feetSoundAlternance = !feetSoundAlternance;
 				feetSoundTimer = 0.5f;

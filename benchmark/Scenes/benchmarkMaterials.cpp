@@ -13,10 +13,9 @@ const float CAMERA_RADIUS = 50.0f;
 const float CAMERA_SPEED = 0.3f;
 
 
-void BenchmarkMaterials::loadScene()
+void BenchmarkMaterials::loadSceneAssets()
 {
 	// Create 729 unique materials
-	// =========================================
 	for (int r = 0; r < 9; r++)
 	{
 		for (int g = 0; g < 9; g++)
@@ -28,15 +27,16 @@ void BenchmarkMaterials::loadScene()
 
 				const std::string material_name = "material" + name_suffix.str();
 				const Color material_color = Color{ 10 + 29 * r, 10 + 29 * g, 10 + 29 * b, 255 };
-				Material& material = AssetManager::CreateMaterial(material_name, AssetManager::GetShader("flat_emissive"));
-				material.addParameter("emissive", material_color.toVector());
+				Material::LoadParams material(AssetManager::GetAsset<Shader>("flat_emissive"));
+				material.vec3Parameters.emplace("emissive", material_color.toVector());
+				AssetManager::LoadAsset<Material>(material_name, material);
 			}
 		}
 	}
+}
 
-
-	// Create benchmark scene
-	//==========================================
+void BenchmarkMaterials::loadScene()
+{
 	Renderer& renderer = Locator::getRenderer();
 	renderer.SetClearColor(Color{ 50, 75, 75, 255 });
 
@@ -62,8 +62,8 @@ void BenchmarkMaterials::loadScene()
 				material_name << "material_" << x << "_" << y << "_" << z;
 
 				ModelRendererComponent& cube_model = ECS::GetComponent(cube->addComponentByClass<ModelRendererComponent>());
-				cube_model.setModel(&AssetManager::GetModel("default_cube"));
-				cube_model.setMaterial(&AssetManager::GetMaterial(material_name.str()), 0);
+				cube_model.setModel(AssetManager::GetAsset<Model>("default_cube"));
+				cube_model.setMaterial(AssetManager::GetAsset<Material>(material_name.str()), 0);
 			}
 		}
 	}
@@ -71,21 +71,7 @@ void BenchmarkMaterials::loadScene()
 
 void BenchmarkMaterials::unloadScene()
 {
-	// Delete the materials
-	for (int r = 0; r < 9; r++)
-	{
-		for (int g = 0; g < 9; g++)
-		{
-			for (int b = 0; b < 9; b++)
-			{
-				std::stringstream name_suffix;
-				name_suffix << "_" << r << "_" << g << "_" << b;
-
-				const std::string material_name = "material" + name_suffix.str();
-				AssetManager::DeleteMaterial(material_name);
-			}
-		}
-	}
+	// Note: The 729 materials will automatically be deleted by the scene unload
 }
 
 void BenchmarkMaterials::updateScene(float dt)

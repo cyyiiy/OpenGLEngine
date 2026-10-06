@@ -1,13 +1,14 @@
 #include "shapePoint.h"
 #include <Maths/Matrix4.h>
 #include <Rendering/Model/mesh.h>
-#include <Assets/assetManager.h>
+#include <Assets/engineAssets.h>
+#include <glad/glad.h>
 
 
 ShapePoint::ShapePoint(const Vector3& position, const Color& color) : ShapeBase(color), pointPosition(position)
 {}
 
-void ShapePoint::draw(Shader& shader) const
+void ShapePoint::draw(const Shader& shader) const
 {
 	// 1. Compute the point model matrix
 	const Matrix4 point_model_matrix =
@@ -19,7 +20,7 @@ void ShapePoint::draw(Shader& shader) const
 	shader.setVec3("color", shapeColor);
 
 	// 3. Draw the point vertex array (it's a cube)
-	VertexArray& cube_va = AssetManager::GetVertexArray("debug_cube");
+	const VertexArray& cube_va = *EngineAssets::GetVertexArray(EngineAssets::VertexArrayID::Cube);
 	cube_va.setActive();
 
 	if (cube_va.getUseEBO())

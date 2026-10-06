@@ -1,5 +1,4 @@
 #include "audioManager.h"
-#include "Utils/defines.h"
 #include <ServiceLocator/locator.h>
 #include <iostream>
 
@@ -151,9 +150,7 @@ bool AudioManager::IsAudioSystemValid()
 
 AudioSoundPtr AudioManager::LoadSound(std::string soundFile, const SoundSettings settings)
 {
-	const std::string sound_path = RESOURCES_PATH + soundFile;
-
-	// 3. Convert SoundSettings into FMOD settings
+	// 1. Convert SoundSettings into FMOD settings
 	FMOD_MODE spatialization_mode = FMOD_2D;
 	if (settings & ACTIVATE_3D)
 		spatialization_mode = FMOD_3D;
@@ -170,10 +167,11 @@ AudioSoundPtr AudioManager::LoadSound(std::string soundFile, const SoundSettings
 	// 2. Load the sound from file with chosen settings
 	FMOD::Sound* sound;
 	FMOD_RESULT result;
-	result = system->createSound(sound_path.c_str(), spatialization_mode | load_mode | loop_mode | FMOD_3D_LINEARSQUAREROLLOFF, 0, &sound);
+	result = system->createSound(soundFile.c_str(), spatialization_mode | load_mode | loop_mode | FMOD_3D_LINEARSQUAREROLLOFF, 0, &sound);
 	if (result != FMOD_OK)
 	{
 		Locator::getLog().LogMessage_Category("Audio Manager: Failed to load a sound from file." + ErrorFModString(result), LogCategory::Error);
+		return AudioSoundPtr{ nullptr };
 	}
 
 	return AudioSoundPtr{ sound }; // Wrap fmod sound in a struct to avoid other class having to know about fmod
@@ -304,7 +302,7 @@ void AudioManager::PlaySoundOnAudioSource(const std::uint32_t index, const Audio
 	// Play the sound and retrieve the channel it is played on (check if the sound has correctly been played)
 	FMOD::Channel* channel;
 	FMOD_RESULT result;
-	result = system->playSound(sound.getFMod(), group_sound, false, &channel);
+	result = system->playSound(sound.getSoundPtr().sound, group_sound, false, &channel);
 	if (result != FMOD_OK)
 	{
 		Locator::getLog().LogMessage_Category("Audio Manager: Failed to play a sound on an audio source group." + ErrorFModString(result), LogCategory::Error);
@@ -577,7 +575,7 @@ void AudioManager::InstantPlaySound2D(const AudioSound& sound, const float volum
 	// 1. Play the sound and retrieve the channel it is played on
 	FMOD::Channel* channel;
 	FMOD_RESULT result;
-	result = system->playSound(sound.getFMod(), 0, false, &channel);
+	result = system->playSound(sound.getSoundPtr().sound, 0, false, &channel);
 	if (result != FMOD_OK)
 	{
 		Locator::getLog().LogMessage_Category("Audio Manager: Failed to instantly play a 2D sound." + ErrorFModString(result), LogCategory::Error);
@@ -627,7 +625,7 @@ void AudioManager::InstantPlaySound3D(const AudioSound& sound, const Vector3 pla
 	// 1. Play the sound and retrieve the channel it is played on
 	FMOD::Channel* channel;
 	FMOD_RESULT result;
-	result = system->playSound(sound.getFMod(), 0, false, &channel);
+	result = system->playSound(sound.getSoundPtr().sound, 0, false, &channel);
 	if (result != FMOD_OK)
 	{
 		Locator::getLog().LogMessage_Category("Audio Manager: Failed to instantly play a 3D sound." + ErrorFModString(result), LogCategory::Error);
@@ -664,120 +662,6 @@ void AudioManager::InstantPlaySound3D(const AudioSound& sound, const Vector3 pla
 	if (result != FMOD_OK)
 	{
 		Locator::getLog().LogMessage_Category("Audio Manager: Failed to set position on an instantly played 3D sound." + ErrorFModString(result), LogCategory::Error);
-	}
-}
-
-
-
-// --------------------------------------------------------------
-//            Geometry (Collisions) part
-// --------------------------------------------------------------
-
-std::uint32_t AudioManager::CreateCollision(const int maxPolygons, const int maxVertices)
-{
-	if (!system) return 0;
-
-	return 0; // Geometry disabled until I achieve to make it work
-
-	FMOD_RESULT result;
-
-	collisions.emplace(collisionsID, nullptr); // Reserve the memory in the map
-	result = system->createGeometry(maxPolygons, maxVertices, &collisions[collisionsID]); // Actually create the Geometry object
-	collisionsID++; // Increment the total collision count (even if it failed)
-
-	if (result != FMOD_OK) // Check if the Geometry was correctly created
-	{
-		Locator::getLog().LogMessage_Category("Audio Manager: Failed to create a new collision." + ErrorFModString(result), LogCategory::Error);
-		return collisionsID - 1;
-	}
-
-	return collisionsID - 1; // Return the index of the created collision
-}
-
-void AudioManager::ReleaseCollision(const std::uint32_t index)
-{
-	return; // Geometry disabled until I achieve to make it work
-
-	// Retrieve the collision to release
-	FMOD::Geometry* collision_release = collisions[index];
-	if (collision_release == nullptr)
-	{
-		Locator::getLog().LogMessage_Category("Audio Manager: Tried to release a collision with a non-registered index.", LogCategory::Error);
-		return;
-	}
-
-	// Release the collision (fmod)
-	FMOD_RESULT result;
-	result = collision_release->release();
-	if (result != FMOD_OK)
-	{
-		Locator::getLog().LogMessage_Category("Audio Manager: Failed to release a collision." + ErrorFModString(result), LogCategory::Error);
-		return;
-	}
-
-	collisions.erase(index); // Free the unused memory in the map
-}
-
-void AudioManager::AddPolygonToCollision(const std::uint32_t index, const AudioCollisionOcclusion& audioCollisionType, const bool doubleSided, const std::vector<Vector3> vertices)
-{
-	return; // Geometry disabled until I achieve to make it work
-
-	// Retrieve the collision to modify
-	FMOD::Geometry* collision_polygon = collisions[index];
-	if (collision_polygon == nullptr)
-	{
-		Locator::getLog().LogMessage_Category("Audio Manager: Tried to add a polygon to a collision with a non-registered index.", LogCategory::Error);
-		return;
-	}
-
-	// Converts Vector3 to FMOD_VECTOR
-	std::vector<FMOD_VECTOR> vertices_fmod;
-	vertices_fmod.reserve(vertices.size());
-	for (Vector3 vertex : vertices)
-	{
-		vertices_fmod.push_back(vertex.toFMOD());
-	}
-
-	// Add the polygon
-	FMOD_RESULT result;
-	result = collision_polygon->addPolygon(audioCollisionType.directOcclusion, audioCollisionType.reverbOcclusion, doubleSided, static_cast<int>(vertices.size()), &vertices_fmod[0], 0);
-	if (result != FMOD_OK)
-	{
-		Locator::getLog().LogMessage_Category("Audio Manager: Failed to add a polygon to a collision." + ErrorFModString(result), LogCategory::Error);
-		return;
-	}
-}
-
-void AudioManager::SetCollisionTransform(const std::uint32_t index, const Transform& transform)
-{
-	return; // Geometry disabled until I achieve to make it work
-
-	// Retrieve the collision to modify
-	FMOD::Geometry* collision_transform = collisions[index];
-	if (collision_transform == nullptr)
-	{
-		Locator::getLog().LogMessage_Category("Audio Manager: Tried to set the transform of a collision with a non-registered index.", LogCategory::Error);
-		return;
-	}
-
-	FMOD_RESULT result;
-	const FMOD_VECTOR position = transform.getPosition().toFMOD();
-	const FMOD_VECTOR scale = transform.getScale().toFMOD();
-
-	// Set position
-	result = collision_transform->setPosition(&position);
-	if (result != FMOD_OK)
-	{
-		Locator::getLog().LogMessage_Category("Audio Manager: Failed to set a collision position." + ErrorFModString(result), LogCategory::Error);
-		return;
-	}
-
-	// Set scale
-	result = collision_transform->setScale(&scale);
-	if (result != FMOD_OK)
-	{
-		Locator::getLog().LogMessage_Category("Audio Manager: Failed to set a collision scale." + ErrorFModString(result), LogCategory::Error);
-		return;
 	}
 }
 

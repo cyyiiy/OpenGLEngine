@@ -1,7 +1,12 @@
 #include "scene.h"
 #include <ServiceLocator/locator.h>
 
-void Scene::load() 
+void Scene::loadAssets()
+{
+	loadSceneAssets();
+}
+
+void Scene::load()
 {
 	firstFrame = true;
 

@@ -34,7 +34,7 @@ void MovingPlatformComponent::setupMovingPlatform(const Vector3& pointA_, const 
 	rigidbody_comp.useGravity = false;
 
 	audio_source_comp.setSpatialization(ChannelSpatialization::Channel3D);
-	audio_source_comp.playSound(AssetManager::GetSound("elevator"), -1);
+	audio_source_comp.playSound(*AssetManager::GetAsset<AudioSound>("elevator"), -1);
 
 	setUpdateActivated(true);
 

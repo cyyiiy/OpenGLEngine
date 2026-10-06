@@ -30,7 +30,6 @@ protected:
 
 private:
 	void loadProp(const std::string& name);
-	void unloadProp(const std::string& name);
 
 	void startBenchmarkState(BenchmarkState state);
 
