@@ -95,5 +95,4 @@
 
 ~ Ajouter des outils de debug/benchmark en realtime, qui permettraient d'avoir des stats sur le nombre de chaque type d'asset actuellement chargés, des infos sur l'ECS, le nombre de materials actifs, etc...
 
-~ Surveiller les performances du rendering des models. Devoir regarder les clés d'une unordered_map pour savoir si un model renderer component utilise un material n'est pas très optimisé (le benchmark "materials" lag énormément mais surtout en debug).
-Les potentielles solutions seraient de stocker les matériaux et les IDs différemment dans le composant (s'inspirer de la struct hybride de l'ancien système qui laggait moins ?), ou de carrément changer la manière dont le rendering des model est fait (créer des "draw calls" de mesh ordonnés par matériaux ?)
+~ Le système de draw par material n'est pas optimal, je pense qu'il serait plus simple de garder la même logique mais avec les shaders, ce qui serait un bon compromis entre l'idée générale de ce système et quelque chose de plus viable pour un jeu avec beaucoup de material différents
