@@ -6,9 +6,9 @@ class BenchmarkMaterials : public Scene
 {
 public:
 	std::string getSceneName() override { return "BenchmarkMaterialsScene"; }
-	void loadSceneAssets() override;
 
 protected:
+	void loadSceneAssets() override;
 	void loadScene() override;
 	void unloadScene() override;
 	void updateScene(float dt) override;

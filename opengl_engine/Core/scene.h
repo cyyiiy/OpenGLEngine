@@ -7,6 +7,7 @@ class Scene : public EntityContainer
 public:
 	virtual ~Scene() {} 
 
+	void loadAssets();
 	void load();
 	void unload(bool exitGame);
 	void update(float dt);
@@ -17,9 +18,9 @@ public:
 	//  Overridable functions for user-created scenes
 	// -----------------------------------------------
 	virtual std::string getSceneName() { return ""; };
-	virtual void loadSceneAssets() {}
 
 protected:
+	virtual void loadSceneAssets() {}
 	virtual void loadScene() = 0;
 	virtual void unloadScene() = 0;
 	virtual void updateScene(float dt) {}

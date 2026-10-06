@@ -6,9 +6,9 @@ class ExpositionScene : public Scene
 {
 public:
 	std::string getSceneName() override { return "ExpositionScene"; }
-	void loadSceneAssets() override;
 
 protected:
+	void loadSceneAssets() override;
 	void loadScene() override;
 	void unloadScene() override;
 	void updateScene(float dt) override;

@@ -47,7 +47,7 @@ void Game::loadScene(Scene* scene)
 	// Load new scene assets
 	const std::string new_scene_name = scene->getSceneName();
 	if (new_scene_name != "") AssetManager::OpenLoadingGroup(new_scene_name);
-	scene->loadSceneAssets();
+	scene->loadAssets();
 	if (new_scene_name != "") AssetManager::CloseLoadingGroup();
 
 	// Load new scene objects
