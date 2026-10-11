@@ -1,30 +1,34 @@
 == COURT TERME == (engine v0.3 - pre-alpha)
 
-~ Designer l'Asset Manager V2 (sur un projet à part) - fait
-	À rajouter :
-	- Une option pour retourner un élément par défaut (comme la texture noire et violette) au lieu de nullptr si disponible - fait
-	- Une option pour un constructeur alternatif (comme les models à partir de données brutes) - fait
+~ Editeur phase 01 - "Proof of Concept" :
+	- Créer un projet "cyengine_editor"
+	- Intégrer la librairie ImGui
+	- Créer une fenêtre ImGui de test sur le projet éditeur
+	- Réussir à rendre la fenêtre du moteur sur l'interface ImGui
 
-~ Implémenter l'Asset Manager V2 : - fait
-	- Intégrer les éléments de l'Asset Manager qui ne font pas de conflits (utils, IAsset, json & CyassetDocument) - fait
-	- Créer une classe statique pour les assets engine (shaders, vertex arrays, fonts statiques récupérables via références) - fait
-	- Modifier la classe Texture pour le nouveau format (si possible, garder le moteur compilable) - fait
-	- Modifier la classe Shader pour le nouveau format - fait
-	- Modifier la classe Material pour le nouveau format (essayer de faire un LoadParams au mieux) - fait
-	- Modifier la classe Model pour le nouveau format (plus de déplacement -> les modèles gardent leurs meshes chez eux ?) - fait
-	- Modifier la classe Font pour le nouveau format - fait
-	- Modifier la classe AudioSound pour le nouveau format (mettre les paramètres flag en LoadParams ?) - fait
-	- Intégrer le reste de l'Asset Manager (AssetManager, AssetManagerType, AssetTraits) - fait
-	- Ajouter les assets "nulls" (en réutilisant la classe EngineAssets ?) - fait
-	- Mettre à jour le code du projet Sandbox pour compiler et corriger les bugs - fait
-	- Modifier le code du Game System pour intégrer l'utilisation des loading groups - fait
-	- Mettre à jour le code des projets Benchmark et Doomlike - fait
-	- Nettoyer le moteur si nécessaire - fait
+~ Editeur phase 02 "Editeur de Projet" :
+	- Pouvoir créer et ouvrir des projets (dossier racine + fichier .cyproject) depuis l'interface de l'éditeur
+	- Sauvegarder les projets récents (+ d'autres options ?) dans les AppData
+	- Générer automatiquement la solution visual studio dans le projet (avec les headers, les libs, etc.)
+	- Utiliser le dossier racine pour les assets d'un projet (chargement des settings du projet après le chargement de l'engine ?)
+	- Créer une première base d'interface pour l'éditeur une fois le projet ouvert
+	- [À VOIR] Pouvoir lancer le projet depuis l'éditeur (compiler + exécuter)
+	- [À VOIR] Pouvoir build le projet (générer un dossier avec .exe en release + les assets avec résolution automatique des paths)
 
-~ Faire le début de l'éditeur de projet (utiliser ImGUI pour l'interface)
-	- Note: Avoir un chemin de projet qui se renseigne à l'asset manager (notamment)
+~ Editeur phase 03 "Editeur d'Assets" :
+	- Avoir une fenêtre "Content Drawer" dans l'éditeur, pour pouvoir parcourir les fichiers du projets (donc les assets)
+	- Créer l'importeur / éditeur de Texture
+	- Créer l'importeur / éditeur de Shader
+	- Créer l'importeur / éditeur de Material
+	- Créer l'importeur / éditeur de Model
+	- Créer l'importeur / éditeur de Font
+	- Créer l'importeur / éditeur d'AudioSound
 
-~ Faire un éditeur d'assets (permettre de générer des fichiers .cyasset)
+~ Release de l'engine v0.3
+	- Nettoyage de la solution du moteur : enlever les projets doomlike et sandbox + renomer "opengl_engine" en "cyengine_core"
+	- Transférer le doomlike dans un git à part au propre et en refaire une release sur itch.io
+	- Transférer le sandbox pour qu'il soit dans le git du moteur, mais pas dans la solution du moteur
+	- Faire un README (au moins quelque chose d'assez général, pas besoin de faire une doc complète du moteur)
 
 
 == MOYEN TERME == (engine v0.4 - pre-alpha)
