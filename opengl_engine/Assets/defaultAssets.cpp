@@ -85,19 +85,19 @@ void DefaultAssets::LoadDefaultAssets()
 	// Default shaders (flat emissive, object lit & flat lit)
 	const Shader::LoadParams shader_flat_emissive_params = {
 		FilesystemUtils::ConvertStringsToPaths({ "Shaders/Unlit/flat_emissive.vert", "Shaders/Unlit/flat_emissive.frag" }),
-		ShaderType::Unlit
+		SHADER_MODEL
 	};
 	AssetManager::LoadAsset<Shader>("flat_emissive", shader_flat_emissive_params);
 
 	const Shader::LoadParams shader_lit_object_params = {
 		FilesystemUtils::ConvertStringsToPaths({ "Shaders/Lit/object_lit.vert", "Shaders/Lit/object_lit.frag" }),
-		ShaderType::Lit
+		SHADER_LIT | SHADER_MODEL
 	};
 	AssetManager::LoadAsset<Shader>("lit_object", shader_lit_object_params);
 
 	const Shader::LoadParams shader_lit_flat_color_params = {
 		FilesystemUtils::ConvertStringsToPaths({ "Shaders/Lit/flat_lit.vert", "Shaders/Lit/flat_lit.frag" }),
-		ShaderType::Lit
+		SHADER_LIT | SHADER_MODEL
 	};
 	AssetManager::LoadAsset<Shader>("lit_flat_color", shader_lit_flat_color_params);
 

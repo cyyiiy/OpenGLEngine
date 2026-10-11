@@ -94,5 +94,3 @@
 == REFLEXIONS / PROBLEMES CONNUS ==
 
 ~ Ajouter des outils de debug/benchmark en realtime, qui permettraient d'avoir des stats sur le nombre de chaque type d'asset actuellement chargés, des infos sur l'ECS, le nombre de materials actifs, etc...
-
-~ Le système de draw par material n'est pas optimal, je pense qu'il serait plus simple de garder la même logique mais avec les shaders, ce qui serait un bon compromis entre l'idée générale de ce système et quelque chose de plus viable pour un jeu avec beaucoup de material différents

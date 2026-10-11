@@ -10,6 +10,7 @@
 #include <ECS/ecsTypes.h>
 
 #include <Rendering/cameraComponent.h>
+#include <Rendering/shader.h>
 #include <Rendering/material.h>
 
 #include <vector>
@@ -50,8 +51,8 @@ public:
 	void SetClearColor(Color clearColor_) override;
 	const Color GetClearColor() const override;
 
-	void AddMaterial(Material* material) override;
-	void RemoveMaterial(Material* material) override;
+	void AddModelShader(Shader* modelShader) override;
+	void RemoveModelShader(Shader* modelShader) override;
 
 
 	void InitializeRenderer(Color clearColor_, Vector2Int windowSize_, ComponentHandle<CameraComponent> defaultCamera_) override;
@@ -62,12 +63,11 @@ public:
 	void SetDebugViewMode(bool debugViewMode_) override;
 	void SetWindowSize(Vector2Int windowSize_) override;
 
-
 private:
 	CameraComponent& selectCurrentCam();
 	bool isCurrentCamValid();
 
-	void drawModelComponent(const class ModelRendererComponent& modelComponent, const Material* materialInUsage);
+	void drawModelComponent(const class ModelRendererComponent& modelComponent, const Shader* shaderInUsage);
 	void drawVertexArray(const class VertexArray& vertexArray, bool drawAsLines);
 
 	void useDirectionalLight(const class DirectionalLightComponent& dirLightComponent, const Shader& shaderInUsage);
@@ -84,7 +84,9 @@ private:
 	void drawSpriteComponent(const class SpriteComponent& spriteComponent, const Shader& shaderInUsage);
 
 
-	std::unordered_map<Shader*, std::vector<Material*>> materials;
+	std::vector<Shader*> modelShaders;
+	const Material* currentMaterial{ nullptr };
+
 	std::unordered_map<LightType, int> lights_count;
 
 	Color clearColor{ Color::black };

@@ -4,7 +4,7 @@
 
 class CameraComponent;
 struct Color;
-class Material;
+class Shader;
 class LightComponent;
 class ModelRendererComponent;
 class TextRendererComponent;
@@ -63,16 +63,16 @@ public:
 
 
 	/**
-	* Register a material to the renderer.
-	* @param	material	The material to register.
+	* Register a model shader to the renderer.
+	* @param	modelShader		The shader with the SHADER_MODEL bitflag to register.
 	*/
-	virtual void AddMaterial(Material* material) = 0;
+	virtual void AddModelShader(Shader* modelShader) = 0;
 
 	/**
-	* Unregister a material from the renderer.
-	* @param	material	The material to unregister.
+	* Unregister a model shader from the renderer.
+	* @param	modelShader		The shader with the SHADER_MODEL bitflag to unregister.
 	*/
-	virtual void RemoveMaterial(Material* material) = 0;
+	virtual void RemoveModelShader(Shader* modelShader) = 0;
 
 
 	/**

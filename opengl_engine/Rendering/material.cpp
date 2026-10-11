@@ -8,14 +8,10 @@ Material::Material(LoadParams materialLoadParams) : IAsset(),
 	shader(materialLoadParams.shader), textures(materialLoadParams.textures),
 	boolParameters(materialLoadParams.boolParameters), intParameters(materialLoadParams.intParameters),
 	floatParameters(materialLoadParams.floatParameters), vector3Parameters(materialLoadParams.vec3Parameters)
-{
-	Locator::getRenderer().AddMaterial(this);
-}
+{}
 
 Material::~Material()
-{
-	Locator::getRenderer().RemoveMaterial(this);
-}
+{}
 
 
 std::string Material::GetTypeName()
@@ -25,6 +21,12 @@ std::string Material::GetTypeName()
 
 std::shared_ptr<Material> Material::Create(const LoadParams& params)
 {
+	if (!(params.shader->getShaderType() & SHADER_MODEL))
+	{
+		Locator::getLog().LogMessage_Category("Material: Tried to create a material from a shader that doesn't have the SHADER_MODEL bitflag.", LogCategory::Error);
+		return nullptr;
+	}
+
 	return std::make_shared<Material>(params);
 }
 

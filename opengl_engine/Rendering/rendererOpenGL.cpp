@@ -43,11 +43,8 @@ void RendererOpenGL::Draw()
 	auto& spot_lights_manager = ECS::Manager<SpotLightComponent>();
 
 	// Loop through all shaders
-	for (auto& materials_by_shaders : materials)
+	for (Shader* shader : modelShaders)
 	{
-		// Retrieve the shader
-		Shader* shader = materials_by_shaders.first;
-
 		if (!shader) continue;
 
 		// Activate the shader and set the primary uniforms
@@ -56,54 +53,40 @@ void RendererOpenGL::Draw()
 		shader->setMatrix4("projection", projection.getAsFloatPtr());
 
 		ShaderType shader_type = shader->getShaderType();
-		switch (shader_type) // Feels a bit hardcoded, should be cool to find a better way to do this
+		if (shader_type & SHADER_LIT)
 		{
-		case ShaderType::Lit:
-			// Use lights
+			// Use lights if the shader is lit
 			lights_count[EDirectionalLight] = 0;
 			lights_count[EPointLight] = 0;
 			lights_count[ESpotLight] = 0;
 
 			directional_lights_manager.ForEach([this, shader](const DirectionalLightComponent& dir_light_component)
-			{
-				this->useDirectionalLight(dir_light_component, *shader);
-			});
+				{
+					this->useDirectionalLight(dir_light_component, *shader);
+				});
 
 			point_lights_manager.ForEach([this, shader](const PointLightComponent& point_light_component)
-			{
-				this->usePointLight(point_light_component, *shader);
-			});
+				{
+					this->usePointLight(point_light_component, *shader);
+				});
 			shader->setInt("nbPointLights", lights_count[EPointLight]);
 
 			spot_lights_manager.ForEach([this, shader](const SpotLightComponent& spot_light_component)
-			{
-				this->useSpotLight(spot_light_component, *shader);
-			});
+				{
+					this->useSpotLight(spot_light_component, *shader);
+				});
 			shader->setInt("nbSpotLights", lights_count[ESpotLight]);
 
 			shader->setVec3("viewPos", current_camera.getCamPosition());
-
-			break;
-
-		case ShaderType::Unlit:
-			// Nothing else to do
-			break;
 		}
-		
-		// Loop through all materials that use the shader
-		for (Material* material : materials_by_shaders.second)
+
+		currentMaterial = nullptr;
+
+		// Loop through all model renderer components to draw all meshes that uses the active shader
+		model_renderers_manager.ForEach([this, shader](const ModelRendererComponent& model_component)
 		{
-			shader->setBool("beta_prevent_tex_scaling", false); // Should do a better thing for all beta parameters
-			shader->setFloat("beta_tex_scaling_factor", 1.0f); // Should do a better thing for all beta parameters
-
-			material->use();
-
-			// Loop through all model renderer components to draw all meshes that uses the active material
-			model_renderers_manager.ForEach([this, material](const ModelRendererComponent& model_component)
-			{
-				this->drawModelComponent(model_component, material);
-			});
-		}
+			this->drawModelComponent(model_component, shader);
+		});
 	}
 
 	// Draw debug part
@@ -226,11 +209,11 @@ void RendererOpenGL::Draw()
 }
 
 
-void RendererOpenGL::drawModelComponent(const ModelRendererComponent& modelComponent, const Material* materialInUsage)
+void RendererOpenGL::drawModelComponent(const ModelRendererComponent& modelComponent, const Shader* shaderInUsage)
 {
 	// 1. Check if the model component is valid and uses the currently processed material
 	if (!modelComponent.isValid()) return;
-	if (!modelComponent.usesMaterial(materialInUsage)) return;
+	if (!modelComponent.usesShader(shaderInUsage)) return;
 
 	// 2. Compute the model matrices
 	Matrix4 model_matrix = modelComponent.offset.getModelMatrix();
@@ -248,17 +231,37 @@ void RendererOpenGL::drawModelComponent(const ModelRendererComponent& modelCompo
 	normal_matrix.transpose();
 
 	// 3. Set the matrices in the shader
-	const Shader& shader_used = *materialInUsage->getShader();
+	shaderInUsage->setMatrix4("model", model_matrix.getAsFloatPtr());
+	shaderInUsage->setMatrix4("normalMatrix", normal_matrix.getAsFloatPtr());
+	shaderInUsage->setVec3("scale", model_scale);
 
-	shader_used.setMatrix4("model", model_matrix.getAsFloatPtr());
-	shader_used.setMatrix4("normalMatrix", normal_matrix.getAsFloatPtr());
-	shader_used.setVec3("scale", model_scale);
+	// 4. Get the model and the materials used by the component
+	const Model& model = modelComponent.getModel();
+	const std::vector<std::shared_ptr<Material>>& model_materials = modelComponent.getMaterials();
 
-	// 4. Draw the meshes of the model component that uses the current material
-	modelComponent.ForEachMeshOfMaterial(materialInUsage, [this](const Mesh& mesh)
+	// 5. Loop through all the material of the component
+	for (size_t mat_id = 0; mat_id < model_materials.size(); ++mat_id)
 	{
-		drawVertexArray(mesh.getVertexArray(), false);
-	});
+		const Material* material = model_materials[mat_id].get();
+		if (material->getShader().get() != shaderInUsage) continue;
+
+		// Activate the material only if it isn't already activated
+		if (material != currentMaterial)
+		{
+			// Note: Should do a better system for beta parameters
+			shaderInUsage->setBool("beta_prevent_tex_scaling", false);
+			shaderInUsage->setFloat("beta_tex_scaling_factor", 1.0f);
+
+			// Activate the material
+			material->use();
+
+			currentMaterial = material;
+		}
+
+		// 6. Draw the meshes of the model component that uses the current material
+		for (size_t mesh_id : model.getMeshIdsForMaterialId(static_cast<MaterialID>(mat_id)))
+			drawVertexArray(model.getMesh(mesh_id).getVertexArray(), false);
+	}
 }
 
 void RendererOpenGL::drawVertexArray(const VertexArray& vertexArray, bool drawAsLines)
@@ -664,31 +667,29 @@ const Color RendererOpenGL::GetClearColor() const
 	return clearColor;
 }
 
-
-void RendererOpenGL::AddMaterial(Material* material)
+void RendererOpenGL::AddModelShader(Shader* modelShader)
 {
-	materials[material->getShader().get()].push_back(material);
+	if (!(modelShader->getShaderType() & SHADER_MODEL))
+	{
+		Locator::getLog().LogMessage_Category("Renderer: Tried to add a model shader that doesn't have the SHADER_MODEL bitflag.", LogCategory::Warning);
+	}
+
+	modelShaders.push_back(modelShader);
 }
 
-void RendererOpenGL::RemoveMaterial(Material* material)
+void RendererOpenGL::RemoveModelShader(Shader* modelShader)
 {
-	Shader* shader = material->getShader().get();
-	std::vector<Material*>& material_vector = materials.at(shader);
-
-	auto iter = std::find(material_vector.begin(), material_vector.end(), material);
-	if (iter == material_vector.end())
+	auto iter = std::find(modelShaders.begin(), modelShaders.end(), modelShader);
 	{
-		Locator::getLog().LogMessage_Category("Renderer: Tried to remove a material that isn't registered.", LogCategory::Error);
-		return;
+		if (iter == modelShaders.end())
+		{
+			Locator::getLog().LogMessage_Category("Renderer: Tried to remove a model shader that isn't registered.", LogCategory::Warning);
+			return;
+		}
 	}
 
-	std::iter_swap(iter, material_vector.end() - 1);
-	material_vector.pop_back();
-
-	if (material_vector.empty())
-	{
-		materials.erase(shader);
-	}
+	std::iter_swap(iter, modelShaders.end() - 1);
+	modelShaders.pop_back();
 }
 
 

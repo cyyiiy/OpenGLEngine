@@ -13,10 +13,14 @@
 
 Shader::Shader(unsigned int _ID, ShaderType _type) :
 	IAsset(), ID(_ID), type(_type)
-{}
+{
+	if (type & SHADER_MODEL) Locator::getRenderer().AddModelShader(this);
+}
 
 Shader::~Shader()
 {
+	if (type & SHADER_MODEL) Locator::getRenderer().RemoveModelShader(this);
+
 	glDeleteProgram(ID);
 }
 

@@ -1,6 +1,7 @@
 #pragma once
 #include <ECS/component.h>
 #include <Rendering/Model/model.h>
+#include <Rendering/material.h>
 #include <Core/transform.h>
 
 #include <unordered_map>
@@ -24,32 +25,17 @@ public:
 	void resetToDefaultMaterials();
 
 
-	/** Check if this component uses the given material. */
-	bool usesMaterial(const Material* material) const;
+	/** Check if this component uses the given shader. */
+	bool usesShader(const Shader* shader) const;
 
 	/** Return true if this component has a valid model. */
 	bool isValid() const;
 
+	/** Get the model used by this component. */
+	const Model& getModel() const { return *model; }
 
-	/** Iterates on the meshes that uses the given material.
-	* 
-	* Usage: 
-	* 
-	* component.ForEachMeshOfMaterial(material, [this](const Mesh& mesh) { this->foo(mesh); });
-	* 
-	* @param	material	The material to check.
-	* @param	func		The lambda to execute for each mesh.
-	*/
-	template <typename Func>
-	void ForEachMeshOfMaterial(const Material* material, Func&& func) const
-	{
-		for (size_t mat_id = 0; mat_id < materials.size(); ++mat_id)
-		{
-			if (materials[mat_id].get() != material) continue;
-			for (size_t mesh_id : model->getMeshIdsForMaterialId(static_cast<MaterialID>(mat_id)))
-				func(model->getMesh(mesh_id));
-		}
-	}
+	/** Get the list of materials used by this component. */
+	const std::vector<std::shared_ptr<Material>>& getMaterials() const { return materials; }
 
 
 	/** True if the model need to ignore its owner transform. Offset will then be computed from world origin (0;0;0) */

@@ -119,25 +119,25 @@ void EngineAssets::LoadEngineAssets()
 
 	const Shader::LoadParams draw_debug_params = {
 		FilesystemUtils::ConvertStringsToPaths({ "Shaders/Unlit/draw_debug.vert", "Shaders/Unlit/draw_debug.frag" }),
-		ShaderType::Unlit
+		SHADER_MODEL
 	};
 	shaders.emplace(ShaderID::DrawDebug, Shader::Create(draw_debug_params));
 
 	const Shader::LoadParams text_render_params = {
 		FilesystemUtils::ConvertStringsToPaths({ "Shaders/Unlit/text_render.vert", "Shaders/Unlit/text_render.frag" }),
-		ShaderType::Unlit
+		0
 	};
 	shaders.emplace(ShaderID::TextRender, Shader::Create(text_render_params));
 
 	const Shader::LoadParams sprite_render_params = {
 		FilesystemUtils::ConvertStringsToPaths({ "Shaders/Unlit/sprite_render.vert", "Shaders/Unlit/sprite_render.frag" }),
-		ShaderType::Unlit
+		0
 	};
 	shaders.emplace(ShaderID::SpriteRender, Shader::Create(sprite_render_params));
 
 	const Shader::LoadParams billboard_params = {
 		FilesystemUtils::ConvertStringsToPaths({ "Shaders/Unlit/billboard.vert", "Shaders/Unlit/billboard.frag", "Shaders/Unlit/billboard.geom" }),
-		ShaderType::Unlit
+		0
 	};
 	shaders.emplace(ShaderID::BillboardRender, Shader::Create(billboard_params)); 
 

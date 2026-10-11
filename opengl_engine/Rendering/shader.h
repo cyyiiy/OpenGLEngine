@@ -8,12 +8,9 @@
 
 typedef unsigned int GLenum;
 
-enum class ShaderType : uint8_t
-{
-	Null,
-	Lit,
-	Unlit
-};
+typedef unsigned char ShaderType;
+#define SHADER_LIT    1 << 0 // For shaders that must receive light values
+#define SHADER_MODEL  1 << 1 // For shaders that render 3D models. Required for shaders that will be used in materials.
 
 
 class Shader : public IAsset
@@ -70,7 +67,7 @@ public:
 
 private:
 	unsigned int ID{ 0 };
-	ShaderType type{ ShaderType::Null };
+	ShaderType type{ 0 };
 
 	static std::unordered_map<GLenum, std::string> ConvertShaderPaths(std::vector<std::filesystem::path> shaderPaths);
 	static bool LoadShaderPart(const GLenum shaderPartType, const std::string& shaderPartPath, unsigned int& outShaderPartId);
