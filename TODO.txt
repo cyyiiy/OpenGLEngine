@@ -72,6 +72,8 @@
 
 == AUTRES ==
 
+~ Regarder comment charger d'autres charactères que les ASCII128 pour les Font (au moins avoir les accents français mdr)
+
 ~ Compute la direction des Spot Light en fonction de la rotation de l'Entity (avoir une rotation offset ? avoir un vecteur de direction offset ?)
 [Probablement obsolète une fois l'ECS V3 implémenté, à voir]
 
@@ -83,7 +85,7 @@
 
 ~ Utiliser une state machine pour la logique de la classe game
 
-~ Réussir à intégrer les collisions des sons de FMod
+~ Ajouter des outils de debug/benchmark en realtime, qui permettraient d'avoir des stats sur le nombre de chaque type d'asset actuellement chargés, des infos sur l'ECS, le nombre de materials actifs, etc...
 
 ~ Mettre un text renderer component 3D
 
@@ -96,5 +98,3 @@
 
 
 == REFLEXIONS / PROBLEMES CONNUS ==
-
-~ Ajouter des outils de debug/benchmark en realtime, qui permettraient d'avoir des stats sur le nombre de chaque type d'asset actuellement chargés, des infos sur l'ECS, le nombre de materials actifs, etc...

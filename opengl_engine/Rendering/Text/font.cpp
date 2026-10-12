@@ -48,6 +48,7 @@ std::shared_ptr<Font> Font::Create(const LoadParams& params)
 	if (error)
 	{
 		Locator::getLog().LogMessage_Category("Font: Failed to load font at path " + font_path.string() + ".", LogCategory::Error);
+		FT_Done_FreeType(ft);
 		return nullptr;
 	}
 
@@ -74,7 +75,8 @@ std::shared_ptr<Font> Font::Create(const LoadParams& params)
 	glBindTexture(GL_TEXTURE_2D_ARRAY, texture_array_id);
 
 	// Setup the texture 3D (this is the array of textures), here the font size are for the size of the textures and the char_count for the size of the array
-	glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_R8, params.fontSize, params.fontSize, char_count, 0, GL_RED, GL_UNSIGNED_BYTE, 0);
+	std::vector<unsigned char> zeroes(size_t(params.fontSize) * params.fontSize * char_count, 0);
+	glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_R8, params.fontSize, params.fontSize, char_count, 0, GL_RED, GL_UNSIGNED_BYTE, zeroes.data());
 
 	// Set the parameters of the texture
 	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -93,6 +95,8 @@ std::shared_ptr<Font> Font::Create(const LoadParams& params)
 			continue;
 		}
 
+		glPixelStorei(GL_UNPACK_ROW_LENGTH, face->glyph->bitmap.pitch);
+
 		// Add a texture for the current char into the texture array
 		glTexSubImage3D(
 			GL_TEXTURE_2D_ARRAY,
@@ -106,6 +110,8 @@ std::shared_ptr<Font> Font::Create(const LoadParams& params)
 			GL_UNSIGNED_BYTE,
 			face->glyph->bitmap.buffer // Datas of the texture
 		);
+
+		glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 
 		// Store character for later use
 		font_characters.emplace(c,
