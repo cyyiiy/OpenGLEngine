@@ -1,7 +1,7 @@
 == COURT TERME == (engine v0.3 - pre-alpha)
 
-~ Editeur phase 01 - "Proof of Concept" :
-	- Créer un projet "cyengine_editor"
+~ Editeur phase 01 - "Proof of Concept" : - en cours
+	- Créer un projet "cyengine_editor" - fait
 	- Intégrer la librairie ImGui
 	- Créer une fenêtre ImGui de test sur le projet éditeur
 	- Réussir à rendre la fenêtre du moteur sur l'interface ImGui
