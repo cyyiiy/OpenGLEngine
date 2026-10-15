@@ -73,13 +73,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <PublicIncludeDirectories>
     </PublicIncludeDirectories>
-    <IncludePath>$(SolutionDir)\opengl_engine;$(ProjectDir);$(SolutionDir)\OpenGLLibrary\includes;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)\opengl_engine;$(ProjectDir);$(SolutionDir)\OpenGLLibrary\includes;$(ProjectDir)\EditorLibrary;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)\OpenGLLibrary\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <PublicIncludeDirectories>
     </PublicIncludeDirectories>
-    <IncludePath>$(SolutionDir)\opengl_engine;$(ProjectDir);$(SolutionDir)\OpenGLLibrary\includes;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)\opengl_engine;$(ProjectDir);$(SolutionDir)\OpenGLLibrary\includes;$(ProjectDir)\EditorLibrary;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)\OpenGLLibrary\lib_release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -150,12 +150,38 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="EditorLibrary\imgui\imgui.cpp" />
+    <ClCompile Include="EditorLibrary\imgui\imgui_demo.cpp" />
+    <ClCompile Include="EditorLibrary\imgui\imgui_draw.cpp" />
+    <ClCompile Include="EditorLibrary\imgui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="EditorLibrary\imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="EditorLibrary\imgui\imgui_stdlib.cpp" />
+    <ClCompile Include="EditorLibrary\imgui\imgui_tables.cpp" />
+    <ClCompile Include="EditorLibrary\imgui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\opengl_engine\opengl_engine.vcxproj">
       <Project>{7bdf02e2-ab62-4176-987f-2c2b99391124}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="EditorLibrary\imgui\debug\imgui.natstepfilter" />
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="EditorLibrary\imgui\debug\imgui.natvis" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="EditorLibrary\imgui\imconfig.h" />
+    <ClInclude Include="EditorLibrary\imgui\imgui.h" />
+    <ClInclude Include="EditorLibrary\imgui\imgui_impl_glfw.h" />
+    <ClInclude Include="EditorLibrary\imgui\imgui_impl_opengl3.h" />
+    <ClInclude Include="EditorLibrary\imgui\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="EditorLibrary\imgui\imgui_internal.h" />
+    <ClInclude Include="EditorLibrary\imgui\imgui_stdlib.h" />
+    <ClInclude Include="EditorLibrary\imgui\imstb_rectpack.h" />
+    <ClInclude Include="EditorLibrary\imgui\imstb_textedit.h" />
+    <ClInclude Include="EditorLibrary\imgui\imstb_truetype.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
