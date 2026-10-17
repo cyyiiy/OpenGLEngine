@@ -163,6 +163,10 @@ void Engine::run()
 	// Main loop
 	while (!glfwWindowShouldClose(window.getGLFWwindow()))
 	{
+		// Poll OpenGL events part
+		// -------------------------
+		glfwPollEvents();
+
 		// Time logic part
 		// -----------------
 		double current_frame = glfwGetTime();
@@ -178,7 +182,7 @@ void Engine::run()
 
 
 		// Engine / game update part
-		// -------------
+		// ---------------------------
 		engineUpdate(window.getGLFWwindow());
 
 		const bool game_paused = DebugManager::GetPauseState();
@@ -219,21 +223,20 @@ void Engine::run()
 
 
 		// Late update part
-		// ------------
+		// ------------------
 		if (game) game->lateUpdate();
 		ECS::DeletePendings();
 
 
 		// Time logic end of frame part
-		// ------------------------
+		// ------------------------------
 		const float engine_time = static_cast<float>(glfwGetTime() - current_frame);
 		GameplayStatics::SetEngineTime(engine_time);
 
 
-		// Events and buffer swap part
-		// -----------------------------
+		// Buffer swap part
+		// ------------------
 		glfwSwapBuffers(window.getGLFWwindow());
-		glfwPollEvents();
 	}
 
 	// Close engine (loop exit)

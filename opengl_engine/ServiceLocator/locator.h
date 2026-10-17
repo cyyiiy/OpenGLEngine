@@ -21,13 +21,12 @@ public:
 	static Log& getLog();
 	static Log& provideLog(std::weak_ptr<Log> logService_);
 
+	static void initialize();
+
 private:
 	static std::shared_ptr<Renderer> rendererService;
 	static std::shared_ptr<Physics> physicsService;
 	static std::shared_ptr<Audio> audioService;
 	static std::shared_ptr<Log> logService;
-
-	friend class Engine;
-	static void initialize();
 };
 

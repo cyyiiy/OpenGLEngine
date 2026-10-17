@@ -434,7 +434,9 @@ private:
     }
     
     
-    friend class Engine; // This function must only be called from a safe source
+    // This function must only be called from a safe source
+    friend class Engine;
+    friend class Editor;
     static void ClearAllAssets()
     {
         // Note: This function is called after all game elements have been destroyed (so we can assume the asset manager is the last owner of the pointers)

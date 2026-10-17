@@ -53,6 +53,7 @@ public:
 
 private:
 	friend class Engine;
+	friend class Editor;
 
 	static void LoadNullAssets();
 
