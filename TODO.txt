@@ -3,7 +3,7 @@
 ~ Editeur phase 01 - "Proof of Concept" : - en cours
 	- Créer un projet "cyengine_editor" - fait
 	- Intégrer la librairie ImGui - fait
-	- Créer une fenêtre ImGui de test sur le projet éditeur (modifier engine pour avoir l'option de caler les calls imgui dans la main loop ?)
+	- Créer une fenêtre ImGui de test sur le projet éditeur - fait
 	- Réussir à rendre la fenêtre du moteur sur l'interface ImGui
 
 ~ Editeur phase 02 "Editeur de Projet" :

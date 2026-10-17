@@ -42,6 +42,9 @@
     <ClCompile Include="EditorLibrary\imgui\imgui_widgets.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="editor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="EditorLibrary\imgui\debug\imgui.natstepfilter" />
@@ -78,6 +81,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="EditorLibrary\imgui\imgui_impl_opengl3_loader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="editor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

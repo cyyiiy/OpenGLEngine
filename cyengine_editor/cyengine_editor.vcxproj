@@ -150,6 +150,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="editor.cpp" />
     <ClCompile Include="EditorLibrary\imgui\imgui.cpp" />
     <ClCompile Include="EditorLibrary\imgui\imgui_demo.cpp" />
     <ClCompile Include="EditorLibrary\imgui\imgui_draw.cpp" />
@@ -172,6 +173,7 @@
     <Natvis Include="EditorLibrary\imgui\debug\imgui.natvis" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="editor.h" />
     <ClInclude Include="EditorLibrary\imgui\imconfig.h" />
     <ClInclude Include="EditorLibrary\imgui\imgui.h" />
     <ClInclude Include="EditorLibrary\imgui\imgui_impl_glfw.h" />
