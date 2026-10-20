@@ -4,7 +4,7 @@
 	- Créer un projet "cyengine_editor" - fait
 	- Intégrer la librairie ImGui - fait
 	- Créer une fenêtre ImGui de test sur le projet éditeur - fait
-	- Réussir à rendre la fenêtre du moteur sur l'interface ImGui
+	- Réussir à rendre la fenêtre du moteur sur l'interface ImGui - en cours
 
 ~ Editeur phase 02 "Editeur de Projet" :
 	- Pouvoir créer et ouvrir des projets (dossier racine + fichier .cyproject) depuis l'interface de l'éditeur
