@@ -161,6 +161,7 @@
     <ClCompile Include="EditorLibrary\imgui\imgui_tables.cpp" />
     <ClCompile Include="EditorLibrary\imgui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Scenes\demoScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\opengl_engine\opengl_engine.vcxproj">
@@ -186,6 +187,7 @@
     <ClInclude Include="EditorLibrary\imgui\imstb_rectpack.h" />
     <ClInclude Include="EditorLibrary\imgui\imstb_textedit.h" />
     <ClInclude Include="EditorLibrary\imgui\imstb_truetype.h" />
+    <ClInclude Include="Scenes\demoScene.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

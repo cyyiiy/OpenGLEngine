@@ -48,6 +48,7 @@
     <ClCompile Include="EditorCore\scenesManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Scenes\demoScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -94,6 +95,7 @@
     <ClInclude Include="EditorCore\scenesManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Scenes\demoScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
