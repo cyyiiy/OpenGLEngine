@@ -5,6 +5,8 @@
 	- Intégrer la librairie ImGui - fait
 	- Créer une fenêtre ImGui de test sur le projet éditeur - fait
 	- Réussir à rendre la fenêtre du moteur sur l'interface ImGui - en cours
+	- Regarder si c'est possible de cumuler les callbacks GLFW (pour les inputs) entre le moteur et ImGui
+	- SI POSSIBLE : Bouger la caméra du viewport quand clic droit sur la fenêtre (à la Unity/Unreal)
 
 ~ Editeur phase 02 "Editeur de Projet" :
 	- Pouvoir créer et ouvrir des projets (dossier racine + fichier .cyproject) depuis l'interface de l'éditeur

@@ -51,6 +51,9 @@
     <ClCompile Include="Scenes\demoScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="EditorGUI\Windows\viewportWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="EditorLibrary\imgui\debug\imgui.natstepfilter" />
@@ -96,6 +99,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Scenes\demoScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorGUI\Windows\editorWindows.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

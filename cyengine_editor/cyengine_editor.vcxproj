@@ -152,6 +152,7 @@
   <ItemGroup>
     <ClCompile Include="EditorCore\editor.cpp" />
     <ClCompile Include="EditorCore\scenesManager.cpp" />
+    <ClCompile Include="EditorGUI\Windows\viewportWindow.cpp" />
     <ClCompile Include="EditorLibrary\imgui\imgui.cpp" />
     <ClCompile Include="EditorLibrary\imgui\imgui_demo.cpp" />
     <ClCompile Include="EditorLibrary\imgui\imgui_draw.cpp" />
@@ -177,6 +178,7 @@
   <ItemGroup>
     <ClInclude Include="EditorCore\editor.h" />
     <ClInclude Include="EditorCore\scenesManager.h" />
+    <ClInclude Include="EditorGUI\Windows\editorWindows.h" />
     <ClInclude Include="EditorLibrary\imgui\imconfig.h" />
     <ClInclude Include="EditorLibrary\imgui\imgui.h" />
     <ClInclude Include="EditorLibrary\imgui\imgui_impl_glfw.h" />

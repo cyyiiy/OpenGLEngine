@@ -8,6 +8,8 @@
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
 
+#include <EditorGUI/Windows/editorWindows.h>
+
 #include <iostream>
 
 
@@ -89,7 +91,9 @@ void Editor::run()
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
-		ImGui::ShowDemoWindow();
+		
+		// TODO: Move this in a function that create the entire editor GUI
+		EditorWindows::ShowViewportWindow();
 
 		// Time logic
 		double current_frame = glfwGetTime();
