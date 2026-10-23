@@ -278,6 +278,7 @@
     <ClInclude Include="Rendering\Shapes\shapeLine.h" />
     <ClInclude Include="Rendering\Shapes\shapePoint.h" />
     <ClInclude Include="Rendering\texture.h" />
+    <ClInclude Include="Rendering\textureInterface.h" />
     <ClInclude Include="Rendering\Text\font.h" />
     <ClInclude Include="Rendering\Text\textComponent.h" />
     <ClInclude Include="Rendering\Text\textRenderUtils.h" />

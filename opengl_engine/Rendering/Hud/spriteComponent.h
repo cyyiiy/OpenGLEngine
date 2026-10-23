@@ -1,7 +1,7 @@
 #pragma once
 #include <ECS/component.h>
 #include <Rendering/Hud/hudElement.h>
-#include <Rendering/texture.h>
+#include <Rendering/textureInterface.h>
 #include <memory>
 
 
@@ -13,7 +13,7 @@ class SpriteComponent : public Component, public HudElement
 {
 public:
 	/** The sprite texture to render. */
-	std::shared_ptr<Texture> texture{ nullptr };
+	std::shared_ptr<TextureInterface> texture{ nullptr };
 };
 
 

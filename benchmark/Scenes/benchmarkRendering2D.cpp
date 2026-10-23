@@ -1,6 +1,7 @@
 #include "benchmarkRendering2D.h"
 #include <ServiceLocator/locator.h>
 #include <Assets/assetManager.h>
+#include <Rendering/texture.h>
 
 #include <Rendering/Text/textComponent.h>
 #include <Rendering/Hud/spriteComponent.h>

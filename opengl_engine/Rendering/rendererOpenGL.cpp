@@ -382,7 +382,7 @@ void RendererOpenGL::useSpotLight(const SpotLightComponent& spotLightComponent, 
 void RendererOpenGL::drawBillboardComponent(const BillboardRendererComponent& billboardComponent, const Shader& shaderInUsage)
 {
 	// 1. Check if the billboard texture is valid
-	Texture* billboard_tex = billboardComponent.billboardTexture.get();
+	TextureInterface* billboard_tex = billboardComponent.billboardTexture.get();
 	if (billboard_tex == nullptr) return;
 
 	// 2. Compute the billboard transform
@@ -594,7 +594,7 @@ void RendererOpenGL::drawSpriteComponent(const SpriteComponent& spriteComponent,
 	// 1. Check if the sprite renderer component is valid
 	if (!spriteComponent.active) return;
 
-	Texture* sprite_texture = spriteComponent.texture.get();
+	TextureInterface* sprite_texture = spriteComponent.texture.get();
 	if (sprite_texture == nullptr) return;
 
 	// 2. Compute the hud matrix

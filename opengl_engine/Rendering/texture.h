@@ -1,11 +1,12 @@
 #pragma once
+#include "textureInterface.h"
 #include <Assets/assetInterface.h>
 #include <Assets/cyassetDocument.h>
 #include <filesystem>
 #include <string>
 
 
-class Texture : public IAsset
+class Texture : public TextureInterface, public IAsset
 {
 public:
 	// Asset part
@@ -40,11 +41,11 @@ public:
 
 
 	// Texture part
-	void use() const;
+	void use() const override;
 
 	int getTextureWidth() const { return width; }
 	int getTextureHeight() const { return height; }
-	struct Vector2Int getTextureSize() const;
+	struct Vector2Int getTextureSize() const override;
 
 private:
 	unsigned int ID{ 0 };

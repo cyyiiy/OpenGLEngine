@@ -1,6 +1,7 @@
 #include "testFpsScene.h"
 #include <ServiceLocator/locator.h>
 #include <Assets/assetManager.h>
+#include <Rendering/texture.h>
 
 #include <Rendering/Lights/directionalLightComponent.h>
 #include <Rendering/modelRendererComponent.h>

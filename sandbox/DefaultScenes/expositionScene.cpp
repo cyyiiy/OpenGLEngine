@@ -4,6 +4,7 @@
 #include <Inputs/Input.h>
 #include <Maths/Geometry/box.h>
 #include <Core/Debug/debugManager.h>
+#include <Rendering/texture.h>
 
 #include <Rendering/cameraComponent.h>
 #include <Rendering/modelRendererComponent.h>

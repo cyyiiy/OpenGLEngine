@@ -4,6 +4,7 @@
 #include <Assets/assetManager.h>
 #include <GameplayStatics/gameplayStatics.h>
 #include <Inputs/Input.h>
+#include <Rendering/texture.h>
 #include <Audio/audioSound.h>
 
 #include <GameComponents/playerComponent.h>

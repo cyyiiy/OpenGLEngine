@@ -3,7 +3,7 @@
 #include <Assets/cyassetDocument.h>
 
 #include "shader.h"
-#include "texture.h"
+#include "textureInterface.h"
 #include <Maths/Vector3.h>
 
 #include <unordered_map>
@@ -18,7 +18,7 @@ public:
 	struct LoadParams
 	{
 		std::shared_ptr<Shader> shader;
-		std::unordered_map<std::string, std::shared_ptr<Texture>> textures;
+		std::unordered_map<std::string, std::shared_ptr<TextureInterface>> textures;
 
 		std::unordered_map<std::string, bool> boolParameters;
 		std::unordered_map<std::string, int> intParameters;
@@ -55,7 +55,7 @@ public:
 
 private:
 	std::shared_ptr<Shader> shader;
-	std::unordered_map<std::string, std::shared_ptr<Texture>> textures;
+	std::unordered_map<std::string, std::shared_ptr<TextureInterface>> textures;
 
 	std::unordered_map<std::string, bool> boolParameters;
 	std::unordered_map<std::string, int> intParameters;

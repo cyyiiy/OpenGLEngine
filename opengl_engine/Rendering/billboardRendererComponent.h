@@ -1,6 +1,6 @@
 #pragma once
 #include <ECS/component.h>
-#include <Rendering/texture.h>
+#include <Rendering/textureInterface.h>
 #include <Utils/Color.h>
 #include <Maths/Vector2.h>
 #include <Maths/Vector3.h>
@@ -14,7 +14,7 @@ class BillboardRendererComponent : public Component
 {
 public:
 	/** The billboard texture to render. */
-	std::shared_ptr<Texture> billboardTexture{ nullptr };
+	std::shared_ptr<TextureInterface> billboardTexture{ nullptr };
 
 	/** The scale of the billboard on scene. Default is a one scene-unit square. */
 	Vector2 billboardScale{ Vector2::one };

@@ -5,6 +5,9 @@
 #include <Rendering/modelRendererComponent.h>
 #include <Rendering/Lights/pointLightComponent.h>
 #include <PhysicsAABB/boxCollisionComponent.h>
+#include <Rendering/Model/model.h>
+#include <Rendering/texture.h>
+#include <Rendering/material.h>
 
 
 Entity* LampFactory::CreateLamp(EntityContainer* entityContainer, const Vector3& position, float intensityMultiplier, bool isCeiling, bool startOff)
