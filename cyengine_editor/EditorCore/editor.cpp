@@ -3,6 +3,7 @@
 #include <Rendering/rendererOpenGL.h>
 #include <Assets/assetManager.h>
 #include <Assets/engineAssets.h>
+#include <EditorUtils/editorAssets.h>
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_glfw.h>
@@ -66,6 +67,7 @@ bool Editor::initialize(int wndw_width, int wndw_height)
 	// Initialize asset manager
 	EngineAssets::LoadNullAssets();
 	EngineAssets::LoadEngineAssets();
+	EditorAssets::LoadEditorAssets();
 
 	// Set global OpenGL properties
 	glEnable(GL_DEPTH_TEST);
@@ -116,6 +118,8 @@ void Editor::run()
 	clearEntities();
 	ECS::Clear(true);
 	AssetManager::ClearAllAssets();
+	EditorAssets::UnloadEditorAssets();
+	EngineAssets::UnloadEngineAssets();
 	Locator::initialize(); // Reset locator to null services (delete the real services)
 }
 
