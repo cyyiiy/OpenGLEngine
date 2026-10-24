@@ -7,6 +7,7 @@
 	- Réussir à rendre la fenêtre du moteur sur l'interface ImGui - en cours
 	- Regarder si c'est possible de cumuler les callbacks GLFW (pour les inputs) entre le moteur et ImGui
 	- SI POSSIBLE : Bouger la caméra du viewport quand clic droit sur la fenêtre (à la Unity/Unreal)
+	- Créer une fenêtre ImGui de log, et faire une implémentation de log pour l'éditeur qui écris dans la console, sur la fenêtre ImGui (+ dans un fichier log ? + sur le viewport ?)
 
 ~ Editeur phase 02 "Editeur de Projet" :
 	- Pouvoir créer et ouvrir des projets (dossier racine + fichier .cyproject) depuis l'interface de l'éditeur
@@ -75,6 +76,8 @@
 == AUTRES ==
 
 ~ Regarder comment charger d'autres charactères que les ASCII128 pour les Font (au moins avoir les accents français mdr)
+
+~ Remettre des fonctions de print debug dans l'ECS (faire comme les print debugs de l'Asset Manager)
 
 ~ Compute la direction des Spot Light en fonction de la rotation de l'Entity (avoir une rotation offset ? avoir un vecteur de direction offset ?)
 [Probablement obsolète une fois l'ECS V3 implémenté, à voir]
