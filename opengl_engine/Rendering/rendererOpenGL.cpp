@@ -18,23 +18,26 @@
 #include <glad/glad.h>
 
 
-
 void RendererOpenGL::Draw()
+{
+	if (!isCurrentCamValid()) return;
+
+	renderScene(selectCurrentCam(), windowSize, true, true);
+}
+
+void RendererOpenGL::renderScene(CameraComponent& camera, Vector2Int renderSize, bool renderHud, bool renderDebug)
 {
 	// Clear with flat color
 	glClearColor(clearColor.r / 255.0f, clearColor.g / 255.0f, clearColor.b / 255.0f, clearColor.a / 255.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 
-	
-	if (!isCurrentCamValid()) return;
-	CameraComponent& current_camera = selectCurrentCam();
 
 	//  RENDERING 3D
 	// ========================
 
-	Matrix4 view = current_camera.getViewMatrix();
-	Matrix4 projection = Matrix4::createPerspectiveFOV(Maths::toRadians(current_camera.getFov()), static_cast<float>(windowSize.x), static_cast<float>(windowSize.y), 0.1f, 1000.0f);
+	Matrix4 view = camera.getViewMatrix();
+	Matrix4 projection = Matrix4::createPerspectiveFOV(Maths::toRadians(camera.getFov()), static_cast<float>(renderSize.x), static_cast<float>(renderSize.y), 0.1f, 1000.0f);
 
 	// Get the needed component managers
 	auto& model_renderers_manager = ECS::Manager<ModelRendererComponent>();
@@ -61,23 +64,23 @@ void RendererOpenGL::Draw()
 			lights_count[ESpotLight] = 0;
 
 			directional_lights_manager.ForEach([this, shader](const DirectionalLightComponent& dir_light_component)
-				{
-					this->useDirectionalLight(dir_light_component, *shader);
-				});
+			{
+				this->useDirectionalLight(dir_light_component, *shader);
+			});
 
 			point_lights_manager.ForEach([this, shader](const PointLightComponent& point_light_component)
-				{
-					this->usePointLight(point_light_component, *shader);
-				});
+			{
+				this->usePointLight(point_light_component, *shader);
+			});
 			shader->setInt("nbPointLights", lights_count[EPointLight]);
 
 			spot_lights_manager.ForEach([this, shader](const SpotLightComponent& spot_light_component)
-				{
-					this->useSpotLight(spot_light_component, *shader);
-				});
+			{
+				this->useSpotLight(spot_light_component, *shader);
+			});
 			shader->setInt("nbSpotLights", lights_count[ESpotLight]);
 
-			shader->setVec3("viewPos", current_camera.getCamPosition());
+			shader->setVec3("viewPos", camera.getCamPosition());
 		}
 
 		currentMaterial = nullptr;
@@ -89,40 +92,43 @@ void RendererOpenGL::Draw()
 		});
 	}
 
-	// Draw debug part
-	const Material& debug_draw_mat = *EngineAssets::GetMaterial(EngineAssets::MaterialID::DrawDebug);
-	const Shader* debug_draw_shader = debug_draw_mat.getShader().get();
-	debug_draw_shader->use();
-	debug_draw_shader->setMatrix4("view", view.getAsFloatPtr());
-	debug_draw_shader->setMatrix4("projection", projection.getAsFloatPtr());
-	
-	debug_draw_mat.use();
-
-	auto& shape_renderers_manager = ECS::Manager<ShapeRendererComponent>();
-	shape_renderers_manager.ForEach([debug_draw_shader](const ShapeRendererComponent& shape_renderer_component)
+	if (renderDebug)
 	{
-		shape_renderer_component.shape->draw(*debug_draw_shader);
-	});
+		// Draw debug part
+		const Material& debug_draw_mat = *EngineAssets::GetMaterial(EngineAssets::MaterialID::DrawDebug);
+		const Shader* debug_draw_shader = debug_draw_mat.getShader().get();
+		debug_draw_shader->use();
+		debug_draw_shader->setMatrix4("view", view.getAsFloatPtr());
+		debug_draw_shader->setMatrix4("projection", projection.getAsFloatPtr());
 
+		debug_draw_mat.use();
 
-	if (debugViewMode)
-	{
-		// Draw collisions components
-		auto& box_col_renderers_manager = ECS::Manager<BoxCollisionComponent>();
-		box_col_renderers_manager.ForEach([this, debug_draw_shader](const BoxCollisionComponent& box_col_component)
+		auto& shape_renderers_manager = ECS::Manager<ShapeRendererComponent>();
+		shape_renderers_manager.ForEach([debug_draw_shader](const ShapeRendererComponent& shape_renderer_component)
 		{
-			this->drawBoxCollision(box_col_component, *debug_draw_shader);
+			shape_renderer_component.shape->draw(*debug_draw_shader);
 		});
 
-		// Draw raycasts
-		auto& raycast_renderers_manager = ECS::Manager<RaycastRendererComponent>();
-		raycast_renderers_manager.ForEach([debug_draw_shader](const RaycastRendererComponent& raycast_renderer_component)
+
+		if (debugViewMode)
 		{
-			for (auto& shape : raycast_renderer_component.shapes)
+			// Draw collisions components
+			auto& box_col_renderers_manager = ECS::Manager<BoxCollisionComponent>();
+			box_col_renderers_manager.ForEach([this, debug_draw_shader](const BoxCollisionComponent& box_col_component)
 			{
-				shape->draw(*debug_draw_shader);
-			}
-		});
+				this->drawBoxCollision(box_col_component, *debug_draw_shader);
+			});
+
+			// Draw raycasts
+			auto& raycast_renderers_manager = ECS::Manager<RaycastRendererComponent>();
+			raycast_renderers_manager.ForEach([debug_draw_shader](const RaycastRendererComponent& raycast_renderer_component)
+			{
+				for (auto& shape : raycast_renderer_component.shapes)
+				{
+					shape->draw(*debug_draw_shader);
+				}
+			});
+		}
 	}
 
 
@@ -134,8 +140,8 @@ void RendererOpenGL::Draw()
 
 	// Compute the matrix and vectors used to render billboards
 	const Matrix4 view_proj = view * projection;
-	const Vector3 cam_up = current_camera.getCamUp();
-	const Vector3 cam_right = current_camera.getCamRight();
+	const Vector3 cam_up = camera.getCamUp();
+	const Vector3 cam_right = camera.getCamRight();
 
 	// Activate the billboard shader and set global uniforms
 	const Shader* billboard_shader = EngineAssets::GetShader(EngineAssets::ShaderID::BillboardRender).get();
@@ -151,7 +157,7 @@ void RendererOpenGL::Draw()
 		this->drawBillboardComponent(billboard_renderer_component, *billboard_shader);
 	});
 
-	if (debugViewMode)
+	if (renderDebug && debugViewMode)
 	{
 		// Draw point lights debug
 		point_lights_manager.ForEach([this, billboard_shader](const PointLightComponent& point_light_component)
@@ -172,6 +178,8 @@ void RendererOpenGL::Draw()
 
 	//  RENDERING HUD
 	// ========================
+
+	if (!renderHud) return;
 
 	glDisable(GL_DEPTH_TEST);
 
@@ -691,7 +699,6 @@ void RendererOpenGL::RemoveModelShader(Shader* modelShader)
 	std::iter_swap(iter, modelShaders.end() - 1);
 	modelShaders.pop_back();
 }
-
 
 CameraComponent& RendererOpenGL::selectCurrentCam()
 {

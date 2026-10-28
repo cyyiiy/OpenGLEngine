@@ -64,6 +64,8 @@ public:
 	void SetWindowSize(Vector2Int windowSize_) override;
 
 private:
+	void renderScene(CameraComponent& camera, Vector2Int renderSize, bool renderHud, bool renderDebug);
+
 	CameraComponent& selectCurrentCam();
 	bool isCurrentCamValid();
 
