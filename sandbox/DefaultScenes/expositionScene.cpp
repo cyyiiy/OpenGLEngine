@@ -5,6 +5,7 @@
 #include <Maths/Geometry/box.h>
 #include <Core/Debug/debugManager.h>
 #include <Rendering/texture.h>
+#include <Rendering/renderTargetTexture.h>
 
 #include <Rendering/cameraComponent.h>
 #include <Rendering/modelRendererComponent.h>
@@ -34,6 +35,17 @@ void ExpositionScene::loadSceneAssets()
 	AssetManager::LoadAsset<Material>("backpack", backpack_mat);
 
 	AssetManager::LoadAsset<Model>("backpack", Model::FileImportParams{ "backpack/backpack.fbx", { AssetManager::GetAsset<Material>("backpack") } });
+
+
+	// Load the assets necessary for the other camera render target
+	AssetManager::LoadAsset<RenderTargetTexture>("camera_render_target", { 1280, 720 } );
+
+	Material::LoadParams camera_texture_mat(AssetManager::GetAsset<Shader>("lit_object"));
+	camera_texture_mat.textures.emplace("diffuse", AssetManager::GetAsset<Texture>("default_black"));
+	camera_texture_mat.textures.emplace("specular", AssetManager::GetAsset<Texture>("default_black"));
+	camera_texture_mat.textures.emplace("emissive", AssetManager::GetAsset<RenderTargetTexture>("camera_render_target"));
+	camera_texture_mat.floatParameters.emplace("material.shininess", 32.0f);
+	AssetManager::LoadAsset<Material>("camera_texture", camera_texture_mat);
 }
 
 
@@ -82,6 +94,22 @@ void ExpositionScene::loadScene()
 	backpack->setScale(0.002f);
 	ModelRendererComponent& backpack_model = ECS::GetComponent(backpack->addComponentByClass<ModelRendererComponent>());
 	backpack_model.setModel(AssetManager::GetAsset<Model>("backpack"));
+
+	Entity* camera_target_plane = createEntity();
+	camera_target_plane->setPosition(Vector3{ 6.0f, 1.0f, 0.0f });
+	camera_target_plane->setRotation(Quaternion::concatenate(Quaternion{ Vector3::unitX, Maths::toRadians(270.0f) }, Quaternion{ Vector3::unitY, Maths::toRadians(90.0f) }));
+	camera_target_plane->setScale(Vector3{ 3.2f, 1.0f, 1.8f });
+	ModelRendererComponent& camera_target_plane_model = ECS::GetComponent(camera_target_plane->addComponentByClass<ModelRendererComponent>());
+	camera_target_plane_model.setModel(AssetManager::GetAsset<Model>("default_plane"));
+	camera_target_plane_model.setMaterial(AssetManager::GetAsset<Material>("camera_texture"), 0);
+
+	Entity* black_plane = createEntity();
+	black_plane->setPosition(Vector3{ 6.01f, 1.0f, 0.0f });
+	black_plane->setRotation(Quaternion::concatenate(Quaternion{ Vector3::unitX, Maths::toRadians(270.0f) }, Quaternion{ Vector3::unitY, Maths::toRadians(90.0f) }));
+	black_plane->setScale(Vector3{ 3.3f, 1.0f, 1.9f });
+	ModelRendererComponent& black_plane_model = ECS::GetComponent(black_plane->addComponentByClass<ModelRendererComponent>());
+	black_plane_model.setModel(AssetManager::GetAsset<Model>("default_plane"));
+	black_plane_model.setMaterial(AssetManager::GetAsset<Material>("default_black_emissive"), 0);
 
 
 	// Billboard
@@ -319,4 +347,9 @@ void ExpositionScene::updateScene(float dt)
 	// Automatic rotation of the sprite
 	SpriteComponent& sprite_comp = ECS::GetComponent(sprite);
 	sprite_comp.rotAngle = Maths::fmod(sprite_comp.rotAngle + dt * 180.0f, 360.0f);
+
+
+	// Render the scene from the unused camera POV to the render target texture
+	ComponentHandle<CameraComponent> inactive_camera = (activeCamera == cameraOne) ? cameraTwo : cameraOne;
+	Locator::getRenderer().DrawToRenderTarget(*AssetManager::GetAsset<RenderTargetTexture>("camera_render_target"), inactive_camera, false, false);
 }
