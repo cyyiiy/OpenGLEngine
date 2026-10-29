@@ -29,6 +29,7 @@ public:
 
 	void InitializeRenderer(Color clearColor_, Vector2Int windowSize_, ComponentHandle<CameraComponent> defaultCamera_) override {}
 	void Draw() override {}
+	void DrawToRenderTarget(const class RenderTargetTexture& renderTarget, ComponentHandle<CameraComponent> camera, bool drawDebug, bool drawHud) override {}
 
 	void SetDebugCamera(ComponentHandle<CameraComponent> debugCamera_) override {}
 	void SetDebugCamActivated(bool debugCamActivated_) override {}

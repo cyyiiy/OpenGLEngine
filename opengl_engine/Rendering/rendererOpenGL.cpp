@@ -3,6 +3,7 @@
 #include <ServiceLocator/locator.h>
 #include <ECS/ecs.h>
 #include <ECS/entity.h>
+#include <Rendering/renderTargetTexture.h>
 #include <Rendering/modelRendererComponent.h>
 #include <Rendering/billboardRendererComponent.h>
 #include <Rendering/shapeRendererComponent.h>
@@ -25,16 +26,34 @@ void RendererOpenGL::Draw()
 	renderScene(selectCurrentCam(), windowSize, true, true);
 }
 
+void RendererOpenGL::DrawToRenderTarget(const RenderTargetTexture& renderTarget, ComponentHandle<CameraComponent> camera, bool drawDebug, bool drawHud)
+{
+	renderTarget.bind();
+
+	if (ECS::IsComponentHandleValid(camera))
+	{
+		renderScene(ECS::GetComponent(camera), renderTarget.getTextureSize(), drawHud, drawDebug);
+	}
+	else if (isCurrentCamValid())
+	{
+		renderScene(selectCurrentCam(), renderTarget.getTextureSize(), drawHud, drawDebug);
+	}
+
+	renderTarget.unbind();
+}
+
 void RendererOpenGL::renderScene(CameraComponent& camera, Vector2Int renderSize, bool renderHud, bool renderDebug)
 {
 	// Clear with flat color
 	glClearColor(clearColor.r / 255.0f, clearColor.g / 255.0f, clearColor.b / 255.0f, clearColor.a / 255.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glEnable(GL_DEPTH_TEST);
 
 
 	//  RENDERING 3D
 	// ========================
+
+	glViewport(0, 0, renderSize.x, renderSize.y);
+	glEnable(GL_DEPTH_TEST);
 
 	Matrix4 view = camera.getViewMatrix();
 	Matrix4 projection = Matrix4::createPerspectiveFOV(Maths::toRadians(camera.getFov()), static_cast<float>(renderSize.x), static_cast<float>(renderSize.y), 0.1f, 1000.0f);
@@ -183,7 +202,7 @@ void RendererOpenGL::renderScene(CameraComponent& camera, Vector2Int renderSize,
 
 	glDisable(GL_DEPTH_TEST);
 
-	Matrix4 hud_projection = Matrix4::createSimpleViewProj(static_cast<float>(windowSize.x), static_cast<float>(windowSize.y));
+	Matrix4 hud_projection = Matrix4::createSimpleViewProj(static_cast<float>(renderSize.x), static_cast<float>(renderSize.y));
 
 	// Bind the hud (char and sprite) vertex array
 	EngineAssets::GetVertexArray(EngineAssets::VertexArrayID::QuadHUD)->setActive();
@@ -195,9 +214,9 @@ void RendererOpenGL::renderScene(CameraComponent& camera, Vector2Int renderSize,
 
 	auto& hud_texts_manager = ECS::Manager<TextComponent>();
 	const Shader* text_shader_ptr = &text_render_shader;
-	hud_texts_manager.ForEach([this, text_shader_ptr](const TextComponent& text_component)
+	hud_texts_manager.ForEach([this, text_shader_ptr, renderSize](const TextComponent& text_component)
 	{
-		this->drawTextComponent(text_component, *text_shader_ptr);
+		this->drawTextComponent(text_component, *text_shader_ptr, renderSize);
 	});
 
 	// Prepare the shader used in sprite rendering
@@ -207,9 +226,9 @@ void RendererOpenGL::renderScene(CameraComponent& camera, Vector2Int renderSize,
 
 	auto& hud_sprites_manager = ECS::Manager<SpriteComponent>();
 	const Shader* sprite_shader_ptr = &sprite_render_shader;
-	hud_sprites_manager.ForEach([this, sprite_shader_ptr](const SpriteComponent& sprite_component)
+	hud_sprites_manager.ForEach([this, sprite_shader_ptr, renderSize](const SpriteComponent& sprite_component)
 	{
-		this->drawSpriteComponent(sprite_component, *sprite_shader_ptr);
+		this->drawSpriteComponent(sprite_component, *sprite_shader_ptr, renderSize);
 	});
 
 	// Unbind the hud vertex array
@@ -483,7 +502,7 @@ void RendererOpenGL::drawSpotLightDebug(const SpotLightComponent& spotLightCompo
 	glActiveTexture(GL_TEXTURE0);
 }
 
-void RendererOpenGL::drawTextComponent(const TextComponent& textComponent, const Shader& shaderInUsage)
+void RendererOpenGL::drawTextComponent(const TextComponent& textComponent, const Shader& shaderInUsage, Vector2Int renderSize)
 {
 	// 1. Check if the text renderer component is valid
 	if (!textComponent.active) return;
@@ -497,7 +516,7 @@ void RendererOpenGL::drawTextComponent(const TextComponent& textComponent, const
 	const float text_angle_rad = Maths::toRadians(textComponent.rotAngle);
 
 	// 3. Precompute text screen pos and pivot point
-	const Vector2 screen_pos = (windowSize * (textComponent.position.screenAnchor - Vector2{ 0.5f })) + textComponent.position.offset;
+	const Vector2 screen_pos = (renderSize * (textComponent.position.screenAnchor - Vector2{ 0.5f })) + textComponent.position.offset;
 	Vector2 text_pivot = textComponent.position.pivot;
 	text_pivot.x = -text_pivot.x;
 	text_pivot.y = 1.0f - text_pivot.y;
@@ -597,7 +616,7 @@ void RendererOpenGL::drawTextComponent(const TextComponent& textComponent, const
 	glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 }
 
-void RendererOpenGL::drawSpriteComponent(const SpriteComponent& spriteComponent, const Shader& shaderInUsage)
+void RendererOpenGL::drawSpriteComponent(const SpriteComponent& spriteComponent, const Shader& shaderInUsage, Vector2Int renderSize)
 {
 	// 1. Check if the sprite renderer component is valid
 	if (!spriteComponent.active) return;
@@ -608,7 +627,7 @@ void RendererOpenGL::drawSpriteComponent(const SpriteComponent& spriteComponent,
 	// 2. Compute the hud matrix
 	const Vector2 sprite_size = sprite_texture->getTextureSize() * spriteComponent.scale;
 	const Vector2 pivot_inv_y = Vector2{ spriteComponent.position.pivot.x, 1.0f - spriteComponent.position.pivot.y };
-	const Vector2 screen_pos = (windowSize * (spriteComponent.position.screenAnchor - Vector2{ 0.5f })) + spriteComponent.position.offset;
+	const Vector2 screen_pos = (renderSize * (spriteComponent.position.screenAnchor - Vector2{ 0.5f })) + spriteComponent.position.offset;
 	const Matrix4 sprite_transform =
 		Matrix4::createScale(Vector3{ sprite_size, 1.0f }) * // Scale to the size of the sprite
 		Matrix4::createTranslation(sprite_size * -pivot_inv_y) * // Translate to use the pivot (for rotation)

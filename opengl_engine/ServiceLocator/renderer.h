@@ -85,10 +85,19 @@ public:
 	virtual void InitializeRenderer(Color clearColor_, Vector2Int windowSize_, ComponentHandle<CameraComponent> defaultCamera_) = 0;
 
 	/**
-	* Execute the rendering process.
-	* Automatically called by the engine each frame. Prefer to not call this function.
+	* Render the engine on the application window.
+	* Automatically called by the engine each frame. Prefer to not manually call this function.
 	*/
 	virtual void Draw() = 0;
+
+	/**
+	* Render the engine into a render target texture.
+	* @param	renderTarget	The render target texture to render the engine into.
+	* @param	camera			The camera to render the engine from. If no camera is given, it will use the current camera.
+	* @param	drawDebug		Wether or not to draw the debug shapes and the debug view mode elements.
+	* @param	drawHud			Wether or not to draw the hud textes and sprites.
+	*/
+	virtual void DrawToRenderTarget(const class RenderTargetTexture& renderTarget, ComponentHandle<CameraComponent> camera, bool drawDebug, bool drawHud) = 0;
 
 
 	/**

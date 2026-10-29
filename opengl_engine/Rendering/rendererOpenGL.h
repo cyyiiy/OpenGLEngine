@@ -57,6 +57,7 @@ public:
 
 	void InitializeRenderer(Color clearColor_, Vector2Int windowSize_, ComponentHandle<CameraComponent> defaultCamera_) override;
 	void Draw() override;
+	void DrawToRenderTarget(const class RenderTargetTexture& renderTarget, ComponentHandle<CameraComponent> camera, bool drawDebug, bool drawHud) override;
 
 	void SetDebugCamera(ComponentHandle<CameraComponent> debugCamera_) override;
 	void SetDebugCamActivated(bool debugCamActivated_) override;
@@ -82,8 +83,8 @@ private:
 	void drawPointLightDebug(const class PointLightComponent& pointLightComponent, const Shader& shaderInUsage);
 	void drawSpotLightDebug(const class SpotLightComponent& spotLightComponent, const Shader& shaderInUsage);
 
-	void drawTextComponent(const class TextComponent& textComponent, const Shader& shaderInUsage);
-	void drawSpriteComponent(const class SpriteComponent& spriteComponent, const Shader& shaderInUsage);
+	void drawTextComponent(const class TextComponent& textComponent, const Shader& shaderInUsage, Vector2Int renderSize);
+	void drawSpriteComponent(const class SpriteComponent& spriteComponent, const Shader& shaderInUsage, Vector2Int renderSize);
 
 
 	std::vector<Shader*> modelShaders;
