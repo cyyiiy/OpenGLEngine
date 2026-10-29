@@ -4,7 +4,7 @@
 	- Créer un projet "cyengine_editor" - fait
 	- Intégrer la librairie ImGui - fait
 	- Créer une fenêtre ImGui de test sur le projet éditeur - fait
-	- Réussir à rendre la fenêtre du moteur sur l'interface ImGui - en cours
+	- Réussir à rendre la fenêtre du moteur sur l'interface ImGui - fait
 	- Regarder si c'est possible de cumuler les callbacks GLFW (pour les inputs) entre le moteur et ImGui
 	- SI POSSIBLE : Bouger la caméra du viewport quand clic droit sur la fenêtre (à la Unity/Unreal)
 	- Créer une fenêtre ImGui de log, et faire une implémentation de log pour l'éditeur qui écris dans la console, sur la fenêtre ImGui (+ dans un fichier log ? + sur le viewport ?)

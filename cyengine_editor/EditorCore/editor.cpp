@@ -81,8 +81,6 @@ bool Editor::initialize(int wndw_width, int wndw_height)
 
 void Editor::run()
 {
-	lastFrame = glfwGetTime();
-
 	// Main loop
 	while (!glfwWindowShouldClose(window.getGLFWwindow()))
 	{
@@ -97,14 +95,14 @@ void Editor::run()
 		// TODO: Move this in a function that create the entire editor GUI
 		EditorWindows::ShowViewportWindow();
 
-		// Time logic
-		double current_frame = glfwGetTime();
-		deltaTime = static_cast<float>(current_frame - lastFrame);
-		lastFrame = current_frame;
-
-		// Render the engine
+		// Render the engine inside a render target
+		RenderTargetTexture& viewport_render_target = *EditorAssets::GetViewportRenderTarget();
 		Renderer& renderer = Locator::getRenderer();
-		renderer.Draw();
+		renderer.DrawToRenderTarget(viewport_render_target, ComponentHandle<CameraComponent>(), true, true);
+
+		// Clear the window before rendering ImGui
+		glClearColor(0, 0, 0, 0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// Render ImGui
 		ImGui::Render();
