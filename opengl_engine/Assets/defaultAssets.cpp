@@ -70,12 +70,12 @@ void DefaultAssets::LoadDefaultAssets()
 	const std::vector<Vertex> plane_vertices
 	{
 		// Positions                         // Normals                   // Tex coords
-		Vertex{Vector3{-0.5f, 0.0f, -0.5f},  Vector3{ 0.0f, 1.0f, 0.0f},  Vector2{-0.5f, -0.5f}},
-		Vertex{Vector3{ 0.5f, 0.0f, -0.5f},  Vector3{ 0.0f, 1.0f, 0.0f},  Vector2{ 0.5f, -0.5f}},
-		Vertex{Vector3{ 0.5f, 0.0f,  0.5f},  Vector3{ 0.0f, 1.0f, 0.0f},  Vector2{ 0.5f,  0.5f}},
-		Vertex{Vector3{ 0.5f, 0.0f,  0.5f},  Vector3{ 0.0f, 1.0f, 0.0f},  Vector2{ 0.5f,  0.5f}},
-		Vertex{Vector3{-0.5f, 0.0f,  0.5f},  Vector3{ 0.0f, 1.0f, 0.0f},  Vector2{-0.5f,  0.5f}},
-		Vertex{Vector3{-0.5f, 0.0f, -0.5f},  Vector3{ 0.0f, 1.0f, 0.0f},  Vector2{-0.5f, -0.5f}}
+		Vertex{Vector3{-0.5f, 0.0f, -0.5f},  Vector3{ 0.0f, 1.0f, 0.0f},  Vector2{ 0.0f, 0.0f }},
+		Vertex{Vector3{ 0.5f, 0.0f, -0.5f},  Vector3{ 0.0f, 1.0f, 0.0f},  Vector2{ 1.0f, 0.0f }},
+		Vertex{Vector3{ 0.5f, 0.0f,  0.5f},  Vector3{ 0.0f, 1.0f, 0.0f},  Vector2{ 1.0f, 1.0f }},
+		Vertex{Vector3{ 0.5f, 0.0f,  0.5f},  Vector3{ 0.0f, 1.0f, 0.0f},  Vector2{ 1.0f, 1.0f }},
+		Vertex{Vector3{-0.5f, 0.0f,  0.5f},  Vector3{ 0.0f, 1.0f, 0.0f},  Vector2{ 0.0f, 1.0f }},
+		Vertex{Vector3{-0.5f, 0.0f, -0.5f},  Vector3{ 0.0f, 1.0f, 0.0f},  Vector2{ 0.0f, 0.0f }}
 	};
 	const MeshVerticesData plane_mesh_data{ plane_vertices, {}, 0 };
 	const Model::RawVerticesParams model_plane_params = { plane_mesh_data, nullptr };
