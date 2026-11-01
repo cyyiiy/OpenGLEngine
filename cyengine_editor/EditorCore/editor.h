@@ -19,5 +19,7 @@ public:
 	void windowResize(GLFWwindow* glWindow, int width, int height);
 
 private:
+	void processEditorShortcuts();
+
 	Window window;
 };

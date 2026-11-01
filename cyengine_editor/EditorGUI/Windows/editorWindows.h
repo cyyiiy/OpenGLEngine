@@ -3,4 +3,6 @@
 namespace EditorWindows
 {
 	void ShowViewportWindow();
+
+	void ShowTestWindowA();
 }

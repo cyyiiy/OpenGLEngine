@@ -4,13 +4,11 @@
 #include <Assets/assetManager.h>
 #include <Assets/engineAssets.h>
 #include <EditorUtils/editorAssets.h>
+#include <EditorGUI/Windows/editorWindows.h>
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
-
-#include <EditorGUI/Windows/editorWindows.h>
-
 #include <iostream>
 
 
@@ -87,6 +85,9 @@ void Editor::run()
 		// Poll OpenGL events
 		glfwPollEvents();
 
+		// Process keyboard shortcuts
+		processEditorShortcuts();
+
 		// Start the ImGui frame
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
@@ -94,6 +95,7 @@ void Editor::run()
 		
 		// TODO: Move this in a function that create the entire editor GUI
 		EditorWindows::ShowViewportWindow();
+		EditorWindows::ShowTestWindowA();
 
 		// Render the engine inside a render target
 		RenderTargetTexture& viewport_render_target = *EditorAssets::GetViewportRenderTarget();
@@ -128,6 +130,26 @@ void Editor::close()
 	ImGui::DestroyContext();
 	glfwTerminate();
 }
+
+void Editor::processEditorShortcuts()
+{
+	// Check if the keyboard is used by ImGui (when writing in an input field for example)
+	ImGuiIO& io = ImGui::GetIO();
+	if (io.WantCaptureKeyboard) return;
+
+	// Escape shortcut -> Close the editor (for now)
+	if (ImGui::IsKeyPressed(ImGuiKey_Escape))
+	{
+		glfwSetWindowShouldClose(window.getGLFWwindow(), true);
+	}
+
+	// Ctrl+S shortcut -> Print a callback message (for now)
+	if (ImGui::IsKeyChordPressed(ImGuiMod_Ctrl | ImGuiKey_S))
+	{
+		std::cout << "Ctrl+S shortcut pressed, saving...\n";
+	}
+}
+
 
 void Editor::windowResize(GLFWwindow* glWindow, int width, int height)
 {
