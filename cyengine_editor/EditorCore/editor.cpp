@@ -108,6 +108,7 @@ void Editor::run()
 		
 		// TODO: Move this in a function that create the entire editor GUI
 		EditorWindows::ShowViewportWindow();
+		EditorWindows::ShowLogWindow();
 		EditorWindows::ShowTestWindowA();
 
 		// Render the engine inside a render target

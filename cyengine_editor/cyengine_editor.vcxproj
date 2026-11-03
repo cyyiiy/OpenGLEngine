@@ -152,6 +152,7 @@
   <ItemGroup>
     <ClCompile Include="EditorCore\editor.cpp" />
     <ClCompile Include="EditorCore\scenesManager.cpp" />
+    <ClCompile Include="EditorGUI\Windows\logWindow.cpp" />
     <ClCompile Include="EditorGUI\Windows\testWindows.cpp" />
     <ClCompile Include="EditorGUI\Windows\viewportWindow.cpp" />
     <ClCompile Include="EditorLibrary\imgui\imgui.cpp" />
