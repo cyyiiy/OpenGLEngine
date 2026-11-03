@@ -4,21 +4,26 @@
 #include <Rendering/cameraComponent.h>
 #include <Rendering/modelRendererComponent.h>
 #include <Rendering/Lights/directionalLightComponent.h>
+#include <EditorUtils/editorStatics.h>
 
 #include <Assets/assetManager.h>
 #include <Rendering/Model/model.h>
 #include <Rendering/material.h>
 #include <Utils/Color.h>
+#include <imgui/imgui.h>
 
+const float CAMERA_SPEED = 4.0f;
+const float CAMERA_MOUSE_SENSITIVITY = 0.1f;
 
 void DemoScene::loadScene()
 {
 	const Vector3 cam_pos = Vector3{ 10.0f, 5.0f, 5.0f };
 
-	Entity* cam_entity = createEntity();
-	cam_entity->setPosition(cam_pos);
-	cam_entity->setRotation(Quaternion::createLookAt(cam_pos, Vector3::zero, Vector3::unitY));
-	CameraComponent& camera_comp = ECS::GetComponent(cam_entity->addComponentByClass<CameraComponent>());
+	cameraEntity = createEntity();
+	cameraEntity->setPosition(cam_pos);
+	cameraEntity->setRotation(Quaternion::createLookAt(cam_pos, Vector3::zero, Vector3::unitY));
+	cameraComp = cameraEntity->addComponentByClass<CameraComponent>();
+	CameraComponent& camera_comp = ECS::GetComponent(cameraComp);
 	camera_comp.setYaw(-90.0f);
 	camera_comp.setAsActiveCamera();
 
@@ -37,3 +42,35 @@ void DemoScene::loadScene()
 
 void DemoScene::unloadScene()
 {}
+
+void DemoScene::updateScene(float dt)
+{
+	if (EditorStatics::isViewportFocused)
+	{
+		CameraComponent& camera_comp = ECS::GetComponent(cameraComp);
+
+		if (ImGui::IsKeyDown(ImGuiKey_Z))
+			cameraEntity->addPosition(camera_comp.getCamForward() * CAMERA_SPEED * dt);
+
+		if (ImGui::IsKeyDown(ImGuiKey_S))
+			cameraEntity->addPosition(-camera_comp.getCamForward() * CAMERA_SPEED * dt);
+
+		if (ImGui::IsKeyDown(ImGuiKey_Q))
+			cameraEntity->addPosition(camera_comp.getCamRight() * CAMERA_SPEED * dt);
+
+		if (ImGui::IsKeyDown(ImGuiKey_D))
+			cameraEntity->addPosition(-camera_comp.getCamRight() * CAMERA_SPEED * dt);
+
+		if (ImGui::IsKeyDown(ImGuiKey_Space))
+			cameraEntity->addPosition(Vector3::unitY * CAMERA_SPEED * dt);
+
+		if (ImGui::IsKeyDown(ImGuiKey_C))
+			cameraEntity->addPosition(Vector3::negUnitY * CAMERA_SPEED * dt);
+
+		ImGuiIO& io = ImGui::GetIO();
+
+		const Vector2 mouse_delta = Vector2{ io.MouseDelta.x, io.MouseDelta.y } * CAMERA_MOUSE_SENSITIVITY;
+		camera_comp.addYaw(mouse_delta.x);
+		camera_comp.setPitch(Maths::clamp(camera_comp.getPitch() - mouse_delta.y, -89.0f, 89.0f));
+	}
+}

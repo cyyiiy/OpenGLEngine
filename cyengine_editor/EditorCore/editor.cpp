@@ -3,7 +3,9 @@
 #include <Rendering/rendererOpenGL.h>
 #include <Assets/assetManager.h>
 #include <Assets/engineAssets.h>
+#include <EditorCore/scenesManager.h>
 #include <EditorUtils/editorAssets.h>
+#include <EditorUtils/editorStatics.h>
 #include <EditorGUI/Windows/editorWindows.h>
 
 #include <imgui/imgui.h>
@@ -25,6 +27,7 @@ bool Editor::initialize(int wndw_width, int wndw_height)
 		glfwTerminate();
 		return false;
 	}
+	EditorStatics::window = &window;
 
 	// Initialize ImGui
 	IMGUI_CHECKVERSION();
@@ -79,14 +82,24 @@ bool Editor::initialize(int wndw_width, int wndw_height)
 
 void Editor::run()
 {
+	lastFrame = glfwGetTime();
+
 	// Main loop
 	while (!glfwWindowShouldClose(window.getGLFWwindow()))
 	{
 		// Poll OpenGL events
 		glfwPollEvents();
 
+		// Compute delta time
+		double current_frame = glfwGetTime();
+		deltaTime = static_cast<float>(current_frame - lastFrame);
+		lastFrame = current_frame;
+
 		// Process keyboard shortcuts
 		processEditorShortcuts();
+
+		// Update the active scene (if there is one)
+		ScenesManager::updateActiveScene(deltaTime);
 
 		// Start the ImGui frame
 		ImGui_ImplOpenGL3_NewFrame();
@@ -125,6 +138,7 @@ void Editor::run()
 
 void Editor::close()
 {
+	EditorStatics::window = nullptr;
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
@@ -136,6 +150,8 @@ void Editor::processEditorShortcuts()
 	// Check if the keyboard is used by ImGui (when writing in an input field for example)
 	ImGuiIO& io = ImGui::GetIO();
 	if (io.WantCaptureKeyboard) return;
+
+	if (EditorStatics::isViewportFocused) return;
 
 	// Escape shortcut -> Close the editor (for now)
 	if (ImGui::IsKeyPressed(ImGuiKey_Escape))

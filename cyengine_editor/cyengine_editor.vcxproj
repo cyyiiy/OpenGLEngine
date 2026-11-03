@@ -163,6 +163,7 @@
     <ClCompile Include="EditorLibrary\imgui\imgui_tables.cpp" />
     <ClCompile Include="EditorLibrary\imgui\imgui_widgets.cpp" />
     <ClCompile Include="EditorUtils\editorAssets.cpp" />
+    <ClCompile Include="EditorUtils\editorStatics.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Scenes\demoScene.cpp" />
   </ItemGroup>
@@ -192,6 +193,7 @@
     <ClInclude Include="EditorLibrary\imgui\imstb_textedit.h" />
     <ClInclude Include="EditorLibrary\imgui\imstb_truetype.h" />
     <ClInclude Include="EditorUtils\editorAssets.h" />
+    <ClInclude Include="EditorUtils\editorStatics.h" />
     <ClInclude Include="Scenes\demoScene.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

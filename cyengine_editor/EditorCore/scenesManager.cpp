@@ -19,3 +19,10 @@ void ScenesManager::unloadActiveScene()
 	// Using parameter "exitGame" to true so all raycasts get cleared
 	activeScene->unload(true);
 }
+
+void ScenesManager::updateActiveScene(float deltaTime)
+{
+	if (!activeScene) return;
+
+	activeScene->update(deltaTime);
+}

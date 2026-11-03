@@ -1,8 +1,12 @@
 #include "editorWindows.h"
 #include <EditorUtils/editorAssets.h>
+#include <EditorUtils/editorStatics.h>
 #include <ServiceLocator/locator.h>
 #include <ServiceLocator/renderer.h>
+#include <Core/window.h>
 #include <imgui/imgui.h>
+#include <GLFW/glfw3.h>
+
 
 void EditorWindows::ShowViewportWindow()
 {
@@ -25,6 +29,23 @@ void EditorWindows::ShowViewportWindow()
 		ImVec2(0, 1),
 		ImVec2(1, 0)
 	);
+
+	// Check if the viewport window is focused
+	Window& window_ref = *EditorStatics::window;
+
+	if (ImGui::IsItemHovered() && ImGui::IsMouseDown(ImGuiMouseButton_Right))
+	{
+		EditorStatics::isViewportFocused = true;
+		glfwSetInputMode(window_ref.getGLFWwindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	}
+
+	if (EditorStatics::isViewportFocused && 
+		(ImGui::IsMouseReleased(ImGuiMouseButton_Right) ||
+			!glfwGetWindowAttrib(window_ref.getGLFWwindow(), GLFW_FOCUSED)))
+	{
+		EditorStatics::isViewportFocused = false;
+		glfwSetInputMode(window_ref.getGLFWwindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	}
 
 	// End the window section
 	ImGui::End();

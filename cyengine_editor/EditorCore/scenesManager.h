@@ -23,6 +23,12 @@ public:
 	*/
 	static void unloadActiveScene();
 
+	/**
+	* Update the currently active scene.
+	* @param	deltaTime	The delta time of the frame.
+	*/
+	static void updateActiveScene(float deltaTime);
+
 private:
 	static Scene* activeScene;
 };

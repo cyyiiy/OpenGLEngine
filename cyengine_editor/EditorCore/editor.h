@@ -22,4 +22,7 @@ private:
 	void processEditorShortcuts();
 
 	Window window;
+
+	float deltaTime = 0.0f;
+	double lastFrame = 0.0f;
 };
