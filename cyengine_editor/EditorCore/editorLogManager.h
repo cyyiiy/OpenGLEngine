@@ -1,6 +1,7 @@
 #pragma once
 #include <ServiceLocator/log.h>
 #include <Log/logUtils.h>
+#include <Log/logFile.h>
 #include <unordered_map>
 
 
@@ -24,6 +25,7 @@ public:
 private:
 	void printLogToConsole(const std::string& logText, LogCategory logCategory);
 	void printLogToLogWindow(const std::string& logText, const Color& logColor);
+	void writeLogToFile(const std::string& logText, LogCategory logCategory);
 
 	std::unordered_map<LogDisplay, LogCategory> logCategoryDisplayRules
 	{
@@ -31,5 +33,6 @@ private:
 		{ LogDisplay::Screen, LogCategory::Warning },
 		{ LogDisplay::LogFile, LogCategory::Info }
 	};
-};
 
+	LogFile logFileWriter;
+};

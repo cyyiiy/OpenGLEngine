@@ -52,7 +52,7 @@ void LogManager::SetConsoleLogDisplayRule(LogCategory logCategory)
 
 void LogManager::Initialize()
 {
-	logFileWriter.init();
+	logFileWriter.init("log.txt");
 }
 
 void LogManager::UpdateScreenLogs(float dt)

@@ -1,9 +1,9 @@
 #include "logFile.h"
 #include <ServiceLocator/locator.h>
 
-void LogFile::init()
+void LogFile::init(const std::string& log_file_name)
 {
-	logFileStream = std::ofstream(LOG_FILE);
+	logFileStream = std::ofstream(log_file_name);
 	if (!logFileStream.is_open())
 	{
 		Locator::getLog().LogMessage_Category("Log File: Unable to open log file.", LogCategory::Error);

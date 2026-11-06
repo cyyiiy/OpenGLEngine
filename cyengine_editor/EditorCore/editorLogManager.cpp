@@ -5,12 +5,14 @@
 
 EditorLogManager::~EditorLogManager()
 {
+	logFileWriter.exit();
 }
 
 void EditorLogManager::LogMessageToScreen(const std::string& logText, const Color& logColor, const float logDuration, const std::string logIndex)
 {
 	printLogToConsole(logText, LogCategory::Custom);
 	printLogToLogWindow(logText, logColor);
+	writeLogToFile(logText, LogCategory::Custom);
 }
 
 void EditorLogManager::EraseLogIndexMessage(const std::string logIndex)
@@ -21,6 +23,7 @@ void EditorLogManager::LogMessage_Category(const std::string& logText, LogCatego
 {
 	printLogToConsole(logText, logCategory);
 	printLogToLogWindow(LogCategoryToString(logCategory) + logText, LogCategoryToColor(logCategory));
+	writeLogToFile(logText, logCategory);
 }
 
 void EditorLogManager::SetScreenLogDisplayRule(LogCategory logCategory)
@@ -35,6 +38,7 @@ void EditorLogManager::SetConsoleLogDisplayRule(LogCategory logCategory)
 
 void EditorLogManager::Initialize()
 {
+	logFileWriter.init("editor-log.txt");
 }
 
 void EditorLogManager::UpdateScreenLogs(float dt)
@@ -52,4 +56,11 @@ void EditorLogManager::printLogToLogWindow(const std::string& logText, const Col
 {
 	const ImVec4 color{ logColor.r / 255.0f, logColor.g / 255.0f, logColor.b / 255.0f, logColor.a / 255.0f };
 	EditorStatics::logMessages.push_back(LogMessage{ logText, color });
+}
+
+void EditorLogManager::writeLogToFile(const std::string& logText, LogCategory logCategory)
+{
+	if (logCategory < logCategoryDisplayRules[LogDisplay::LogFile]) return;
+
+	logFileWriter.addMessage(LogCategoryToString(logCategory) + logText);
 }

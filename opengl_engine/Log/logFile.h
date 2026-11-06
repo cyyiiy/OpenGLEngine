@@ -3,12 +3,10 @@
 #include <string>
 #include <fstream>
 
-const std::string LOG_FILE{ "log.txt" };
-
 class LogFile
 {
 public:
-	void init();
+	void init(const std::string& log_file_name);
 	void exit();
 	void addMessage(const std::string& message);
 

@@ -1,5 +1,6 @@
 .vs
 x64
 log.txt
+editor-log.txt
 .idea/
 imgui.ini
