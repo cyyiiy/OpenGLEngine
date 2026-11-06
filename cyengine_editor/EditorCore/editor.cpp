@@ -1,6 +1,7 @@
 #include "editor.h"
 #include <ServiceLocator/locator.h>
 #include <Rendering/rendererOpenGL.h>
+#include <EditorCore/editorLogManager.h>
 #include <Assets/assetManager.h>
 #include <Assets/engineAssets.h>
 #include <EditorCore/scenesManager.h>
@@ -51,6 +52,10 @@ bool Editor::initialize(int wndw_width, int wndw_height)
 	// Initialize the service locator
 	Locator::initialize();
 
+	// Create the log manager
+	Log& log = Locator::provideLog(std::make_shared<EditorLogManager>());
+	log.Initialize();
+
 	// Create renderer and default camera
 	Entity* default_cam_entity = createEntity();
 	default_cam_entity->addComponentByClass<CameraComponent>();
@@ -100,6 +105,9 @@ void Editor::run()
 
 		// Update the active scene (if there is one)
 		ScenesManager::updateActiveScene(deltaTime);
+
+		// Update the logs
+		Locator::getLog().UpdateScreenLogs(deltaTime);
 
 		// Start the ImGui frame
 		ImGui_ImplOpenGL3_NewFrame();
@@ -163,7 +171,7 @@ void Editor::processEditorShortcuts()
 	// Ctrl+S shortcut -> Print a callback message (for now)
 	if (ImGui::IsKeyChordPressed(ImGuiMod_Ctrl | ImGuiKey_S))
 	{
-		std::cout << "Ctrl+S shortcut pressed, saving...\n";
+		Locator::getLog().LogMessage_Category("Ctrl+S shortcut pressed, saving...", LogCategory::Info);
 	}
 }
 

@@ -66,6 +66,9 @@
     <ClCompile Include="EditorGUI\Windows\logWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="EditorCore\editorLogManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="EditorLibrary\imgui\debug\imgui.natstepfilter" />
@@ -120,6 +123,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="EditorUtils\editorStatics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCore\editorLogManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

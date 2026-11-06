@@ -151,6 +151,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="EditorCore\editor.cpp" />
+    <ClCompile Include="EditorCore\editorLogManager.cpp" />
     <ClCompile Include="EditorCore\scenesManager.cpp" />
     <ClCompile Include="EditorGUI\Windows\logWindow.cpp" />
     <ClCompile Include="EditorGUI\Windows\testWindows.cpp" />
@@ -181,6 +182,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EditorCore\editor.h" />
+    <ClInclude Include="EditorCore\editorLogManager.h" />
     <ClInclude Include="EditorCore\scenesManager.h" />
     <ClInclude Include="EditorGUI\Windows\editorWindows.h" />
     <ClInclude Include="EditorLibrary\imgui\imconfig.h" />
