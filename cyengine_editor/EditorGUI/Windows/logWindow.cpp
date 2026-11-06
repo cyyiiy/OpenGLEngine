@@ -1,4 +1,5 @@
 #include "editorWindows.h"
+#include <EditorUtils/editorStatics.h>
 #include <imgui/imgui.h>
 #include <iostream>
 
@@ -13,6 +14,9 @@ void EditorWindows::ShowLogWindow()
 	// Create the window
 	ImGui::Begin("Logs", NULL, window_flags);
 
+	// Check if the window scroll is already at the bottom (enable auto-scrolling)
+	const bool auto_scroll = ImGui::GetScrollY() >= ImGui::GetScrollMaxY() - 1.0f;
+
 	// Set the window menu bar
 	if (ImGui::BeginMenuBar())
 	{
@@ -20,7 +24,7 @@ void EditorWindows::ShowLogWindow()
 		{
 			if (ImGui::MenuItem("Clear Logs")) 
 			{
-				std::cout << "Clearing logs...\n";
+				EditorStatics::logMessages.clear();
 			}
 
 			ImGui::EndMenu();
@@ -29,9 +33,15 @@ void EditorWindows::ShowLogWindow()
 	}
 
 	// Set the window content
-	for (int i = 0; i < 100; i++)
+	for (LogMessage& log_message : EditorStatics::logMessages)
 	{
-		ImGui::Text("Example log %i", i);
+		ImGui::TextColored(log_message.color, "%s", log_message.log.c_str());
+	}
+
+	// Force the scroll to the bottom (make new messages visible) if auto-scrolling is enabled
+	if (auto_scroll)
+	{
+		ImGui::SetScrollHereY(1.0f);
 	}
 
 	// End the window section
