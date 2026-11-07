@@ -132,6 +132,9 @@ void Editor::run()
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
+		// Update ECS
+		ECS::DeletePendings();
+
 		// Swap buffers
 		glfwSwapBuffers(window.getGLFWwindow());
 	}
