@@ -9,7 +9,7 @@
 	- SI POSSIBLE : Bouger la caméra du viewport quand clic droit sur la fenêtre (à la Unity/Unreal) - fait
 	- Créer une fenêtre ImGui de log, et faire une implémentation de log pour l'éditeur qui écris dans la console, sur la fenêtre ImGui (+ dans un fichier log ? + sur le viewport ?) - fait
 	- Faire des tests avec le docking (regarder comment créer un layout de fenêtres) - fait
-	- Corriger la render texture du viewport qui se resize pas toujours quand on resize la fenêtre
+	- Corriger la render texture du viewport qui se resize pas toujours quand on resize la fenêtre - fait
 	- Faire des tests pour pouvoir switcher entre plusieurs layouts en fonction du mode actif de l'éditeur
 
 ~ Editeur phase 02 "Editeur de Projet" :
@@ -106,5 +106,3 @@
 
 
 == REFLEXIONS / PROBLEMES CONNUS ==
-
-~ Le texte (et les éléments 2D en général) peut se stretch de manière un peu dégueu sur la fenêtre viewport de l'éditeur, à voir si il faut le changer à un moment

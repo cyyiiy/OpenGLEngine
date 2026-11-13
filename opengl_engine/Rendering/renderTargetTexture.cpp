@@ -118,7 +118,7 @@ void RenderTargetTexture::resize(int _width, int _height)
 {
 	// Check the new size
 	if (_width <= 0 || _height <= 0) return;
-	if (_width == width || _height == height) return;
+	if (_width == width && _height == height) return;
 
 	width = _width;
 	height = _height;
