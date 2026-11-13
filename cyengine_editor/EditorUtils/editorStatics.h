@@ -15,6 +15,8 @@ class EditorStatics
 public:
 	static bool isViewportFocused;
 
+	static bool needResetLayout;
+
 	static std::vector<LogMessage> logMessages;
 
 	static class Window* window;

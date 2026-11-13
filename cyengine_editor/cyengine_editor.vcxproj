@@ -153,6 +153,8 @@
     <ClCompile Include="EditorCore\editor.cpp" />
     <ClCompile Include="EditorCore\editorLogManager.cpp" />
     <ClCompile Include="EditorCore\scenesManager.cpp" />
+    <ClCompile Include="EditorGUI\Layouts\exampleLayout.cpp" />
+    <ClCompile Include="EditorGUI\Windows\editorMainMenu.cpp" />
     <ClCompile Include="EditorGUI\Windows\logWindow.cpp" />
     <ClCompile Include="EditorGUI\Windows\testWindows.cpp" />
     <ClCompile Include="EditorGUI\Windows\viewportWindow.cpp" />
@@ -184,6 +186,7 @@
     <ClInclude Include="EditorCore\editor.h" />
     <ClInclude Include="EditorCore\editorLogManager.h" />
     <ClInclude Include="EditorCore\scenesManager.h" />
+    <ClInclude Include="EditorGUI\Layouts\editorLayouts.h" />
     <ClInclude Include="EditorGUI\Windows\editorWindows.h" />
     <ClInclude Include="EditorLibrary\imgui\imconfig.h" />
     <ClInclude Include="EditorLibrary\imgui\imgui.h" />

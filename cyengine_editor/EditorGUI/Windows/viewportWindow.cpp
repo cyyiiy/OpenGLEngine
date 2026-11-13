@@ -1,8 +1,6 @@
 #include "editorWindows.h"
 #include <EditorUtils/editorAssets.h>
 #include <EditorUtils/editorStatics.h>
-#include <ServiceLocator/locator.h>
-#include <ServiceLocator/renderer.h>
 #include <Core/window.h>
 #include <imgui/imgui.h>
 #include <GLFW/glfw3.h>
@@ -11,13 +9,12 @@
 void EditorWindows::ShowViewportWindow()
 {
 	// Set the window flags
-	ImGuiWindowFlags window_flags = 0;
-	window_flags |= ImGuiWindowFlags_NoCollapse;
-
-	// Note: Window position/size can be forced here, docking too?
+	const ImGuiWindowFlags window_flags =
+		ImGuiWindowFlags_NoCollapse |
+		ImGuiWindowFlags_NoMove;
 
 	// Create the window
-	ImGui::Begin("Viewport", NULL, window_flags);
+	ImGui::Begin(VIEWPORT_WINDOW_NAME, NULL, window_flags);
 
 	// Set the window content
 	const ImVec2 viewport_size = ImGui::GetContentRegionAvail();

@@ -7,7 +7,7 @@
 #include <EditorCore/scenesManager.h>
 #include <EditorUtils/editorAssets.h>
 #include <EditorUtils/editorStatics.h>
-#include <EditorGUI/Windows/editorWindows.h>
+#include <EditorGUI/Layouts/editorLayouts.h>
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_glfw.h>
@@ -114,10 +114,8 @@ void Editor::run()
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 		
-		// TODO: Move this in a function that create the entire editor GUI
-		EditorWindows::ShowViewportWindow();
-		EditorWindows::ShowLogWindow();
-		EditorWindows::ShowTestWindowA();
+		// Show the editor layout
+		EditorLayouts::ShowExampleLayout();
 
 		// Render the engine inside a render target
 		RenderTargetTexture& viewport_render_target = *EditorAssets::GetViewportRenderTarget();

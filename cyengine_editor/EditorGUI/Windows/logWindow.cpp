@@ -7,12 +7,13 @@
 void EditorWindows::ShowLogWindow()
 {
 	// Set the window flags
-	ImGuiWindowFlags window_flags = 0;
-	window_flags |= ImGuiWindowFlags_NoCollapse;
-	window_flags |= ImGuiWindowFlags_MenuBar;
+	const ImGuiWindowFlags window_flags =
+		ImGuiWindowFlags_NoCollapse |
+		ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_MenuBar;
 
 	// Create the window
-	ImGui::Begin("Logs", NULL, window_flags);
+	ImGui::Begin(LOGS_WINDOW_NAME, NULL, window_flags);
 
 	// Check if the window scroll is already at the bottom (enable auto-scrolling)
 	const bool auto_scroll = ImGui::GetScrollY() >= ImGui::GetScrollMaxY() - 1.0f;
