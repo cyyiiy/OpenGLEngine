@@ -10,10 +10,11 @@ namespace EditorWindows
 
 	void ShowMainMenu();
 
-	void ShowViewportWindow();
 
-	void ShowLogWindow();
+	void ShowViewportWindow(const char* layout);
 
-	void ShowTestWindowA();
-	void ShowTestWindowB();
+	void ShowLogWindow(const char* layout);
+
+	void ShowTestWindowA(const char* layout);
+	void ShowTestWindowB(const char* layout);
 }

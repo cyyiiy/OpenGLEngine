@@ -1,6 +1,7 @@
 #include "editorLayouts.h"
 #include <EditorGUI/Windows/editorWindows.h>
 #include <EditorUtils/editorStatics.h>
+#include <EditorUtils/guiHelper.h>
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
 
@@ -33,12 +34,12 @@ void EditorLayouts::ShowExampleLayout()
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-	ImGui::Begin("ExampleLayoutWindow", NULL, layout_window_flags);
+	ImGui::Begin(GuiHelper::CombineChars(EXAMPLE_LAYOUT_NAME, "Window").c_str(), NULL, layout_window_flags);
 	ImGui::PopStyleVar(3);
 
 
 	// We want to reset the layout if its entry is not found in the .ini file
-	ImGuiID dockspace_id = ImGui::GetID("ExampleLayoutDockSpace");
+	ImGuiID dockspace_id = ImGui::GetID(GuiHelper::CombineChars(EXAMPLE_LAYOUT_NAME, "Dockspace").c_str());
 	const bool no_ini = (ImGui::DockBuilderGetNode(dockspace_id) == nullptr);
 
 	// Create the dock space (the layout support)
@@ -55,12 +56,10 @@ void EditorLayouts::ShowExampleLayout()
 
 
 	// Show the windows of the example layout
-	EditorWindows::ShowTestWindowA();
-	EditorWindows::ShowTestWindowB();
-	EditorWindows::ShowLogWindow();
-	EditorWindows::ShowViewportWindow();
-	// Note: The order matters here, as for windows with tabs it will show the last created one at application launch
-	// Also, the very last window created is the one focused at application launch
+	EditorWindows::ShowViewportWindow(EXAMPLE_LAYOUT_NAME);
+	EditorWindows::ShowLogWindow(EXAMPLE_LAYOUT_NAME);
+	EditorWindows::ShowTestWindowA(EXAMPLE_LAYOUT_NAME);
+	EditorWindows::ShowTestWindowB(EXAMPLE_LAYOUT_NAME);
 }
 
 void ResetExampleLayout(ImGuiID dockspaceId, ImVec2 layoutSize)
@@ -78,10 +77,10 @@ void ResetExampleLayout(ImGuiID dockspaceId, ImVec2 layoutSize)
 	id_top = ImGui::DockBuilderSplitNode(id_other, ImGuiDir_Up, 0.80f, nullptr, &id_bottom);
 
 	// Assign the windows to the layout
-	ImGui::DockBuilderDockWindow(EditorWindows::VIEWPORT_WINDOW_NAME, id_top);
-	ImGui::DockBuilderDockWindow(EditorWindows::LOGS_WINDOW_NAME, id_bottom);
-	ImGui::DockBuilderDockWindow(EditorWindows::TEST_A_WINDOW_NAME, id_right);
-	ImGui::DockBuilderDockWindow(EditorWindows::TEST_B_WINDOW_NAME, id_bottom); // Node re-usage create tabs
+	ImGui::DockBuilderDockWindow(GuiHelper::WindowLayout(EditorWindows::VIEWPORT_WINDOW_NAME, EditorLayouts::EXAMPLE_LAYOUT_NAME).c_str(), id_top);
+	ImGui::DockBuilderDockWindow(GuiHelper::WindowLayout(EditorWindows::LOGS_WINDOW_NAME, EditorLayouts::EXAMPLE_LAYOUT_NAME).c_str(), id_bottom);
+	ImGui::DockBuilderDockWindow(GuiHelper::WindowLayout(EditorWindows::TEST_A_WINDOW_NAME, EditorLayouts::EXAMPLE_LAYOUT_NAME).c_str(), id_right);
+	ImGui::DockBuilderDockWindow(GuiHelper::WindowLayout(EditorWindows::TEST_B_WINDOW_NAME, EditorLayouts::EXAMPLE_LAYOUT_NAME).c_str(), id_bottom); // Node re-usage create tabs
 	
 	ImGui::DockBuilderFinish(dockspaceId);
 }
@@ -118,12 +117,12 @@ void EditorLayouts::ShowAlternativeLayout()
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-	ImGui::Begin("AlternativeLayoutWindow", NULL, layout_window_flags);
+	ImGui::Begin(GuiHelper::CombineChars(ALTERNATIVE_LAYOUT_NAME, "Window").c_str(), NULL, layout_window_flags);
 	ImGui::PopStyleVar(3);
 
 
 	// We want to reset the layout if its entry is not found in the .ini file
-	ImGuiID dockspace_id = ImGui::GetID("AlternativevLayoutDockSpace");
+	ImGuiID dockspace_id = ImGui::GetID(GuiHelper::CombineChars(ALTERNATIVE_LAYOUT_NAME, "Dockspace").c_str());
 	const bool no_ini = (ImGui::DockBuilderGetNode(dockspace_id) == nullptr);
 
 	// Create the dock space (the layout support)
@@ -140,9 +139,9 @@ void EditorLayouts::ShowAlternativeLayout()
 
 
 	// Show the windows of the example layout
-	EditorWindows::ShowTestWindowB();
-	EditorWindows::ShowLogWindow();
-	EditorWindows::ShowViewportWindow();
+	EditorWindows::ShowTestWindowB(ALTERNATIVE_LAYOUT_NAME);
+	EditorWindows::ShowLogWindow(ALTERNATIVE_LAYOUT_NAME);
+	EditorWindows::ShowViewportWindow(ALTERNATIVE_LAYOUT_NAME);
 }
 
 void ResetAlternativeLayout(ImGuiID dockspaceId, ImVec2 layoutSize)
@@ -160,9 +159,9 @@ void ResetAlternativeLayout(ImGuiID dockspaceId, ImVec2 layoutSize)
 	id_top = ImGui::DockBuilderSplitNode(id_other, ImGuiDir_Up, 0.60f, nullptr, &id_bottom);
 
 	// Assign the windows to the layout
-	ImGui::DockBuilderDockWindow(EditorWindows::VIEWPORT_WINDOW_NAME, id_top);
-	ImGui::DockBuilderDockWindow(EditorWindows::LOGS_WINDOW_NAME, id_bottom);
-	ImGui::DockBuilderDockWindow(EditorWindows::TEST_B_WINDOW_NAME, id_left);
+	ImGui::DockBuilderDockWindow(GuiHelper::WindowLayout(EditorWindows::VIEWPORT_WINDOW_NAME, EditorLayouts::ALTERNATIVE_LAYOUT_NAME).c_str(), id_top);
+	ImGui::DockBuilderDockWindow(GuiHelper::WindowLayout(EditorWindows::LOGS_WINDOW_NAME, EditorLayouts::ALTERNATIVE_LAYOUT_NAME).c_str(), id_bottom);
+	ImGui::DockBuilderDockWindow(GuiHelper::WindowLayout(EditorWindows::TEST_B_WINDOW_NAME, EditorLayouts::ALTERNATIVE_LAYOUT_NAME).c_str(), id_left);
 
 	ImGui::DockBuilderFinish(dockspaceId);
 }

@@ -1,12 +1,13 @@
 #include "editorWindows.h"
 #include <EditorUtils/editorAssets.h>
 #include <EditorUtils/editorStatics.h>
+#include <EditorUtils/guiHelper.h>
 #include <Core/window.h>
 #include <imgui/imgui.h>
 #include <GLFW/glfw3.h>
 
 
-void EditorWindows::ShowViewportWindow()
+void EditorWindows::ShowViewportWindow(const char* layout)
 {
 	// Set the window flags
 	const ImGuiWindowFlags window_flags =
@@ -14,7 +15,11 @@ void EditorWindows::ShowViewportWindow()
 		ImGuiWindowFlags_NoMove;
 
 	// Create the window
-	ImGui::Begin(VIEWPORT_WINDOW_NAME, NULL, window_flags);
+	std::string window_name;
+	if (std::string(layout).empty()) window_name = VIEWPORT_WINDOW_NAME;
+	else window_name = GuiHelper::WindowLayout(VIEWPORT_WINDOW_NAME, layout);
+
+	ImGui::Begin(window_name.c_str(), NULL, window_flags);
 
 	// Set the window content
 	const ImVec2 viewport_size = ImGui::GetContentRegionAvail();

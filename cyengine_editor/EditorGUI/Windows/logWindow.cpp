@@ -1,10 +1,11 @@
 #include "editorWindows.h"
 #include <EditorUtils/editorStatics.h>
+#include <EditorUtils/guiHelper.h>
 #include <imgui/imgui.h>
 #include <iostream>
 
 
-void EditorWindows::ShowLogWindow()
+void EditorWindows::ShowLogWindow(const char* layout)
 {
 	// Set the window flags
 	const ImGuiWindowFlags window_flags =
@@ -13,7 +14,11 @@ void EditorWindows::ShowLogWindow()
 		ImGuiWindowFlags_MenuBar;
 
 	// Create the window
-	ImGui::Begin(LOGS_WINDOW_NAME, NULL, window_flags);
+	std::string window_name;
+	if (std::string(layout).empty()) window_name = LOGS_WINDOW_NAME;
+	else window_name = GuiHelper::WindowLayout(LOGS_WINDOW_NAME, layout);
+
+	ImGui::Begin(window_name.c_str(), NULL, window_flags);
 
 	// Check if the window scroll is already at the bottom (enable auto-scrolling)
 	const bool auto_scroll = ImGui::GetScrollY() >= ImGui::GetScrollMaxY() - 1.0f;

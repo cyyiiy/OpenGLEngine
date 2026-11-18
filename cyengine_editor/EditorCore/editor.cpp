@@ -115,10 +115,7 @@ void Editor::run()
 		ImGui::NewFrame();
 		
 		// Show the editor layout
-		if (!useAlternativeLayout)
-			EditorLayouts::ShowExampleLayout();
-		else
-			EditorLayouts::ShowAlternativeLayout();
+		EditorLayouts::ShowExampleLayout();
 
 		// Render the engine inside a render target
 		RenderTargetTexture& viewport_render_target = *EditorAssets::GetViewportRenderTarget();
@@ -176,13 +173,6 @@ void Editor::processEditorShortcuts()
 	if (ImGui::IsKeyChordPressed(ImGuiMod_Ctrl | ImGuiKey_S))
 	{
 		Locator::getLog().LogMessage_Category("Ctrl+S shortcut pressed, saving...", LogCategory::Info);
-	}
-
-
-	if (ImGui::IsKeyPressed(ImGuiKey_U))
-	{
-		useAlternativeLayout = !useAlternativeLayout;
-		Locator::getLog().LogMessage_Category("Changing editor layout.", LogCategory::Info);
 	}
 }
 

@@ -75,6 +75,9 @@
     <ClCompile Include="EditorGUI\Layouts\exampleLayout.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="EditorUtils\guiHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="EditorLibrary\imgui\debug\imgui.natstepfilter" />
@@ -135,6 +138,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="EditorGUI\Layouts\editorLayouts.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorUtils\guiHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

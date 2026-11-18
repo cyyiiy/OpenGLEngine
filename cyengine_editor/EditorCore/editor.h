@@ -25,6 +25,4 @@ private:
 
 	float deltaTime = 0.0f;
 	double lastFrame = 0.0f;
-
-	bool useAlternativeLayout = false;
 };
