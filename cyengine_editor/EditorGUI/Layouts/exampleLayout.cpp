@@ -33,12 +33,12 @@ void EditorLayouts::ShowExampleLayout()
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-	ImGui::Begin("LayoutWindow", NULL, layout_window_flags);
+	ImGui::Begin("ExampleLayoutWindow", NULL, layout_window_flags);
 	ImGui::PopStyleVar(3);
 
 
 	// We want to reset the layout if its entry is not found in the .ini file
-	ImGuiID dockspace_id = ImGui::GetID("LayoutDockSpace");
+	ImGuiID dockspace_id = ImGui::GetID("ExampleLayoutDockSpace");
 	const bool no_ini = (ImGui::DockBuilderGetNode(dockspace_id) == nullptr);
 
 	// Create the dock space (the layout support)
@@ -83,5 +83,86 @@ void ResetExampleLayout(ImGuiID dockspaceId, ImVec2 layoutSize)
 	ImGui::DockBuilderDockWindow(EditorWindows::TEST_A_WINDOW_NAME, id_right);
 	ImGui::DockBuilderDockWindow(EditorWindows::TEST_B_WINDOW_NAME, id_bottom); // Node re-usage create tabs
 	
+	ImGui::DockBuilderFinish(dockspaceId);
+}
+
+
+// -----
+
+
+void ResetAlternativeLayout(ImGuiID dockspaceId, ImVec2 layoutSize); // Definition below
+
+void EditorLayouts::ShowAlternativeLayout()
+{
+	ImGuiViewport* viewport = ImGui::GetMainViewport();
+
+	EditorWindows::ShowMainMenu();
+
+
+	// Setup the host window of the layout
+	ImGui::SetNextWindowPos(viewport->WorkPos);
+	ImGui::SetNextWindowSize(viewport->WorkSize);
+	ImGui::SetNextWindowViewport(viewport->ID);
+
+	const ImGuiWindowFlags layout_window_flags =
+		ImGuiWindowFlags_NoTitleBar |
+		ImGuiWindowFlags_NoCollapse |
+		ImGuiWindowFlags_NoResize |
+		ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoDocking |
+		ImGuiWindowFlags_NoBringToFrontOnFocus |
+		ImGuiWindowFlags_NoNavFocus |
+		ImGuiWindowFlags_NoBackground
+		;
+
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+	ImGui::Begin("AlternativeLayoutWindow", NULL, layout_window_flags);
+	ImGui::PopStyleVar(3);
+
+
+	// We want to reset the layout if its entry is not found in the .ini file
+	ImGuiID dockspace_id = ImGui::GetID("AlternativevLayoutDockSpace");
+	const bool no_ini = (ImGui::DockBuilderGetNode(dockspace_id) == nullptr);
+
+	// Create the dock space (the layout support)
+	ImGui::DockSpace(dockspace_id, ImVec2(0, 0), ImGuiDockNodeFlags_PassthruCentralNode);
+
+	if (no_ini || EditorStatics::needResetLayout)
+	{
+		EditorStatics::needResetLayout = false;
+		ResetAlternativeLayout(dockspace_id, viewport->WorkSize);
+	}
+
+
+	ImGui::End(); // Close the layout window
+
+
+	// Show the windows of the example layout
+	EditorWindows::ShowTestWindowB();
+	EditorWindows::ShowLogWindow();
+	EditorWindows::ShowViewportWindow();
+}
+
+void ResetAlternativeLayout(ImGuiID dockspaceId, ImVec2 layoutSize)
+{
+	ImGui::DockBuilderRemoveNode(dockspaceId);
+	ImGui::DockBuilderAddNode(dockspaceId, ImGuiDockNodeFlags_DockSpace);
+	ImGui::DockBuilderSetNodeSize(dockspaceId, layoutSize);
+
+	// First slice, 30% from the left of the layout
+	ImGuiID id_left, id_other;
+	id_left = ImGui::DockBuilderSplitNode(dockspaceId, ImGuiDir_Left, 0.30f, nullptr, &id_other);
+
+	// Second slide, 60% from the top of the "unsliced" part
+	ImGuiID id_top, id_bottom;
+	id_top = ImGui::DockBuilderSplitNode(id_other, ImGuiDir_Up, 0.60f, nullptr, &id_bottom);
+
+	// Assign the windows to the layout
+	ImGui::DockBuilderDockWindow(EditorWindows::VIEWPORT_WINDOW_NAME, id_top);
+	ImGui::DockBuilderDockWindow(EditorWindows::LOGS_WINDOW_NAME, id_bottom);
+	ImGui::DockBuilderDockWindow(EditorWindows::TEST_B_WINDOW_NAME, id_left);
+
 	ImGui::DockBuilderFinish(dockspaceId);
 }
