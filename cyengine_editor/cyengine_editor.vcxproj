@@ -199,6 +199,7 @@
     <ClInclude Include="EditorLibrary\imgui\imstb_rectpack.h" />
     <ClInclude Include="EditorLibrary\imgui\imstb_textedit.h" />
     <ClInclude Include="EditorLibrary\imgui\imstb_truetype.h" />
+    <ClInclude Include="EditorLibrary\pfd\portable-file-dialogs.h" />
     <ClInclude Include="EditorUtils\editorAssets.h" />
     <ClInclude Include="EditorUtils\editorStatics.h" />
     <ClInclude Include="EditorUtils\guiHelper.h" />

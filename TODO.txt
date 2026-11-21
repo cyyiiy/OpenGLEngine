@@ -12,8 +12,8 @@
 	- Corriger la render texture du viewport qui se resize pas toujours quand on resize la fenêtre - fait
 	- Faire des tests pour pouvoir switcher entre plusieurs layouts en fonction du mode actif de l'éditeur - fait
 
-~ Editeur phase 02 "Editeur de Projet" :
-	- Pouvoir créer et ouvrir des projets (dossier racine + fichier .cyproject) depuis l'interface de l'éditeur
+~ Editeur phase 02 "Editeur de Projet" : - en cours
+	- Pouvoir créer et ouvrir des projets (dossier racine + fichier .cyproject) depuis l'interface de l'éditeur - en cours
 	- Sauvegarder les projets récents (+ d'autres options et le imgui.ini ?) dans les AppData
 	- Générer automatiquement la solution visual studio dans le projet (avec les headers, les libs, etc.)
 	- Utiliser le dossier racine pour les assets d'un projet (chargement des settings du projet après le chargement de l'engine ?)

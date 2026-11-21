@@ -143,5 +143,8 @@
     <ClInclude Include="EditorUtils\guiHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="EditorLibrary\pfd\portable-file-dialogs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
