@@ -2,6 +2,8 @@
 
 namespace EditorWindows
 {
+	const static char* NEW_PROJECT_WINDOW = "New Project";
+	const static char* HOMEPAGE_WINDOW_NAME = "Homepage";
 	const static char* VIEWPORT_WINDOW_NAME = "Viewport";
 	const static char* LOGS_WINDOW_NAME = "Logs";
 	const static char* TEST_A_WINDOW_NAME = "Test Window A";
@@ -10,6 +12,9 @@ namespace EditorWindows
 
 	void ShowMainMenu();
 
+	void ShowNewProjectWindow();
+
+	void ShowHomepageWindow(const char* layout);
 
 	void ShowViewportWindow(const char* layout);
 

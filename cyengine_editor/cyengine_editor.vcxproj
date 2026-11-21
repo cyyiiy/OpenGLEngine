@@ -154,8 +154,11 @@
     <ClCompile Include="EditorCore\editorLogManager.cpp" />
     <ClCompile Include="EditorCore\scenesManager.cpp" />
     <ClCompile Include="EditorGUI\Layouts\exampleLayout.cpp" />
+    <ClCompile Include="EditorGUI\Layouts\homepageLayout.cpp" />
     <ClCompile Include="EditorGUI\Windows\editorMainMenu.cpp" />
+    <ClCompile Include="EditorGUI\Windows\homepageWindow.cpp" />
     <ClCompile Include="EditorGUI\Windows\logWindow.cpp" />
+    <ClCompile Include="EditorGUI\Windows\newProjectWindow.cpp" />
     <ClCompile Include="EditorGUI\Windows\testWindows.cpp" />
     <ClCompile Include="EditorGUI\Windows\viewportWindow.cpp" />
     <ClCompile Include="EditorLibrary\imgui\imgui.cpp" />
@@ -202,6 +205,7 @@
     <ClInclude Include="EditorLibrary\pfd\portable-file-dialogs.h" />
     <ClInclude Include="EditorUtils\editorAssets.h" />
     <ClInclude Include="EditorUtils\editorStatics.h" />
+    <ClInclude Include="EditorUtils\editorTypes.h" />
     <ClInclude Include="EditorUtils\guiHelper.h" />
     <ClInclude Include="Scenes\demoScene.h" />
   </ItemGroup>

@@ -78,6 +78,15 @@
     <ClCompile Include="EditorUtils\guiHelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="EditorGUI\Windows\homepageWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorGUI\Layouts\homepageLayout.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorGUI\Windows\newProjectWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="EditorLibrary\imgui\debug\imgui.natstepfilter" />
@@ -144,6 +153,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="EditorLibrary\pfd\portable-file-dialogs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorUtils\editorTypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -2,7 +2,6 @@
 #include <EditorUtils/editorStatics.h>
 #include <EditorUtils/guiHelper.h>
 #include <imgui/imgui.h>
-#include <iostream>
 
 
 void EditorWindows::ShowLogWindow(const char* layout)

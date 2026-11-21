@@ -13,8 +13,10 @@
 	- Faire des tests pour pouvoir switcher entre plusieurs layouts en fonction du mode actif de l'éditeur - fait
 
 ~ Editeur phase 02 "Editeur de Projet" : - en cours
-	- Pouvoir créer et ouvrir des projets (dossier racine + fichier .cyproject) depuis l'interface de l'éditeur - en cours
-	- Sauvegarder les projets récents (+ d'autres options et le imgui.ini ?) dans les AppData
+	- Pouvoir créer des projets (dossier racine + fichier .cyproject) depuis l'interface de l'éditeur - fait
+	- Remplir le fichier .cyproject (json) avec des valeurs (engine version & build name pour le moment)
+	- Pouvoir ouvrir des projets et faire une fenêtre "Project Settings" disponible uniquement avec un projet ouvert
+	- Sauvegarder les projets récents (+ le imgui.ini ?) dans les AppData
 	- Générer automatiquement la solution visual studio dans le projet (avec les headers, les libs, etc.)
 	- Utiliser le dossier racine pour les assets d'un projet (chargement des settings du projet après le chargement de l'engine ?)
 	- Créer une première base d'interface pour l'éditeur une fois le projet ouvert

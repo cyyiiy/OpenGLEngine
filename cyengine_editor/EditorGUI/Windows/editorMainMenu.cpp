@@ -14,6 +14,24 @@ void EditorWindows::ShowMainMenu()
 	{
 		if (ImGui::BeginMenu("File"))
 		{
+			if (ImGui::MenuItem("New Project"))
+			{
+				EditorTypes::NewProjectData& new_project_data = EditorStatics::newProjectData;
+				if (!new_project_data.windowOpened)
+				{
+					new_project_data.windowOpened = true;
+					new_project_data.projectName = "";
+					new_project_data.folderPath = "";
+				}
+			}
+
+			if (ImGui::MenuItem("Open Project"))
+			{
+				// TODO: Open an existing project
+			}
+
+			ImGui::Separator();
+
 			if (ImGui::MenuItem("Save", "Ctrl+S"))
 			{
 				Locator::getLog().LogMessage_Category("Save menu button clicked, saving...", LogCategory::Info);

@@ -8,6 +8,7 @@
 #include <EditorUtils/editorAssets.h>
 #include <EditorUtils/editorStatics.h>
 #include <EditorGUI/Layouts/editorLayouts.h>
+#include <EditorGUI/Windows/editorWindows.h>
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_glfw.h>
@@ -115,7 +116,8 @@ void Editor::run()
 		ImGui::NewFrame();
 		
 		// Show the editor layout
-		EditorLayouts::ShowExampleLayout();
+		EditorLayouts::ShowHomepageLayout();
+		if (EditorStatics::newProjectData.windowOpened) EditorWindows::ShowNewProjectWindow();
 
 		// Render the engine inside a render target
 		RenderTargetTexture& viewport_render_target = *EditorAssets::GetViewportRenderTarget();

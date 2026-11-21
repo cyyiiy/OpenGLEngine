@@ -1,8 +1,8 @@
 #pragma once
-#include <Utils/Color.h>
+#include <EditorUtils/editorTypes.h>
+#include <imgui/imgui.h>
 #include <string>
 #include <vector>
-#include <imgui/imgui.h>
 
 struct LogMessage
 {
@@ -16,6 +16,8 @@ public:
 	static bool isViewportFocused;
 
 	static bool needResetLayout;
+
+	static EditorTypes::NewProjectData newProjectData;
 
 	static std::vector<LogMessage> logMessages;
 
